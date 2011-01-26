@@ -56,7 +56,7 @@ Can recursively and non-recursively merge two enumerable objects together
 	// { foo: 'baz', baz: { bar: false }}
 	
 	console.log(Object.mixin([a, b], 2))
-	// { foo: 'baz', baz: { bar: false, bat, true }}
+	// { foo: 'baz', baz: { bar: false, bat: true }}
 	
 #### Object.getOwnPropertyDescriptors
 Retrieves object property descriptors for every property within an object
