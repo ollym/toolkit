@@ -27,6 +27,29 @@ Generates a random number between two values
 	
 	Math.random();
 	// Output: 0.16625623148865998
+	
+### Array
+
+#### Array.swap
+Swaps two values within an array at two given indexes
+
+	console.log(['foo', 'bar', 'bat'].swap(0, 1));
+	// ['bar', 'foo', 'bat']
+	
+#### Array.contains
+Determines whether a value exists within an array
+
+	console.log(['foo', 'bar'].contains('foo'));
+	// true
+	
+	console.log(['foo', 'bar'].contains('bat'));
+	// false
+	
+#### Array.shuffle
+Shuffles an array of values into a random order
+
+	console.log(['a', 'b', 'c', 'd'].shuffle());
+	// ['d', 'c', 'a', 'b']
 
 ### Object
 
