@@ -8,6 +8,25 @@ The JS Toolkit has very specific goals - as to not re-invent the wheel. They go 
 * Must be able to be backwards compatible if just dropped into any standard application.
 
 ## Documentation
+JS Toolkit currently contains extension methods for the following objects. This will be added to. Eventually.
+
+* Math
+* Object
+* Array
+
+### Math
+
+#### Math.random
+Generates a random number between two values
+
+	Math.random(2, 4);
+	// Output: 3.2285545337945223
+	
+	Math.random(2, 4, true);
+	// Output: 3
+	
+	Math.random();
+	// Output: 0.16625623148865998
 
 ### Object
 
