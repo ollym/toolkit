@@ -1,0 +1,8 @@
+{   "name": "toolkit"
+  , "description": "An ECMA5 compliant javascript toolkit"
+  , "version": "0.0.1"
+  , "contributors": [ 
+      { "name": "Oliver Morgan", "email": "oliver.morgan@kohark.com" }
+  ]
+  , "directories": { "lib": "./lib/toolkit" }
+}
