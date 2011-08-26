@@ -25,7 +25,6 @@ module.exports = [
   
   function Shuffle(result) {
     
-    result(['a', 'b', 'c'].shuffle().join(',') != 'a,b,c', true, 'Ensure shuffle');
     result(['a', 'b', 'c'].shuffle().contains('a', 'b', 'd'), true, 'Element preservation');
   }
 
