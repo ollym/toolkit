@@ -23,6 +23,12 @@ module.exports = [
     result(['1', 2, 3].contains(1), false, 'Casting false-positive');
   },
   
+  function Remove(result) {
+    
+    result(['a', 'b'].remove('b').join(','), 'a', 'Normal');
+    result(['a', 'b'].remove('c').join(','), 'a,b', 'Out-of-range Normal');
+  },
+  
   function Shuffle(result) {
     
     result(['a', 'b', 'c'].shuffle().contains('a', 'b', 'd'), true, 'Element preservation');
@@ -38,7 +44,20 @@ module.exports = [
   
   function Intersect(result) {
     
+    var a = ['a', 'b', 'c'], b = ['b', 'c', 'd'], c = ['c', 'd', 'e'];
     
+    result(a.intersect(b).join(','), 'b,c', 'Two-param Normal');
+    result(a.intersect(b, c).join(','), 'c', 'Three-param Normal');
+    result([1, '2', '3'].intersect(['1', 2, 3]).join(',') == '', true, 'Case-insentive empty intersection');
+  },
+  
+  function Diff(result) {
+    
+    var a = ['a', 'b', 'c'], b = ['b', 'c', 'd'], c = ['c', 'd', 'e'];
+    
+    result(a.diff(b).join(','), 'd,a', 'Two-param Diff');
+    result(a.diff(b, c).join(','), 'e,a', 'Three-param Diff');
+    result([1, '2', '3'].diff(['1', 2, 3]).join(','), '1,2,3,1,2,3', 'Case-insentive diff');
   }
 
 ];
