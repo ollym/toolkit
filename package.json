@@ -8,5 +8,5 @@
   "contributors" : [],
   "dependencies" : [],
   "repository"   : { "type": "git", "url": "git://github.com/ollym/toolkit.git" },
-  "main"         : "./index.js" 
+  "main"         : "index.js" 
 }

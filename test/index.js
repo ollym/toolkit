@@ -1,5 +1,5 @@
 
-require('../lib')
+require('toolkit')
 
 var modules = ['Object', 'Array', 'Math'];
 var start = Date.now();
