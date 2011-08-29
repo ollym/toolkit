@@ -8,7 +8,14 @@ module.exports = [
   
   function LCM(result) {
     
-    result((21).gcd(6, 8), 42, 'Normal');
+    result((21).lcm(6), 42, 'Normal');
+  },
+  
+  function Round(result) {
+
+    result((1.5).round(), 2, 'API Preservation');
+    result((1).round(1).toString(), '1.0', 'Normal');
+    result((15).round(-1), '20', 'Normal');
   }
 
 ];
