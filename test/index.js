@@ -1,7 +1,7 @@
 
 require('../index')
 
-var modules = ['Object', 'Array', 'Math'];
+var modules = ['Object', 'Array', 'Math', 'Number'];
 var start = Date.now();
 var failures = 0;
 
