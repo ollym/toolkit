@@ -28,9 +28,16 @@ module.exports = [
   
   function Map(result) {
     
-    var obj = Object.map({ 1:2, 3:4 }, function(key, val) { return key * val });
+    var obj = Object.create({}, {
+      1: { value: 2, enumerable: true },
+      3: { value: 4, enumerable: true },
+      5: { value: 6, enumerable: false }
+    });
+        
+    obj = Object.map(obj, function(key, val) { return key * val });
     
-    result(JSON.stringify(obj), '{"1":2,"3":12}', 'Stop looping');
+    result(JSON.stringify(obj), '{"1":2,"3":12}', 'Normal');
+    result(obj[5], 6, 'Non-enumerable property preservation');
   },
   
   function getOwnPropertyDescriptors(result) {
@@ -76,16 +83,9 @@ module.exports = [
   },
   
   function Clone(result) {
-    
-    desc = {
-      foo: 
-       { value: 'bar',
-         writable: false,
-         enumerable: true,
-         configurable: false } };
-    
+
     function A() { }
-    A.prototype = Object.create({}, desc);
+    Object.defineProperties(A.prototype, { foo: { value: 'bar' } });
     
     var obj = (new A());
 
@@ -96,9 +96,16 @@ module.exports = [
   
   function Filter(result) {
     
-    var obj = Object.filter({1:2,3:4,5:6}, function(key, val) { return val==4 || key == 1; });
+    var obj = Object.create({}, {
+      1: { value: 2, enumerable: true },
+      3: { value: 4, enumerable: true },
+      5: { value: 6, enumerable: false }
+    });
+    
+    var obj = Object.filter(obj, function(key, val) { return val==4 || key == 1; });
     
     result(JSON.stringify(obj), '{"1":2,"3":4}', 'Normal');
+    result(obj[5], 6, 'Non-enumerable property preservation');
   },
   
   function Clean(result) {
