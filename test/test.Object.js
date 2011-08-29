@@ -29,14 +29,14 @@ module.exports = [
   function Map(result) {
     
     var obj = Object.create({}, {
-      1: { value: 2, enumerable: true },
-      3: { value: 4, enumerable: true },
-      5: { value: 6, enumerable: false }
+      2: { value: 2, enumerable: true, writable: false }, // Test non-writable values
+      3: { value: 4, enumerable: true, writable: true },  // Test Normal
+      5: { value: 6, enumerable: false }                  // Test non-enumerable values
     });
         
     obj = Object.map(obj, function(key, val) { return key * val });
     
-    result(JSON.stringify(obj), '{"1":2,"3":12}', 'Normal');
+    result(JSON.stringify(obj), '{"2":2,"3":12}', 'Normal');
     result(obj[5], 6, 'Non-enumerable property preservation');
   },
   
@@ -88,10 +88,21 @@ module.exports = [
     Object.defineProperties(A.prototype, { foo: { value: 'bar' } });
     
     var obj = (new A());
-
-    result(Object.clone(obj).foo, 'bar', 'Property construction');
-    result(Object.clone(obj) instanceof A, true, 'instanceof Operator');
-    result(obj === Object.clone(obj), false, 'Negative equality');
+    obj.boo = 'baz';
+    
+    var clone = Object.clone(obj);
+    obj.bar = 'baz';
+    
+    result(clone.foo, 'bar', 'Property construction');
+    result(clone.bar, undefined, 'Parent isolation');
+    result(clone.boo, 'baz', 'Parent inheritance');
+    
+    A.prototype.bat = 'foo';
+    
+    result(clone.bat, 'foo', 'Prototypal inheritence');
+    
+    result(clone instanceof A, true, 'instanceof Operator');
+    result(obj === clone, false, 'Negative equality');
   },
   
   function Filter(result) {
@@ -111,7 +122,7 @@ module.exports = [
   function Clean(result) {
     
     var obj = Object.clean({1:undefined, 2:null, 3:false, 4:0, 5:NaN, 6:'foo', 7:'bar'});
-    
+
     result(JSON.stringify(obj), '{"6":"foo","7":"bar"}', 'Normal');
   }
 ];
