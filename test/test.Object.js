@@ -40,6 +40,20 @@ module.exports = [
     result(obj[5], 6, 'Non-enumerable property preservation');
   },
   
+  function Walk(result) {
+    
+    var obj = Object.create({}, {
+      2: { value: 2, enumerable: true, writable: false }, // Test non-writable values
+      3: { value: 4, enumerable: true, writable: true },  // Test Normal
+      5: { value: 6, enumerable: false }                  // Test non-enumerable values
+    });
+        
+    Object.walk(obj, function(key, val) { return key * val });
+    
+    result(JSON.stringify(obj), '{"2":2,"3":12}', 'Normal');
+    result(obj[5], 6, 'Non-enumerable property preservation');
+  },
+  
   function getOwnPropertyDescriptors(result) {
     
     desc = {
