@@ -5,7 +5,7 @@
         <link rel="stylesheet" type="text/css" href="/toolkit/css/grid.css" media="all">
         <link rel="stylesheet" type="text/css" href="/toolkit/css/syntax.css" media="all">
         <link rel="stylesheet" type="text/css" href="/toolkit/css/style.css" media="all">
-        <base href="/1.1.0/" />
+        <base href="/toolkit/1.1.0/" />
         <title>Javascript Toolkit Docs</title>
         <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
     </head>
@@ -66,7 +66,7 @@
         });
                 
         $('#version').change(function() {
-           $('head base').attr('href', window.location.origin + '/' + $(this).val() + '/');
+           $('head base').attr('href', window.location.origin + '/toolkit/' + $(this).val() + '/');
         });
         $('#version').trigger('change');
         
