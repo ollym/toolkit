@@ -27,8 +27,7 @@ module.exports = [
   },
   
   function Shuffle(result) {
-    
-    result(['a', 'b', 'c'].shuffle().contains('a', 'b', 'd'), true, 'Element preservation');
+    result(['a', 'b', 'c'].shuffle().contains('a', 'b', 'c'), true, 'Element preservation');
   },
   
   function Clone(result) {

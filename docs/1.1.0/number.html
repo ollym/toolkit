@@ -1,0 +1,81 @@
+---
+layout: default
+---
+<h1>Number.prototype</h1><hr><ul id="methods"><li class="grid-6"><h2><span class="ret">int</span> <span class="name">Gcd</span> <span class="params">(*int)</span></h2><p>Calculates the Greatest common divisor between a set of numbers. Also known as the greatest common factor. This uses Stein's binary algorithm.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} (12).gcd(6, 9)
+   // returns 3
+{% endhighlight %}</div><div class="code"><a class="toggle" >View Code</a>{% highlight js %}function () {
+    
+    return Object.values(arguments).reduce(function(a, b) {
+      
+      if (a == 0 || b == 0)
+        return a | b;
+        
+      for (var shift = 0; ((a | b) & 1) == 0; shift++) {
+        a >>= 1; b >>= 1;
+      }
+        
+      while ((a & 1) == 0) a >>= 1;
+        
+      do {
+        
+        while ((b & 1) == 0) b >>= 1;
+          
+        if (a < b) b -= a;
+        else {
+          var diff = a - b;
+          a = b;
+          b = diff;
+        }
+        
+        b >>= 1;
+      
+      } while (b != 0);
+      
+      return a << shift;
+      
+    }, this);
+    
+}{% endhighlight %}</div></li><li class="grid-6"><h2><span class="ret">int</span> <span class="name">Lcm</span> <span class="params">(*int)</span></h2><p>Calculates the lowest common multiple between a set of numbers. Uses GCD within the caluclation.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} (21).gcd(6)
+   // returns 42
+{% endhighlight %}</div><div class="code"><a class="toggle" >View Code</a>{% highlight js %}function () {
+    
+    var nums = Object.values(arguments), gcd = this.gcd.apply(this, nums);
+
+    return Math.abs(nums.product() * this) / gcd;
+    
+}{% endhighlight %}</div></li><li class="clear"></li><li class="grid-6"><h2><span class="ret">int</span> <span class="name">Ceil</span></h2><p>Rounds up. Same as Math.ceil().</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} 12.32.ceil()
+   // returns 13
+{% endhighlight %}</div><div class="code"><a class="toggle" >View Code</a>{% highlight js %}function () {
+    
+    return Math.ceil(this);
+    
+}{% endhighlight %}</div></li><li class="grid-6"><h2><span class="ret">int</span> <span class="name">Floor</span></h2><p>Rounds down. Same as Math.floor().</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} 12.32.ceil()
+   // returns 12
+{% endhighlight %}</div><div class="code"><a class="toggle" >View Code</a>{% highlight js %}function () {
+    
+    return Math.floor(this);
+    
+}{% endhighlight %}</div></li><li class="clear"></li><li class="grid-6"><h2><span class="ret">int</span> <span class="name">Abs</span></h2><p>Calculates the magnitude or absolute of a number. Same as Math.abs().</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} (-21).abs()
+   // returns 21
+{% endhighlight %}</div><div class="code"><a class="toggle" >View Code</a>{% highlight js %}function () {
+    
+    return Math.abs(this);
+    
+}{% endhighlight %}</div></li><li class="grid-6"><h2><span class="ret">int</span> <span class="name">Round</span> <span class="params">([digits=0])</span></h2><p>Rounds the number to a given number of digits. Negative numbers are possible. This is similar to Ruby's round().</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} 1.5.round()
+   // returns 2
+ (1).round(1)
+   // returns 1.0
+ (15).round(-1)
+   // returns 20
+{% endhighlight %}</div><div class="code"><a class="toggle" >View Code</a>{% highlight js %}function (digits) {
+    
+    digits = digits || 0;
+    
+    if (digits < 0) {
+      return Number(this.toPrecision(this.floor().toString().length - digits.abs()));
+    }
+    else {
+      return this.toFixed(digits);
+    }
+    
+}{% endhighlight %}</div></li><li class="clear"></li></ul><div class="clear"></div>
