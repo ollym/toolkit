@@ -25,6 +25,7 @@
                         <li><a href="/toolkit/1.1.0/object.html">Object</a></li>
                         <li><a href="/toolkit/1.1.0/number.html">Number</a></li>
                         <li><a href="/toolkit/1.1.0/math.html">Math</a></li>
+                        <li><a href="/toolkit/1.1.0/string.html">String</a></li>
                         <li class="clear"></li>
                     </ul>
                 </nav>
@@ -63,7 +64,7 @@
             
             $(this).toggleClass('open');
         });
-
+                
         $('nav#objects a').each(function() {
             if (this.href == window.location.href)
                 $(this).parent('li').addClass('current');

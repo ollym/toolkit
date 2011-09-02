@@ -44,7 +44,7 @@ layout: default
     }.bind(this));
     
 }{% endhighlight %}</div></li><li class="clear"></li><li class="grid-6"><h2><span class="ret">self</span> <span class="name">Remove</span> <span class="params">(*values)</span></h2><p>Removes all instances of the given values from the array. Remove uses the indexOf method which enforces strict equality (===).</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} var arr = [5, 2, 5, 7];
- arr.remove(5).remove(2); // [7]
+ arr.remove(5, 2); // [7]
 {% endhighlight %}</div><div class="code"><a class="toggle" >View Code</a>{% highlight js %}function () {
     
     args = Object.values(arguments);
@@ -56,10 +56,8 @@ layout: default
     
     return this;
     
-}{% endhighlight %}</div></li><li class="grid-6"><h2><span class="ret">self</span> <span class="name">Shuffle</span></h2><p>Re-orders all values within the array into a random order. The method is simple and relies on Math.random() to generate random numbers which is automatically seeded.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} var arr = this.clone();
- for (var index = 0; index < arr.length - 1; index++) {
-   arr.swap(index, Math.round(Math.random(index, arr.length - 1)));
- }
+}{% endhighlight %}</div></li><li class="grid-6"><h2><span class="ret">self</span> <span class="name">Shuffle</span></h2><p>Re-orders all values within the array into a random order. The method is simple and relies on Math.random() to generate random numbers which is automatically seeded.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} ['a','b','c'].shuffle();
+   // returns something like b,a,c
  return arr;
 {% endhighlight %}</div><div class="code"><a class="toggle" >View Code</a>{% highlight js %}function () {
     
