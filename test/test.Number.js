@@ -31,8 +31,9 @@ module.exports = [
   
   function Odd(result) {
     
+    result((1).odd, true, 'Odd');
     result((3).odd, true, 'Odd');
-    result((2).odd, false, 'Even');
+    result((4).odd, false, 'Even');
   }
 
 ];

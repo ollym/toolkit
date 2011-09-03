@@ -11,6 +11,15 @@ Object.defineProperties = function(prototype, descriptors) {
     title = 'Math';
   }
   
+  if (prototype == String.prototype) {
+    group = 'String';
+    title = 'String.prototype';
+  }
+  else if (prototype == String) {
+    group = 'String';
+    title = 'String';
+  }
+  
   if ( ! (group in fds)) {
     fds[group] = fs.openSync('./docs/' + ver + '/' + group.toLowerCase() + '.html', 'w');
     fs.writeSync(fds[group], '---\nlayout: default\n---\n');

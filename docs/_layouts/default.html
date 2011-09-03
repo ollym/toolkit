@@ -5,7 +5,6 @@
         <link rel="stylesheet" type="text/css" href="/toolkit/css/grid.css" media="all">
         <link rel="stylesheet" type="text/css" href="/toolkit/css/syntax.css" media="all">
         <link rel="stylesheet" type="text/css" href="/toolkit/css/style.css" media="all">
-        <base href="/toolkit/1.1.0/" />
         <title>Javascript Toolkit Docs</title>
         <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
     </head>
@@ -21,11 +20,12 @@
                         <option value="1.1.0" selected>1.1.0</option>
                     </select>
                     <ul>
-                        <li><a href="../">Home</a></li>
-                        <li><a href="array.html">Array</a></li>
-                        <li><a href="object.html">Object</a></li>
-                        <li><a href="number.html">Number</a></li>
-                        <li><a href="math.html">Math</a></li>
+                        <li><a href="/toolkit/">Home</a></li>
+                        <li><a href="/toolkit/1.1.0/array.html">Array</a></li>
+                        <li><a href="/toolkit/1.1.0/object.html">Object</a></li>
+                        <li><a href="/toolkit/1.1.0/number.html">Number</a></li>
+                        <li><a href="/toolkit/1.1.0/math.html">Math</a></li>
+                        <li><a href="/toolkit/1.1.0/string.html">String</a></li>
                         <li class="clear"></li>
                     </ul>
                 </nav>
@@ -65,11 +65,6 @@
             $(this).toggleClass('open');
         });
                 
-        $('#version').change(function() {
-           $('head base').attr('href', window.location.origin + '/toolkit/' + $(this).val() + '/');
-        });
-        $('#version').trigger('change');
-        
         $('nav#objects a').each(function() {
             if (this.href == window.location.href)
                 $(this).parent('li').addClass('current');
