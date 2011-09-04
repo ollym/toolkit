@@ -138,5 +138,30 @@ module.exports = [
     var obj = Object.clean({1:undefined, 2:null, 3:false, 4:0, 5:NaN, 6:'foo', 7:'bar'});
 
     result(JSON.stringify(obj), '{"6":"foo","7":"bar"}', 'Normal');
+  },
+  
+  function Alias(result) {
+    
+    var obj = {
+      a: 'b',
+      fooVal: 'bar',
+      get foo() {
+        return this.fooVal;
+      },
+      set foo(val) {
+        this.fooval = val;
+      }
+    };
+    
+    Object.alias(obj, 'foo', 'bat');
+    Object.alias(obj, 'a', 'b');
+
+    result(obj.a, obj.b, 'Normal');
+    obj.a = 'bar';
+    result(obj.a, obj.b, 'Original change.');
+    
+    result(obj.bat, obj.foo, 'Get-variables');
+    obj.bat = 'bar';
+    result(obj.bat, obj.foo, 'Post-Set Get-variables');
   }
 ];
