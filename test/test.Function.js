@@ -33,11 +33,14 @@ module.exports = [
       }, 50);
     
     }, 5);
+  },
+  
+  function Delay(result) {
+    
+    Date.now.delay(function(now, then) {
+      
+      result(Math.abs(now - then - 50) < 2, true, 'Correct callback - Fuzzy');
+      
+    }, 50, Date.now());
   }
 ];
-
-var fibonacci = function(n) {
-  return n < 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
-};
-
-var fibonacci = fibonacci.cache()
