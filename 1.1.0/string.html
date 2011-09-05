@@ -1,7 +1,23 @@
 ---
 layout: default
 ---
-<h1>String.prototype</h1><hr><ul id="methods"><li class="grid-6"><h2><span class="ret">array</span> <span class="name">Chars</span> <span class="params">(object)</span></h2><p>Gets all the enumerable values within an object.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} Object.values({1:2,3:4});
+<h1>String</h1><hr><ul id="methods"><li class="grid-6"><h2><span class="ret">string</span> <span class="name">UUID</span></h2><p>Creates a RFC 4122 compliant UUID. This implementation relies on Math.random(). Even so you can be assured that each generation is pretty much always going to be different.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} String.uuid()
+   // returns something like '89996AE3-6FBB-428299C78-670C095256631'
+{% endhighlight %}</div><div class="code"><a class="toggle" >View Code</a>{% highlight js %}function () {
+    
+    return Array.range(0, 35).map(function(i) {
+      switch (i) {
+        case 8:
+        case 13:
+        case 23: return '-';
+        case 14: i = 4; break;
+        case 19: i = (Math.random(0, 16).floor() & 0x3) | 0x8; break;
+        default: i = Math.random(0, 16).floor(); break;
+      }
+      return '0123456789ABCDEF'[i];
+    }).join('');
+    
+}{% endhighlight %}</div></li></ul><div class="clear"></div><h1>String.prototype</h1><hr><ul id="methods"><li class="grid-6"><h2><span class="ret">array</span> <span class="name">Chars</span> <span class="params">(object)</span></h2><p>Gets all the enumerable values within an object.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} Object.values({1:2,3:4});
    // returns [2,4]
 {% endhighlight %}</div><div class="code"><a class="toggle" >View Code</a>{% highlight js %}function (obj) {
     
