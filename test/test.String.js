@@ -56,6 +56,12 @@ module.exports = [
     
     result('Hello'.distance('World'), 4, 'Normal');
     result('foobar'.distance('foobaz'), 1, 'Normal');
+  },
+  
+  function UUID(result) {
+    
+    result(String.UUID().length, 36, 'Normal');
+    result(String.UUID() == String.UUID(), false, 'Subsequent inequality');
   }
 
 ];

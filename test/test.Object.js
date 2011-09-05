@@ -1,7 +1,6 @@
 
 module.exports = [
 
-
   function Values(result) {
     
     result(Object.values({ 1:2, 3:4 }), '2,4', 'Normal');
@@ -163,5 +162,8 @@ module.exports = [
     result(obj.bat, obj.foo, 'Get-variables');
     obj.bat = 'bar';
     result(obj.bat, obj.foo, 'Post-Set Get-variables');
+    
+    obj.b = 'bar';
+    result(obj.a, obj.b, 'Reverse Post-Set');
   }
 ];

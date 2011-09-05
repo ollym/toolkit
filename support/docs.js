@@ -19,6 +19,14 @@ Object.defineProperties = function(prototype, descriptors) {
     group = 'String';
     title = 'String';
   }
+  else if (prototype == Function) {
+    group = 'Function';
+    title = 'Function';
+  }
+  else if (prototype == Function.prototype) {
+    group = 'Function';
+    title = 'Function.prototype';
+  }
   
   if ( ! (group in fds)) {
     fds[group] = fs.openSync('./docs/' + ver + '/' + group.toLowerCase() + '.html', 'w');

@@ -1,7 +1,29 @@
 ---
 layout: default
 ---
-<h1>Object</h1><hr><ul id="methods"><li class="grid-6"><h2><span class="ret">array</span> <span class="name">Values</span> <span class="params">(object)</span></h2><p>Gets all the enumerable values within an object.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} Object.values({1:2,3:4});
+<h1>Object</h1><hr><ul id="methods"><li class="grid-6"><h2><span class="ret">void</span> <span class="name">Alias</span> <span class="params">(object, property, alias)</span></h2><p>Creates an alias of a property within an object</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} var obj = {1:2,3:4};
+ Object.alias(obj, 3, 6);
+ log(obj[3] == obj[6]) // > true
+ obj[3] = 5;
+ log(obj[3] == obj[6]) // > true
+{% endhighlight %}</div><div class="code"><a class="toggle" >View Code</a>{% highlight js %}function (object, property, alias) {
+    
+    var desc = Object.getOwnPropertyDescriptor(object, property);
+    
+    if (('get' in desc ) || ('value' in desc)) {
+      delete desc['value'], delete desc['writable'];
+      desc.get = function() {
+        return object[property];
+      }
+    }
+    
+    desc.set = function(val) {
+      return object[property] = val;
+    }
+    
+    Object.defineProperty(object, alias, desc);
+
+}{% endhighlight %}</div></li><li class="grid-6"><h2><span class="ret">array</span> <span class="name">Values</span> <span class="params">(object)</span></h2><p>Gets all the enumerable values within an object.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} Object.values({1:2,3:4});
    // returns [2,4]
 {% endhighlight %}</div><div class="code"><a class="toggle" >View Code</a>{% highlight js %}function (obj) {
     
@@ -12,7 +34,7 @@ layout: default
     
     return arr;
     
-}{% endhighlight %}</div></li><li class="grid-6"><h2><span class="ret">void</span> <span class="name">ForEach</span> <span class="params">(object)</span></h2><p>A fast looping mechanism for objects. Like Array.forEach.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} Object.forEach({1:2,3:4}, function(key, val) {
+}{% endhighlight %}</div></li><li class="clear"></li><li class="grid-6"><h2><span class="ret">void</span> <span class="name">ForEach</span> <span class="params">(object)</span></h2><p>A fast looping mechanism for objects. Like Array.forEach.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} Object.forEach({1:2,3:4}, function(key, val) {
    log(key + ':' + val)
  });
  // > 1:2
@@ -23,7 +45,7 @@ layout: default
       return callback.call(null, key, obj[key], obj);
     });
     
-}{% endhighlight %}</div></li><li class="clear"></li><li class="grid-6"><h2><span class="ret">bool</span> <span class="name">IsObject</span> <span class="params">(*objects)</span></h2><p>Returns whether all the given parameters are objects</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} Object.isObject({1:2,3:4});
+}{% endhighlight %}</div></li><li class="grid-6"><h2><span class="ret">bool</span> <span class="name">IsObject</span> <span class="params">(*objects)</span></h2><p>Returns whether all the given parameters are objects</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} Object.isObject({1:2,3:4});
    // returns true
  Object.isObject(function() { });
    // returns false
@@ -35,7 +57,7 @@ layout: default
       return typeof value === 'object';
     });
     
-}{% endhighlight %}</div></li><li class="grid-6"><h2><span class="ret">mixed</span> <span class="name">Each</span> <span class="params">(object, function)</span></h2><p>Provides a utility to quickly iterate through enumerable properties of an object.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} var ret = Object.each({1:2,3:4}, function(key, val) {
+}{% endhighlight %}</div></li><li class="clear"></li><li class="grid-6"><h2><span class="ret">mixed</span> <span class="name">Each</span> <span class="params">(object, function)</span></h2><p>Provides a utility to quickly iterate through enumerable properties of an object.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} var ret = Object.each({1:2,3:4}, function(key, val) {
    return (key + ':' + val);
  });
  // ret = 1:2
@@ -46,7 +68,7 @@ layout: default
       if ((result = callback.call(null, key, obj[key], this)) !== undefined)
         return result;
     
-}{% endhighlight %}</div></li><li class="clear"></li><li class="grid-6"><h2><span class="ret">object</span> <span class="name">Map</span> <span class="params">(object, function)</span></h2><p>Similar to Array.map except for enumerable object properties.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} Object.map({1:2,3:4}, function(key, val) {
+}{% endhighlight %}</div></li><li class="grid-6"><h2><span class="ret">object</span> <span class="name">Map</span> <span class="params">(object, function)</span></h2><p>Similar to Array.map except for enumerable object properties.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} Object.map({1:2,3:4}, function(key, val) {
    return key * val;
  });
  // returns {1:2,3:12}
@@ -58,7 +80,7 @@ layout: default
 
     return obj;
     
-}{% endhighlight %}</div></li><li class="grid-6"><h2><span class="ret">array</span> <span class="name">GetOwnPropertyDescriptors</span> <span class="params">(object)</span></h2><p>Retrieves object property descriptors for every property within an object</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} Object.getOwnPropertyDescriptors({1:2,3:4});
+}{% endhighlight %}</div></li><li class="clear"></li><li class="grid-6"><h2><span class="ret">array</span> <span class="name">GetOwnPropertyDescriptors</span> <span class="params">(object)</span></h2><p>Retrieves object property descriptors for every property within an object</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} Object.getOwnPropertyDescriptors({1:2,3:4});
  // returns {
  //  '1': {
  //     value: 2,
@@ -83,7 +105,7 @@ layout: default
 
     return descriptors;
     
-}{% endhighlight %}</div></li><li class="clear"></li><li class="grid-6"><h2><span class="ret">self</span> <span class="name">Walk</span> <span class="params">(object, function)</span></h2><p>Similar to Object.map except that the callback values are applied to the object instance and not a clone.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} var obj = {1:2,3:4};
+}{% endhighlight %}</div></li><li class="grid-6"><h2><span class="ret">self</span> <span class="name">Walk</span> <span class="params">(object, function)</span></h2><p>Similar to Object.map except that the callback values are applied to the object instance and not a clone.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} var obj = {1:2,3:4};
  Object.map(obj, function(key, val) {
    return key * val;
  });
@@ -96,7 +118,7 @@ layout: default
     
     return obj;
     
-}{% endhighlight %}</div></li><li class="grid-6"><h2><span class="ret">mixed</span> <span class="name">Reduce</span> <span class="params">(object, callback, [start=undefined])</span></h2><p>Like Array.reduce except for objects. Reduces the object down into a single value.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} Object.reduce({1:2,3:4}, function(group, key, val) {
+}{% endhighlight %}</div></li><li class="clear"></li><li class="grid-6"><h2><span class="ret">mixed</span> <span class="name">Reduce</span> <span class="params">(object, callback, [start=undefined])</span></h2><p>Like Array.reduce except for objects. Reduces the object down into a single value.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} Object.reduce({1:2,3:4}, function(group, key, val) {
    return group + key + val;
  }, 0);
  // returns 10 (0+1+2+3+4)
@@ -108,7 +130,7 @@ layout: default
     
     return start;
     
-}{% endhighlight %}</div></li><li class="clear"></li><li class="grid-6"><h2><span class="ret">object</span> <span class="name">Merge</span> <span class="params">(object, [level=0])</span></h2><p>Like Array.reduce except for objects. Reduces the object down into a single value. You can pass the first parameter as an array or treat it as *objects and ignore the level.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} Object.merge({1:2}, {3:4}, {5:6});
+}{% endhighlight %}</div></li><li class="grid-6"><h2><span class="ret">object</span> <span class="name">Merge</span> <span class="params">(object, [level=0])</span></h2><p>Like Array.reduce except for objects. Reduces the object down into a single value. You can pass the first parameter as an array or treat it as *objects and ignore the level.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} Object.merge({1:2}, {3:4}, {5:6});
    // returns {1:2,3:4,5:6}
  Object.merge([{1:2}, {3:4}, {5:6}]);
    // returns {1:2,3:4,5:6}
@@ -139,7 +161,7 @@ layout: default
       
     }, {});
     
-}{% endhighlight %}</div></li><li class="grid-6"><h2><span class="ret">object</span> <span class="name">Clone</span> <span class="params">(object, [inherit=true])</span></h2><p>Like Array.reduce except for objects. Reduces the object down into a single value.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} function A() { }
+}{% endhighlight %}</div></li><li class="clear"></li><li class="grid-6"><h2><span class="ret">object</span> <span class="name">Clone</span> <span class="params">(object, [inherit=true])</span></h2><p>Clones an object by creating a new object with the same parent prototype and then manually adding all the property descriptors.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} function A() { }
  Object.defineProperty(A.prototype, 'foo', { value: 'bar' });
  var a = new A(), b = Object.clone(a);
  a.foo == b.foo
@@ -152,7 +174,7 @@ layout: default
     
     return Object.create(Object.getPrototypeOf(obj), inherit ? Object.getOwnPropertyDescriptors(obj) : undefined);
     
-}{% endhighlight %}</div></li><li class="clear"></li><li class="grid-6"><h2><span class="ret">object</span> <span class="name">Filter</span> <span class="params">(object, callback)</span></h2><p>Like Array.filter except for objects. Only enumerable values are filtered.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} Object.filter({1:2,3:4,5:6}, function(key, val) {
+}{% endhighlight %}</div></li><li class="grid-6"><h2><span class="ret">object</span> <span class="name">Filter</span> <span class="params">(object, callback)</span></h2><p>Like Array.filter except for objects. Only enumerable values are filtered.</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} Object.filter({1:2,3:4,5:6}, function(key, val) {
    return key == 3;
  });
  // returns {3:4}
@@ -168,7 +190,7 @@ layout: default
     
     return obj;
     
-}{% endhighlight %}</div></li><li class="grid-6"><h2><span class="ret">object</span> <span class="name">Clean</span> <span class="params">(object)</span></h2><p>Like Array.clean except for objects. The following values are filtered: NaN, undefined, null, 0 or false</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} Object.clean({1:false,2:0,3:NaN,4:null,5:6});
+}{% endhighlight %}</div></li><li class="clear"></li><li class="grid-6"><h2><span class="ret">object</span> <span class="name">Clean</span> <span class="params">(object)</span></h2><p>Like Array.clean except for objects. The following values are filtered: NaN, undefined, null, 0 or false</p><div class="example"><a class="toggle" >View Example</a>{% highlight js %} Object.clean({1:false,2:0,3:NaN,4:null,5:6});
    // returns {5:6}
 {% endhighlight %}</div><div class="code"><a class="toggle" >View Code</a>{% highlight js %}function (obj) {
     
@@ -176,4 +198,4 @@ layout: default
       return !! val;
     });
     
-}{% endhighlight %}</div></li><li class="clear"></li></ul><div class="clear"></div>
+}{% endhighlight %}</div></li></ul><div class="clear"></div><h1>Object.prototype</h1><hr><ul id="methods"></ul><div class="clear"></div>
