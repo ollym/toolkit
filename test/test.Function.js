@@ -37,10 +37,31 @@ module.exports = [
   
   function Delay(result) {
     
-    Date.now.delay(function(now, then) {
+    var called = false;
+    
+    Date.now.delay(function(now, then, foo) {
+      
+      called = true;
       
       result(Math.abs(now - then - 50) < 2, true, 'Correct callback - Fuzzy');
+      result(foo, 'foo', 'Multiple parameters');
       
-    }, 50, Date.now());
+    }, 50, Date.now(), 'foo');
+    
+    setTimeout(function() {
+      
+      result(called, true, 'Function called');
+      
+    }, 100)
+  },
+  
+  function Compose(result) {
+    
+    function A(val) { return val ^ 2; }
+    function B(val) { return val / 2; }
+    
+    var C = Function.compose(A, B);
+    
+    result(A(B(5)), C(5), 'Normal');
   }
 ];
