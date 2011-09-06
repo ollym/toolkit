@@ -99,14 +99,14 @@ module.exports = [
   },
   
   function First(result) {
-    
-    result([2, 3, 5].first(), 2, 'Normal');
+
+    result(JSON.stringify([2, 3, 5].first()), '2', 'Normal');
     result([2, 3, 5].first(2), '2,3', 'N-2');
   },
   
   function Last(result) {
     
-    result([2, 3, 5].last(), 5, 'Normal');
+    result(JSON.stringify([2, 3, 5].last()), 5, 'Normal');
     result([2, 3, 5].last(2), '3,5', 'N-2');
   },
   
