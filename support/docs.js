@@ -1,4 +1,4 @@
-var fs = require('fs'), ver = '1.1.0', STAGE_DESC = 0x1, STAGE_EXAMP = 0x2;
+var fs = require('fs'), ver = '1.2.0', STAGE_DESC = 0x1, STAGE_EXAMP = 0x2;
 var fds = {};
 
 Object.defineProperties = function(prototype, descriptors) {

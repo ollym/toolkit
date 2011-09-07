@@ -165,5 +165,16 @@ module.exports = [
     
     obj.b = 'bar';
     result(obj.a, obj.b, 'Reverse Post-Set');
+  },
+  
+  function ObjectHash(result) {
+    
+    function A() { }
+    A.prototype = { foo: 'bar' };
+    
+    var obj = new A();
+    
+    result(obj.__objectHash__, obj.__objectHash__, 'Normal');
+    result(obj.__objectHash__ == A.__objectHash__, false, 'Normal');
   }
 ];
