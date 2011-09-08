@@ -1,4 +1,0 @@
-destination: ./_site
-auto:        true
-pygments:    true
-base:       ./docs
