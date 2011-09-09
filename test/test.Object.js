@@ -39,6 +39,20 @@ module.exports = [
     result(obj[5], 6, 'Non-enumerable property preservation');
   },
   
+  function Map$(result) {
+    
+    var obj = Object.create({}, {
+      2: { value: 2, enumerable: true, writable: false }, // Test non-writable values
+      3: { value: 4, enumerable: true, writable: true },  // Test Normal
+      5: { value: 6, enumerable: false }                  // Test non-enumerable values
+    });
+        
+    Object.walk(obj, function(key, val) { return key * val });
+    
+    result(JSON.stringify(obj), '{"2":2,"3":12}', 'Normal');
+    result(obj[5], 6, 'Non-enumerable property preservation');
+  },
+  
   function Walk(result) {
     
     var obj = Object.create({}, {
@@ -132,9 +146,32 @@ module.exports = [
     result(obj[5], 6, 'Non-enumerable property preservation');
   },
   
+  function Filter$(result) {
+    
+    var obj = Object.create({}, {
+      1: { value: 2, enumerable: true },
+      3: { value: 4, enumerable: true },
+      5: { value: 6, enumerable: false }
+    });
+    
+    Object.filter$(obj, function(key, val) { return val==4 || key == 1; });
+    
+    result(JSON.stringify(obj), '{"1":2,"3":4}', 'Normal');
+    result(obj[5], 6, 'Non-enumerable property preservation');
+  },
+  
   function Clean(result) {
     
     var obj = Object.clean({1:undefined, 2:null, 3:false, 4:0, 5:NaN, 6:'foo', 7:'bar'});
+
+    result(JSON.stringify(obj), '{"6":"foo","7":"bar"}', 'Normal');
+  },
+  
+  function Clean(result) {
+    
+    var obj = {1:undefined, 2:null, 3:false, 4:0, 5:NaN, 6:'foo', 7:'bar'};
+    
+    Object.clean$(obj);
 
     result(JSON.stringify(obj), '{"6":"foo","7":"bar"}', 'Normal');
   },
