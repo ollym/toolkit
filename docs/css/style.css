@@ -29,7 +29,7 @@ body {
 #flare {
   height: 495px;
   background: url(../img/flare.png) no-repeat left;
-  margin: -50px 0 -310px -25px;
+  margin: -50px 0 -310px -250px;
 }
 
 #version {
@@ -189,7 +189,10 @@ span.params {
 }
 
 footer {
-  margin-top: 25px;
+  padding: 25px 0;
   color: white;
   text-align: center;
+}
+footer a {
+  color: white !important;
 }

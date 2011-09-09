@@ -198,6 +198,7 @@ pyg.on('exit', function() {
     
     var base = './docs/' + ver + '/',
         tmpl = doc.toString()
+          .replace('{{version}}', ver)
           .replace('{{nav}}', Object.keys(grouped).reduce(function(c, n) {
             num = listed.reduce(function(a,b) {
               if (b.group == n && versions.indexOf(b.since.split('.', 2).join('.') + '.x') >= vindx) a++;
@@ -222,6 +223,8 @@ pyg.on('exit', function() {
 
         content += '<h1>{{title}}</h1><hr><ul id="methods">'
           .replace('{{title}}', title);
+          
+        var n = 0;
 
         grouped[group][title].forEach(function(prop, i) {
           
@@ -230,6 +233,8 @@ pyg.on('exit', function() {
           
           if (svindx < vindx) 
             return; // Method has't arrived yet!
+            
+          n++;
 
           content += '<li class="grid-6"><h2><span class="ret">{{returns}}</span> <span class="name">{{name}}</span> '
             .replace('{{returns}}', prop.returns)
@@ -251,14 +256,15 @@ pyg.on('exit', function() {
             .replace('{{example}}', prop.example)
             .replace('{{code}}', prop.code);
             
-          if ((i > 0) && ((i + 1) % 2) == 0) content += '<li class="clear"></li>';
+          if ((n % 2) == 0) 
+            content += '<li class="clear"></li>';
 
         });
         
         content += '</ul><div class="clear"></div>';
       }
 
-      fs.writeFileSync(base + group.toLowerCase() + '.html', tmpl.replace('{{content}}', content));
+      fs.writeFileSync(base + group.toLowerCase() + '.html', tmpl.replace('{{content}}', content).replace('{{group}}', group));
     }
   });
 });
