@@ -41,6 +41,12 @@ module.exports = [
     result(str.lpad(4, 'abcd'), 'cbaa', 'Cut pad');
   },
   
+  function Pad(result) {
+    
+    result('a'.pad(5), 'a'.rpad(5), 'Lpad');
+    result('a'.pad(-5), 'a'.lpad(5), 'Lpad');
+  },
+  
   function SwapCase(result) {
     result('aBc'.swapcase(), 'AbC', 'Normal');
     result('Δd'.swapcase(), 'δD', 'Unicode Chars');
@@ -49,7 +55,7 @@ module.exports = [
   function Soundex(result) {
     
     result('Hello'.soundex(), 'H040', 'Normal');
-    result('World'.soundex(), 'W064', 'Normal');
+    result('World'.soundex(), 'W0643', 'Normal');
   },
   
   function Distance(result) {
@@ -62,6 +68,15 @@ module.exports = [
     
     result(String.UUID().length, 36, 'Normal');
     result(String.UUID() == String.UUID(), false, 'Subsequent inequality');
-  }
+  },
+  
+  function Sprintf(result) {
+    
+    result('abc'.sprintf(), 'abc', 'Normal');
+    result('%08b'.sprintf(511), '111111111', 'b-tag');
+    result('%01.2f'.sprintf(12.1), '12.10', 'f-tag');
+    //TODO: NEEDS FURTHER TESTING!
+  },
+
 
 ];
