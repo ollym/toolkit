@@ -211,6 +211,14 @@ module.exports = [
     a.grep$(/(.)\1/);
 
     result(a, ['hello','world','this','is','cool'].grep(/(.)\1/).toString(), 'Normal');
+  },
+  
+  function Sort$(result) {
+    
+    var a = ['hello','world','this','is','cool'];
+    a.sort$();
+
+    result(a, ['hello','world','this','is','cool'].sort().toString(), 'Normal');
   }
   
 ];
