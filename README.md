@@ -21,14 +21,25 @@ You can also install it locally into the node_modules folder of the current dire
 
     npm install toolkit
 
-## Versioning
-Versioning is kept simple and is important to note if you choose to include toolkit as a dependency within your application. The version tags follow the following simple-yet-common format: [Major].[Minor].[Revision]
+## Contributing
+Contributions would be absolutely fantastic. Please don't hold back, I can only take it so far on my own! However there should be some formality to this especially if we have conflicting ideas.
 
-Changes in *Major* versions will likely bring a change to the existing API in other versions.
-Changes in *Minor* versions will include new features and bug fixes but should not break your existing API for that major version.
-Changes in *Revision* are minor code refactoring/document editing and should largely be ignored.
+* If you plan to make a change create an issue first and say that you plan to fix it yourself.
+* I will then reply to that issue with any ideas/contributions I have.
+* Submit a pull request with a commend ending in something like "Fixes #<ISSUE ID>" So that the issue is linked to the commit and will automatically close it when I pull your request.
+    
+Code should follow the style as the rest of the library. Soft 2-space tabs, plenty of whitespace. Re-use methods internally as much as possible - this helps avoid redundant code and is also easier to maintain. If you find yourself writing a lot of code for one small function maybe another function is needed to make it easier/more compact?
 
-All new version won't be released until all unit tests pass successfully.
+The obvious applies:
+
+* Full test coverage of all your code.
+* Do comment blocks for all your functions. Include an example and parameter descriptions.
+
+> Note: Never touch /docs/ everything here is generated automatically.
+
+As always your name will be added to a contributors list and forever praised.
+
+Peace x
 
 ## License
 (The MIT License)
