@@ -6,7 +6,7 @@
         <link rel="stylesheet" type="text/css" href="../css/syntax.css" media="all">
         <link rel="stylesheet" type="text/css" href="../css/style.css" media="all">
         <meta http-equiv="cache-control" content="no-cache">
-        <meta http-equiv="pragma" content="no-cache">
+        <meta http-equiv="Pragma" content="no-cache">
         <meta http-equiv="expires" content="-1">
         <title>JS Toolkit - 1.3.x - Object</title>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
@@ -252,13 +252,19 @@
   
 <span class="p">}</span></pre></div></div></li><li class="grid-6"><h2><span class="ret">object</span> <span class="name">Clean$</span> <span class="params">(<abbr title="The object you want to clean">object</abbr>)</span> <span class="new">New!</span></h2><p>A self-modification version of Object.clean.</p><div class="example"><a class="toggle" >View Example</a><div class="highlight"><pre><span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span><span class="mi">2</span><span class="o">:</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="o">:</span><span class="kc">NaN</span><span class="p">,</span><span class="mi">4</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span><span class="mi">5</span><span class="o">:</span><span class="mi">6</span><span class="p">};</span>
 <span class="nb">Object</span><span class="p">.</span><span class="nx">clean</span><span class="p">(</span><span class="nx">obj</span><span class="p">);</span>
-  <span class="c1">// obj = returns {5:6}</span></pre></div></div><div class="code"><a class="toggle" >View Code</a><div class="highlight"><pre><span class="kd">function</span> <span class="nx">clean$</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// obj = {5:6}</span></pre></div></div><div class="code"><a class="toggle" >View Code</a><div class="highlight"><pre><span class="kd">function</span> <span class="nx">clean$</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
   
   <span class="k">return</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">filter$</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="o">!!</span> <span class="nx">val</span><span class="p">;</span>
   <span class="p">});</span>
   
-<span class="p">}</span></pre></div></div></li><li class="clear"></li></ul><div class="clear"></div><h1>Object.prototype</h1><hr><ul id="methods"><li class="grid-6"><h2><span class="ret">string</span> <span class="name">__objectHash__</span> </h2><p>Returns a unique ID with respect to that current object.</p><div class="example"><a class="toggle" >View Example</a><div class="highlight"><pre><span class="kd">function</span> <span class="nx">A</span><span class="p">()</span> <span class="p">{}</span>
+<span class="p">}</span></pre></div></div></li><li class="clear"></li><li class="grid-6"><h2><span class="ret">integer</span> <span class="name">Size</span> <span class="params">(<abbr title="The object you want to count">object</abbr>)</span> <span class="new">New!</span></h2><p>Calculates the number of enumerable properties within the object</p><div class="example"><a class="toggle" >View Example</a><div class="highlight"><pre><span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="o">:</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="o">:</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="o">:</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="o">:</span><span class="mi">8</span><span class="p">};</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">size</span><span class="p">(</span><span class="nx">obj</span><span class="p">);</span>
+  <span class="c1">// returns 4</span></pre></div></div><div class="code"><a class="toggle" >View Code</a><div class="highlight"><pre><span class="kd">function</span> <span class="nx">size</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+  
+  <span class="k">return</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">obj</span><span class="p">).</span><span class="nx">length</span><span class="p">;</span>
+  
+<span class="p">}</span></pre></div></div></li></ul><div class="clear"></div><h1>Object.prototype</h1><hr><ul id="methods"><li class="grid-6"><h2><span class="ret">string</span> <span class="name">__objectHash__</span> </h2><p>Returns a unique ID with respect to that current object.</p><div class="example"><a class="toggle" >View Example</a><div class="highlight"><pre><span class="kd">function</span> <span class="nx">A</span><span class="p">()</span> <span class="p">{}</span>
 <span class="nx">A</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">foo</span><span class="o">:</span> <span class="s1">&#39;bar&#39;</span> <span class="p">};</span>
 
 <span class="p">(</span><span class="k">new</span> <span class="nx">A</span><span class="p">()).</span><span class="nx">__objectHash__</span></pre></div></div><div class="code"><a class="toggle" >View Code</a><div class="highlight"><pre><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
