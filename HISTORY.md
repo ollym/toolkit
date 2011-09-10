@@ -1,3 +1,12 @@
+1.3.0 / 2011-09-10 
+==================
+
+  * Brand new documenter to better generate docs.
+  * A lot of random bug fixes and improvements to docs overall.
+  * Added: 15 new methods including: Object.size, Array#invoke, Array#pluck, Array#grep, Array#sortBy, Array#fetch, Number#radix, Number#bin, Number#oct, Number#dec, Number#hexl, Number#hex, Number#abbr, String#pad and String#sprintf.
+  * Added: 14 Self-modification functions including: Object.Map$, Object.filter$, Object.clean$, Array#map$, Array#Filter$, Array#clean$, Array#shuffle$, Array#chunk$, Array#flatten$, Array#invoke$, Array#pluck$, Array#grep, Array#sort$ and Array#sortBy$.
+  * Bugfix: Object.reduce not working correctly.
+
 1.2.0 / 2011-09-07 
 ==================
 
