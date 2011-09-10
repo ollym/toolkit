@@ -219,6 +219,27 @@ module.exports = [
     a.sort$();
 
     result(a, ['hello','world','this','is','cool'].sort().toString(), 'Normal');
+  },
+  
+  function sortBy(result) {
+    
+    result(['hello','world','this','is','nice'].sortBy(function(s) { return s.length; }), 'is,this,nice,hello,world', 'Normal');
+    result(['hello','world','this','is','nice'].sortBy('length'), 'is,this,nice,hello,world', 'Normal');
+  },
+  
+  function sortBy$(result) {
+    
+    var a = ['hello','world','this','is','nice'];
+    a.sortBy$('length');
+    
+    result(a, 'is,this,nice,hello,world', 'Normal');
+  },
+
+  function Fetch(result) {
+    
+    result(['c','b','a','d','e'].fetch([2,1,0,3,4]), 'a,b,c,d,e', 'Normal');
+    result(['c','b','a','d','e'].fetch(2,1,0), 'a,b,c', 'Limit keys');
+    result([1,2,3].fetch(function(n,i) { return n % 3; }), '3,1,2', 'Callback-based');
   }
   
 ];
