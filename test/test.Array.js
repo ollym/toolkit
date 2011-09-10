@@ -167,5 +167,50 @@ module.exports = [
     
     result(a.map$(function(n) { return n.odd }), 'true,false,true', 'Normal');
     result(a, 'true,false,true', 'Object equality');
+  },
+  
+  function Union(result) {
+    var a = [1,2,3], b = [3,4,5], c = [5,6,7];
+    
+    result(a.union(b,c), '1,2,3,4,5,6,7', 'Normal');
+  },
+  
+  function Invoke(result) {
+
+    result([1.142,2.321,3.754].invoke('round', 2), '1.14,2.32,3.75', 'Normal');
+  },
+  
+  function Invoke$(result) {
+    
+    var a = [1.142,2.321,3.754];
+    a.invoke$('round', 2);
+
+    result(a, [1.142,2.321,3.754].invoke('round', 2).toString(), 'Normal');
+  },
+  
+  function Pluck(result) {
+
+    result(['hello','world','this','is','nice'].pluck('length'), '5,5,4,2,4', 'Normal');
+  },
+  
+  function Pluck$(result) {
+    
+    var a = ['hello','world','this','is','nice'];
+    a.pluck$('length');
+
+    result(a, ['hello','world','this','is','nice'].pluck('length').toString(), 'Normal');
+  },
+  
+  function Grep(result) {
+    result(['hello','world','this','is','cool'].grep(/(.)\1/), 'hello,cool', 'Normal');
+  },
+  
+  function Grep$(result) {
+    
+    var a = ['hello','world','this','is','cool'];
+    a.grep$(/(.)\1/);
+
+    result(a, ['hello','world','this','is','cool'].grep(/(.)\1/).toString(), 'Normal');
   }
+  
 ];

@@ -1,11 +1,12 @@
 
 require('../index')
 
-var modules = ['Object', 'Array', 'Math', 'Number', 'String', 'Function'];
+var modules = ['Object', 'Array', 'Math', 'Number', 'String', 'Function'],
+    objects = [Object, Array, Math, Number, String, Function]
 var start = Date.now();
 var failures = 0;
 
-modules.forEach(function(mod) {
+modules.forEach(function(mod, i) {
   
   require('./test.' + mod).forEach(function(test) {
         
