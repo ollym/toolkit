@@ -213,5 +213,12 @@ module.exports = [
     
     result(obj.__objectHash__, obj.__objectHash__, 'Normal');
     result(obj.__objectHash__ == A.__objectHash__, false, 'Normal');
+  },
+  
+  function Size(result) {
+    
+    var obj = {1:2,3:4,5:6};
+    
+    result(Object.size(obj), 3, 'Normal');
   }
 ];
