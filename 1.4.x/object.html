@@ -42,29 +42,36 @@
                         <li class="clear"></li>
                     </ul>
                 </nav>
-                <div id="content" class="container-12"><h1>Object</h1><hr><ul id="methods"><li class="grid-6"><h2><span class="ret">void</span> <span class="name">Alias</span> <span class="params">(<abbr title="The object where the property lurks.">object</abbr>, <abbr title="The name of the original property">property</abbr>, <abbr title="A new alias to assign to that object">alias</abbr>)</span></h2><p>Creates an alias of a property within an object</p><div class="example"><a class="toggle" >View Example</a><div class="highlight"><pre><span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="o">:</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="o">:</span><span class="mi">4</span><span class="p">};</span>
+                <div id="content" class="container-12"><h1>Object</h1><hr><ul id="methods"><li class="grid-6"><h2><span class="ret">self</span> <span class="name">Alias</span> <span class="params">(<abbr title="The object where the property lurks.">object</abbr>, <abbr title="The name of the original property">property</abbr>, <abbr title="A new alias to assign to that object">alias</abbr>, <abbr title="A new alias to assign to that object">[complete=false]</abbr>)</span></h2><p>Creates an alias of a property within an object. A true alias requires getters/setters which can be slow so by default we don't bother. If you still wan't it set complete to true.</p><div class="example"><a class="toggle" >View Example</a><div class="highlight"><pre><span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="o">:</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="o">:</span><span class="mi">4</span><span class="p">};</span>
 <span class="nb">Object</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">);</span>
 
 <span class="nx">log</span><span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="nx">obj</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span> <span class="c1">// &gt; true</span>
 
 <span class="nx">obj</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
 
-<span class="nx">log</span><span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="nx">obj</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span> <span class="c1">// &gt; true</span></pre></div></div><div class="code"><a class="toggle" >View Code</a><div class="highlight"><pre><span class="kd">function</span> <span class="nx">alias</span><span class="p">(</span><span class="nx">object</span><span class="p">,</span> <span class="nx">property</span><span class="p">,</span> <span class="nx">alias</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">log</span><span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="nx">obj</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span> <span class="c1">// &gt; true</span></pre></div></div><div class="code"><a class="toggle" >View Code</a><div class="highlight"><pre><span class="kd">function</span> <span class="nx">alias</span><span class="p">(</span><span class="nx">object</span><span class="p">,</span> <span class="nx">property</span><span class="p">,</span> <span class="nx">alias</span><span class="p">,</span> <span class="nx">complete</span><span class="p">)</span> <span class="p">{</span>
   
   <span class="kd">var</span> <span class="nx">desc</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">getOwnPropertyDescriptor</span><span class="p">(</span><span class="nx">object</span><span class="p">,</span> <span class="nx">property</span><span class="p">);</span>
   
-  <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;get&#39;</span> <span class="k">in</span> <span class="nx">desc</span> <span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="s1">&#39;value&#39;</span> <span class="k">in</span> <span class="nx">desc</span><span class="p">))</span> <span class="p">{</span>
-    <span class="k">delete</span> <span class="nx">desc</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">],</span> <span class="k">delete</span> <span class="nx">desc</span><span class="p">[</span><span class="s1">&#39;writable&#39;</span><span class="p">];</span>
-    <span class="nx">desc</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="nx">object</span><span class="p">[</span><span class="nx">property</span><span class="p">];</span>
+  <span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="nx">complete</span><span class="p">)</span> <span class="p">{</span>
+    
+    <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">object</span><span class="p">,</span> <span class="nx">alias</span><span class="p">,</span> <span class="nx">desc</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">else</span> <span class="p">{</span>
+  
+    <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;get&#39;</span> <span class="k">in</span> <span class="nx">desc</span> <span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="s1">&#39;value&#39;</span> <span class="k">in</span> <span class="nx">desc</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">delete</span> <span class="nx">desc</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">],</span> <span class="k">delete</span> <span class="nx">desc</span><span class="p">[</span><span class="s1">&#39;writable&#39;</span><span class="p">];</span>
+      <span class="nx">desc</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">object</span><span class="p">[</span><span class="nx">property</span><span class="p">];</span>
+      <span class="p">}</span>
     <span class="p">}</span>
+     <span class="nx">desc</span><span class="p">.</span><span class="nx">set</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">object</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+    <span class="p">}</span>
+     <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">object</span><span class="p">,</span> <span class="nx">alias</span><span class="p">,</span> <span class="nx">desc</span><span class="p">);</span>
   <span class="p">}</span>
   
-  <span class="nx">desc</span><span class="p">.</span><span class="nx">set</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">object</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
-  <span class="p">}</span>
-  
-  <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">object</span><span class="p">,</span> <span class="nx">alias</span><span class="p">,</span> <span class="nx">desc</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">object</span><span class="p">;</span>
  <span class="p">}</span></pre></div></div></li><li class="grid-6"><h2><span class="ret">array</span> <span class="name">Values</span> <span class="params">(<abbr title="">object</abbr>)</span></h2><p>Gets all the enumerable values within an object.</p><div class="example"><a class="toggle" >View Example</a><div class="highlight"><pre><span class="nb">Object</span><span class="p">.</span><span class="nx">values</span><span class="p">({</span><span class="mi">1</span><span class="o">:</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="o">:</span><span class="mi">4</span><span class="p">});</span>
   <span class="c1">// returns [2,4]</span></pre></div></div><div class="code"><a class="toggle" >View Code</a><div class="highlight"><pre><span class="kd">function</span> <span class="nx">values</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
   
@@ -264,7 +271,19 @@
   
   <span class="k">return</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">obj</span><span class="p">).</span><span class="nx">length</span><span class="p">;</span>
   
-<span class="p">}</span></pre></div></div></li></ul><div class="clear"></div><h1>Object.prototype</h1><hr><ul id="methods"><li class="grid-6"><h2><span class="ret">string</span> <span class="name">__objectHash__</span> </h2><p>Returns a unique ID with respect to that current object.</p><div class="example"><a class="toggle" >View Example</a><div class="highlight"><pre><span class="kd">function</span> <span class="nx">A</span><span class="p">()</span> <span class="p">{}</span>
+<span class="p">}</span></pre></div></div></li><li class="grid-6"><h2><span class="ret">object</span> <span class="name">Combine</span> <span class="params">(<abbr title="The values">array</abbr>)</span> <span class="new">New!</span></h2><p>Combines an array of keys and an array of values (of equal lengths) to create a new enumerable object.</p><div class="example"><a class="toggle" >View Example</a><div class="highlight"><pre><span class="kd">var</span> <span class="nx">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Harry&#39;</span><span class="p">,</span> <span class="s1">&#39;Bill&#39;</span><span class="p">,</span> <span class="s1">&#39;Larry&#39;</span><span class="p">],</span> <span class="nx">values</span> <span class="o">=</span> <span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">52</span><span class="p">,</span> <span class="mi">13</span><span class="p">];</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">combine</span><span class="p">(</span><span class="nx">keys</span><span class="p">,</span> <span class="nx">values</span><span class="p">);</span>
+  <span class="c1">// returns { &#39;Harry&#39;: 32, &#39;Bill&#39;: 52, &#39;Larry&#39;: 13 }</span></pre></div></div><div class="code"><a class="toggle" >View Code</a><div class="highlight"><pre><span class="kd">function</span> <span class="nx">combine</span><span class="p">(</span><span class="nx">keys</span><span class="p">,</span> <span class="nx">values</span><span class="p">)</span> <span class="p">{</span>
+  
+  <span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{};</span>
+  
+  <span class="nx">keys</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">obj</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">values</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+  <span class="p">});</span>
+  
+  <span class="k">return</span> <span class="nx">obj</span><span class="p">;</span>
+  
+<span class="p">}</span></pre></div></div></li><li class="clear"></li></ul><div class="clear"></div><h1>Object.prototype</h1><hr><ul id="methods"><li class="grid-6"><h2><span class="ret">string</span> <span class="name">__objectHash__</span> </h2><p>Returns a unique ID with respect to that current object.</p><div class="example"><a class="toggle" >View Example</a><div class="highlight"><pre><span class="kd">function</span> <span class="nx">A</span><span class="p">()</span> <span class="p">{}</span>
 <span class="nx">A</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">foo</span><span class="o">:</span> <span class="s1">&#39;bar&#39;</span> <span class="p">};</span>
 
 <span class="p">(</span><span class="k">new</span> <span class="nx">A</span><span class="p">()).</span><span class="nx">__objectHash__</span></pre></div></div><div class="code"><a class="toggle" >View Code</a><div class="highlight"><pre><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
@@ -308,6 +327,9 @@
         $('#version').change(function() {
             window.location = window.location.toString().replace(/\/([\d\.x]+)\//, '/' + $(this).val() + '/');
         });
+        
+        if ( ! window.location.host.match(/jstoolkit\.org/) && window.location.protocol != 'file:')
+            window.location.replace(window.location.href.replace('ollym.github.com/toolkit', 'jstoolkit.org'));
                 
         $('nav#objects a').each(function() {
             if (this.href == window.location.href)
