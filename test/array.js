@@ -4,6 +4,18 @@ var assert = require('assert');
 
 module.exports = {
   
+  'Array.intersect': function() {
+    assert.eql(Array.intersect([[1,2,3],[2,3,4],[3,4,5]]), [3]);
+  },
+  
+  'Array.diff': function() {
+    assert.eql(Array.diff([[1,2,3],[2,3,4],[3,4,5]]), [1,5]);
+  },
+  
+  'Array.union': function() {
+    assert.eql(Array.union([[1,2,3],[2,3,4],[3,4,5]]), [1,2,3,4,5]);
+  },
+  
   'Array.range': function() {
     var $R = Array.range;
     assert.eql($R(3), [1,2,3]);
@@ -141,7 +153,7 @@ module.exports = {
   
   'Array#union': function() {
     var a = [1,2,3], b = [3,4,5], c = [5,6,7];
-    assert.eql(a.union(b,c), [1,2,3,4,5,6,7]);
+    assert.eql(a.union(b,c), [3,4,5,6,7,1,2]);
   },
   
   'Array#invoke': function() {
