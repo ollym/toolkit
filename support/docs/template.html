@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <script type="text/javascript">
+        if ( ! window.location.host.match(/jstoolkit\.org/) && window.location.protocol != 'file:')
+            window.location.replace(window.location.href.replace('ollym.github.com/toolkit', 'jstoolkit.org'));
+        </script>
         <link rel="stylesheet" type="text/css" href="../css/reset.css" media="all">
         <link rel="stylesheet" type="text/css" href="../css/grid.css" media="all">
         <link rel="stylesheet" type="text/css" href="../css/syntax.css" media="all">
@@ -79,7 +83,7 @@
         $('#version').change(function() {
             window.location = window.location.toString().replace(/\/([\d\.x]+)\//, '/' + $(this).val() + '/');
         });
-                
+        
         $('nav#objects a').each(function() {
             if (this.href == window.location.href)
                 $(this).parent('li').addClass('current');

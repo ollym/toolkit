@@ -1,4 +1,4 @@
-module.exports = { version: '1.3.0' };
+module.exports = { version: '1.4.0' };
 
 require('./lib/object');
 require('./lib/math');

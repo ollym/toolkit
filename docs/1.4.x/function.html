@@ -92,17 +92,42 @@
     <span class="k">return</span> <span class="nx">cache</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
   <span class="p">}</span>
    
-<span class="p">}</span></pre></div></div></li><li class="grid-6"><h2><span class="ret">function</span> <span class="name">Delay</span> <span class="params">(<abbr title="The number of milliseconds before calling the function.">time</abbr>)</span></h2><p>Delays a function by a certain amount of time then calls the callback with the result of the function</p><div class="example"><a class="toggle" >View Example</a><div class="highlight"><pre><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">.</span><span class="nx">delay</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">now</span><span class="p">,</span> <span class="nx">then</span><span class="p">)</span> <span class="p">{</span>
+<span class="p">}</span></pre></div></div></li><li class="grid-6"><h2><span class="ret">function</span> <span class="name">Delay</span> <span class="params">(<abbr title="The number of milliseconds before calling the function.">time</abbr>, <abbr title="The value of this within the callback.">scope</abbr>)</span></h2><p>Delays a function by a certain amount of time then calls the callback with the result of the function</p><div class="example"><a class="toggle" >View Example</a><div class="highlight"><pre><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">.</span><span class="nx">delay</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">now</span><span class="p">,</span> <span class="nx">then</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">log</span><span class="p">(</span><span class="nx">now</span> <span class="o">-</span> <span class="nx">then</span><span class="p">);</span> <span class="c1">// &gt; 50 (Or very near it!)</span>
-<span class="p">},</span> <span class="mi">50</span><span class="p">,</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">());</span>
-
-</pre></div></div><div class="code"><a class="toggle" >View Code</a><div class="highlight"><pre><span class="kd">function</span> <span class="nx">delay</span><span class="p">(</span><span class="nx">callback</span><span class="p">,</span> <span class="nx">time</span><span class="p">)</span> <span class="p">{</span>
+<span class="p">},</span> <span class="mi">50</span><span class="p">,</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">());</span></pre></div></div><div class="code"><a class="toggle" >View Code</a><div class="highlight"><pre><span class="kd">function</span> <span class="nx">delay</span><span class="p">(</span><span class="nx">callback</span><span class="p">,</span> <span class="nx">time</span><span class="p">,</span> <span class="nx">scope</span><span class="p">)</span> <span class="p">{</span>
   
   <span class="k">return</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">callback</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">callback</span><span class="p">,</span> <span class="p">[</span><span class="k">this</span><span class="p">()].</span><span class="nx">concat</span><span class="p">(</span><span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="mi">2</span><span class="p">)));</span>
+    <span class="nx">callback</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">scope</span><span class="p">,</span> <span class="p">[</span><span class="k">this</span><span class="p">()].</span><span class="nx">concat</span><span class="p">(</span><span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="mi">2</span><span class="p">)));</span>
   <span class="p">}.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">),</span> <span class="nx">time</span><span class="p">);</span>
   
-<span class="p">}</span></pre></div></div></li><li class="clear"></li></ul><div class="clear"></div><div class="clear"></div>    
+<span class="p">}</span></pre></div></div></li><li class="clear"></li><li class="grid-6"><h2><span class="ret">function</span> <span class="name">Once</span> <span class="params">(<abbr title="Unfortunately the original function will loose it's scope. Re-add it here.">scope</abbr>)</span> <span class="new">New!</span></h2><p>Caches a function indefinately. Once the callback is called for the first time it will continue to return that same value. Make sure if the function resides within an instantiated object that you have set the scope parameter.</p><div class="example"><a class="toggle" >View Example</a><div class="highlight"><pre><span class="kd">function</span> <span class="nx">A</span><span class="p">()</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">foo</span> <span class="o">=</span> <span class="s1">&#39;bar&#39;</span><span class="p">;</span> <span class="p">}</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getFoo</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">foo</span><span class="p">;</span> <span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">A</span><span class="p">();</span>
+<span class="nx">obj</span><span class="p">.</span><span class="nx">getFoo</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">getFoo</span><span class="p">.</span><span class="nx">once</span><span class="p">();</span> <span class="c1">// INCORRECT! don&#39;t forget scope!</span>
+<span class="nx">obj</span><span class="p">.</span><span class="nx">getFoo</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">getFoo</span><span class="p">.</span><span class="nx">once</span><span class="p">(</span><span class="nx">obj</span><span class="p">);</span> <span class="c1">// Correct :)</span>
+
+<span class="nx">obj</span><span class="p">.</span><span class="nx">getFoo</span><span class="p">();</span>
+  <span class="c1">// returns &#39;bar&#39;</span>
+
+<span class="nx">obj</span><span class="p">.</span><span class="nx">foo</span> <span class="o">=</span> <span class="s1">&#39;bat&#39;</span><span class="p">;</span>
+
+<span class="nx">obj</span><span class="p">.</span><span class="nx">getFoo</span><span class="p">();</span>
+  <span class="c1">// returns &#39;bar&#39; again!</span>
+
+</pre></div></div><div class="code"><a class="toggle" >View Code</a><div class="highlight"><pre><span class="kd">function</span> <span class="nx">once</span><span class="p">(</span><span class="nx">scope</span><span class="p">)</span> <span class="p">{</span>
+  
+  <span class="kd">var</span> <span class="nx">called</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">val</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+  
+  <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+    
+    <span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="nx">called</span><span class="p">)</span> <span class="p">(</span><span class="nx">called</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">scope</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+    
+    <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
+    
+  <span class="p">}.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">values</span><span class="p">(</span><span class="nx">arguments</span><span class="p">));</span>
+  
+<span class="p">}</span></pre></div></div></li></ul><div class="clear"></div><div class="clear"></div>    
                 </div>
                 <div class="clear"></div>
             </div>
@@ -139,6 +164,9 @@
         $('#version').change(function() {
             window.location = window.location.toString().replace(/\/([\d\.x]+)\//, '/' + $(this).val() + '/');
         });
+        
+        if ( ! window.location.host.match(/jstoolkit\.org/) && window.location.protocol != 'file:')
+            window.location.replace(window.location.href.replace('ollym.github.com/toolkit', 'jstoolkit.org'));
                 
         $('nav#objects a').each(function() {
             if (this.href == window.location.href)
