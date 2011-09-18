@@ -732,15 +732,15 @@ Object.defineProperties(Array.prototype, {
      */
     if (cmp === undefined)
       return this.sort(sort);
-      
+
     if (sort === undefined)
       sort = function(a,b) { return String(a) - String(b) };
-      
+
     // Get the values we intend to sort
     var arr = this[typeof cmp === 'function' ? 'map' : 'pluck'](cmp).map(function(val, i) {
       return { key: i, val: val };
     });
-    
+
     return arr.sort(function(a,b) {
       return sort(a.val, b.val);
     }).map(function(val) {
@@ -1430,7 +1430,7 @@ Object.defineProperties(Number.prototype, {
      * @returns void
      */
     return Object.keys(obj).forEach(function(key) {
-      return callback.call(null, key, obj[key], obj);
+      return callback.call(scope, key, obj[key], obj);
     });
     
   }, writable: true, enumerable: false, configurable: true },
@@ -1453,7 +1453,7 @@ Object.defineProperties(Number.prototype, {
      * 
      * @returns bool
      */
-    return Array.prototype.slice.call(arguments).every(function(value) {
+    return Object.values(arguments).every(function(value) {
       return typeof value === 'object' && Object(value) === value;
     });
     
@@ -1477,7 +1477,7 @@ Object.defineProperties(Number.prototype, {
      */
     var key, result;
     for (key in obj)
-      if ((result = callback.call(null, key, obj[key], this)) !== undefined)
+      if ((result = callback.call(scope, key, obj[key], this)) !== undefined)
         return result;
     
   }, writable: true, enumerable: false, configurable: true },
@@ -1565,32 +1565,7 @@ Object.defineProperties(Number.prototype, {
     
   }, writable: true, enumerable: false, configurable: true },
   
-  walk: { value: function walk(obj, callback) {
-    /**
-     * Similar to Object.map except that the callback values are applied to the object instance and not a clone. 
-     *
-     * @since 1.1.0
-     * @depricated 1.3.0
-     * @param object The object you want to walk
-     * @param function The callback that takes parameters (value, key) and should return a new value
-     * @example
-     *  var obj = {1:2,3:4};
-     *  Object.map(obj, function(key, val) {
-     *    return key * val;
-     *  });
-     *  // obj = {1:2,3:12}
-     * 
-     * @returns self
-     */
-    Object.forEach(obj, function(key, val) {
-      obj[key] = callback.call(null, key, val);
-    });
-    
-    return obj;
-    
-  }, writable: true, enumerable: false, configurable: true },
-  
-  reduce: { value : function reduce(obj, callback, start) {
+  reduce: { value : function reduce(obj, callback, start, scope) {
     /**
      * Like Array.reduce except for objects. Reduces the object down into a single value.
      *
@@ -1607,7 +1582,7 @@ Object.defineProperties(Number.prototype, {
      * @returns mixed
      */
     Object.forEach(obj, function(key, val) {
-      start = callback.call(null, start, key, obj[key]);
+      start = callback.call(scope, start, key, obj[key]);
     });
     
     return start;
@@ -1638,7 +1613,7 @@ Object.defineProperties(Number.prototype, {
      * @returns object
      */
     if (Object.isObject(objects, level)) {
-      objects = Array.prototype.slice.call(arguments), level = 0;
+      objects = Object.values(arguments), level = 0;
     }
     
     level = (level === undefined) ? 0 : level;
@@ -1659,7 +1634,7 @@ Object.defineProperties(Number.prototype, {
     
   }, writable: true, enumerable: false, configurable: true },
   
-  merge$: { value : function copy(object, objects, level) {
+  merge$: { value : function merge$(object, objects, level) {
     /**
      * The self-modification version of Object.merge. Except all values are merged into the first parameter
      *
@@ -1686,16 +1661,16 @@ Object.defineProperties(Number.prototype, {
       objects = Array.prototype.slice.call(arguments);
       level = undefined;
     }
-    
-    var obj = Object.merge.apply(null, objects, level);
-    
-    this.filter$(function(key, val) { return (key in obj); });
-    this.map$(function(key, val) { return obj[key]; });
-    
-    Object.keys(obj).diff(Object.keys(this)).forEach(function(key) {
+
+    var obj = Object.merge.apply(undefined, objects, level);
+
+    Object.filter$(object, function(key, val) { return (key in obj); });
+    Object.map$(object, function(key, val) { return obj[key]; });
+
+    Object.keys(obj).diff(Object.keys(object)).forEach(function(key) {
       object[key] = obj[key];
     });
-    
+
     return object;
     
   }, writable: true, enumerable: false, configurable: true },
