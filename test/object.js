@@ -112,26 +112,30 @@ module.exports = {
   'Object.filter': function() {
     
     var obj = Object.create({}, {
-      1: { value: 2, enumerable: true },
-      3: { value: 4, enumerable: true },
-      5: { value: 6, enumerable: false }
+      1: { value: 2, enumerable: true, configurable: true },
+      3: { value: 4, enumerable: true, configurable: true },
+      4: { value: 4, enumerable: true, configurable: true },
+      5: { value: 6, enumerable: false, configurable: true }
     });
     
-    var obj = Object.filter(obj, function(key, val) { return val==4 || key == 1; });
-    
-    assert.eql(obj, {1:2,3:4});
-    assert.equal(obj[5], 6);
+    assert.eql(Object.filter(obj, function(key, val) { return val==4 || key == 1; }), {1:2,3:4,4:4});
+    assert.eql(Object.filter(obj, [1,3,'4']), {1:2,3:4,4:4});
+    assert.equal(Object.filter(obj, [1,3,'4'])[5], 6);
   },
   
   'Object.filter$': function() {
     
     var obj = Object.create({}, {
-      1: { value: 2, enumerable: true },
-      3: { value: 4, enumerable: true },
-      5: { value: 6, enumerable: false }
+      1: { value: 2, enumerable: true, configurable: true },
+      3: { value: 4, enumerable: true, configurable: true },
+      4: { value: 4, enumerable: true, configurable: true },
+      5: { value: 6, enumerable: false, configurable: true }
     });
     
     assert.strictEqual(Object.filter$(obj, function(key, val) { return val==4 || key == 1; }), obj);
+    assert.eql(obj, {1:2,3:4,4:4});
+    
+    assert.strictEqual(Object.filter$(obj, [1,'3']), obj);
     assert.eql(obj, {1:2,3:4});
   },
   
