@@ -1453,7 +1453,7 @@ Object.defineProperties(Number.prototype, {
      * 
      * @returns bool
      */
-    return Object.values(arguments).every(function(value) {
+    return Array.prototype.slice.call(arguments).every(function(value) {
       return typeof value === 'object' && Object(value) === value;
     });
     
@@ -1638,7 +1638,7 @@ Object.defineProperties(Number.prototype, {
      * @returns object
      */
     if (Object.isObject(objects, level)) {
-      objects = Object.values(arguments), level = 0;
+      objects = Array.prototype.slice.call(arguments), level = 0;
     }
     
     level = (level === undefined) ? 0 : level;
