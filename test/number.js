@@ -1,67 +1,74 @@
-require('toolkit.js');
-
-var assert = require('assert');
-
-module.exports = {
+module('Number');
   
-  'Number#gcd': function() {
-    assert.strictEqual((12).gcd(6,9), 3);
-  },
+test('Number.random', function() {
   
-  'Number#lcm': function() {
-    assert.strictEqual((21).lcm(6), 42);
-  },
+  var r = Number.random;
   
-  'Number#round': function() {
-    assert.strictEqual((1.5).round(), 2);
-    assert.strictEqual((1.52).round(1), 1.5);
-    assert.strictEqual((15).round(-1), 20);
-  },
+  ok(r(1) >= 1);
+  ok(r(1) <= 2);
+  ok(r() >= 0);
+  ok(r() <= 1);
+  ok(r(100, 1000) >= 100);
+  ok(r(100, 1000) <= 1000);
+});
   
-  'Number#chr': function() {
-    assert.strictEqual((72).chr, 'H');
-  },
+test('Number#gcd', function() {
+  strictEqual((12).gcd(6,9), 3);
+});
   
-  'Number#even': function() {
-    assert.strictEqual((3).even, false);
-    assert.strictEqual((2).even, true);
-  },
+test('Number#lcm', function() {
+  strictEqual((21).lcm(6), 42);
+});
   
-  'Number#odd': function() {
-    assert.strictEqual((1).odd, true);
-    assert.strictEqual((3).odd, true);
-    assert.strictEqual((4).odd, false);
-  },
+test('Number#round', function() {
+  strictEqual((1.5).round(), 2);
+  strictEqual((1.52).round(1), 1.5);
+  strictEqual((15).round(-1), 20);
+});
   
-  'Number#radix': function() {
-    assert.strictEqual((127).radix(8, 5), '00177');
-  },
+test('Number#chr', function() {
+  strictEqual((72).chr, 'H');
+});
   
-  'Number#bin': function() {
-    assert.strictEqual((15).bin(8), '00001111');
-  },
+test('Number#even', function() {
+  strictEqual((3).even, false);
+  strictEqual((2).even, true);
+});
   
-  'Number#oct': function() {
-    assert.strictEqual((127).oct(4), '0177');
-  },
+test('Number#odd', function() {
+  strictEqual((1).odd, true);
+  strictEqual((3).odd, true);
+  strictEqual((4).odd, false);
+});
   
-  'Number#dec': function() {
-    assert.strictEqual((80).dec(4), '0080');
-  },
+test('Number#radix', function() {
+  strictEqual((127).radix(8, 5), '00177');
+});
   
-  'Number#hexl': function() {
-    assert.strictEqual((1023).hexl(), '3ff');
-  },
+test('Number#bin', function() {
+  strictEqual((15).bin(8), '00001111');
+});
   
-  'Number#hex': function() {
-    assert.strictEqual((1023).hex(), '3FF');
-  },
+test('Number#oct', function() {
+  strictEqual((127).oct(4), '0177');
+});
   
-  'Number#abbr': function() {
-    assert.strictEqual((1023).abbr(), '1k');
-    assert.strictEqual((999).abbr(), '999');
-    assert.strictEqual((1e26).abbr(), '100Y');
-    assert.strictEqual((1050).abbr(3), '1.050k');
-    assert.strictEqual((1024).abbr(3,true), '1.000k');
-  }
-};
+test('Number#dec', function() {
+  strictEqual((80).dec(4), '0080');
+});
+  
+test('Number#hexl', function() {
+  strictEqual((1023).hexl(), '3ff');
+});
+  
+test('Number#hex', function() {
+  strictEqual((1023).hex(), '3FF');
+});
+  
+test('Number#abbr', function() {
+  strictEqual((1023).abbr(), '1k');
+  strictEqual((999).abbr(), '999');
+  strictEqual((1e26).abbr(), '100Y');
+  strictEqual((1050).abbr(3), '1.050k');
+  strictEqual((1024).abbr(3,true), '1.000k');
+});

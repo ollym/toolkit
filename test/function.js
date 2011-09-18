@@ -1,68 +1,66 @@
-require('toolkit.js');
+module('Function')
 
-var assert = require('assert');
+test('Function.compose', function() {
+  
+  function a(val) { return val ^ 2; }
+  function b(val) { return val / 2; }
+  
+  var c = Function.compose(a,b);
+  
+  strictEqual(a(b(5)), c(5));
+});
+  
+test('Function#cache', function() {
+  
+  var value = 1, getVal = (function() { return value; }).cache();
+  
+  strictEqual(getVal(), 1);
+  value = 2;
+  
+  setTimeout(function() {
+    
+    strictEqual(getVal(), 1);
+    strictEqual(getVal(1), 2);
+    
+    var getValueTimeOut = function() { return value; }.cache(20);
+    
+    getValueTimeOut();
+    value = 3;
 
-module.exports = {
+    setTimeout(function() { strictEqual(getValueTimeOut(), 2) }, 10);
+    setTimeout(function() { strictEqual(getValueTimeOut(), 3) }, 50);
+    
+  }, 5);
+});
   
-  'Function.compose': function() {
-    
-    function a(val) { return val ^ 2; }
-    function b(val) { return val / 2; }
-    
-    var c = Function.compose(a,b);
-    
-    assert.strictEqual(a(b(5)), c(5));
-  },
+test('Function#delay', function() {
   
-  'Function#cache': function() {
-    
-    var value = 1, getVal = (function() { return value; }).cache();
-    
-    assert.strictEqual(getVal(), 1);
-    value = 2;
-    
-    setTimeout(function() {
-      
-      assert.strictEqual(getVal(), 1);
-      assert.strictEqual(getVal(1), 2);
-      
-      var getValueTimeOut = function() { return value; }.cache(20);
-      
-      getValueTimeOut();
-      value = 3;
-
-      setTimeout(function() { assert.strictEqual(getValueTimeOut(), 2); }, 10);
-      setTimeout(function() { assert.strictEqual(getValueTimeOut(), 3); }, 50);
-      
-    }, 5);
-  },
+  var called = false;
   
-  'Function#delay': function() {
+  Date.now.delay(function(now, then, foo) {
     
-    var called = false;
+    called = true;
     
-    Date.now.delay(function(now, then, foo) {
-      
-      called = true;
-      
-      assert.ok(Math.abs(now - then - 50) < 2);
-      assert.strictEqual(foo, 'foo');
-      
-    }, 50, Date.now(), 'foo');
+    ok(Math.abs(now - then - 50) < 2);
+    strictEqual(foo, 'foo');
     
-    setTimeout(function() {
-      
-      assert.ok(called);
-      
-    }, 100)
-  },
+  }, 50, Date.now(), 'foo');
   
-  'Function#once': function() {
+  setTimeout(function() {
     
-    var value = 3, once = function() { return value; }.once();
-    assert.strictEqual(once(), 3);
-    value = 4;
-    assert.strictEqual(once(), 3);
-    assert.strictEqual(once(1), 3);
-  }
-}
+    ok(called);
+    
+  }, 100)
+});
+  
+test('Function#once', function() {
+  
+  var value = 3, once = function() { return value; }.once();
+  
+  strictEqual(once(), 3);
+  
+  value = 4;
+  
+  strictEqual(once(), 3);
+  strictEqual(once(1), 3);
+});
