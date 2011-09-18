@@ -167,13 +167,30 @@ module.exports = {
   },
   
   'Array#pluck': function() {
+    
+    var a = { name: 'Ann', age: 36, pass: 's8J2ld0a' },
+        b = { name: 'Bob', age: 21, pass: '0aJdlfsa' },
+        c = { name: 'Charlie', age: 31, pass: 'f8fadasa' }
+    
+    assert.eql([a,b,c].pluck(['name', 'age']), [{name:'Ann',age:36},{name:'Bob',age:21},{name:'Charlie',age:31}]);
     assert.eql(['a','aa','aaa'].pluck('length'), [1,2,3]);
   },
   
   'Array#pluck$': function() {
+    
     var a = ['a','aa','aaa'];
+    
     assert.strictEqual(a.pluck$('length'), a);
     assert.eql(a, [1,2,3]);
+    
+    var a = { name: 'Ann', age: 36, pass: 's8J2ld0a' },
+        b = { name: 'Bob', age: 21, pass: '0aJdlfsa' },
+        c = { name: 'Charlie', age: 31, pass: 'f8fadasa' }
+    
+    var arr = [a,b,c];
+    
+    assert.strictEqual(arr.pluck$(['name', 'age']), arr);
+    assert.eql(arr, [{name:'Ann',age:36},{name:'Bob',age:21},{name:'Charlie',age:31}]);
   },
   
   'Array#grep': function() {
