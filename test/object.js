@@ -178,6 +178,14 @@ module.exports = {
     assert.strictEqual(Object.size({1:2,3:4,5:6}), 3);
   },
   
+  'Object.merge$': function() {
+    
+    var obj = {1:2,3:4,5:6};
+    
+    assert.strictEqual(Object.merge$(obj, {6:7}), obj);
+    assert.eql(obj, {1:2,3:4,5:6,6:7})
+  },
+  
   'Object#__objectHash__': function() {
     
     function a() { }
