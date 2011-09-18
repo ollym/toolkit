@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <script type="text/javascript">
+        if ( ! window.location.host.match(/jstoolkit\.org/) && window.location.protocol != 'file:')
+            window.location.replace(window.location.href.replace('ollym.github.com/toolkit', 'jstoolkit.org'));
+        </script>
         <link rel="stylesheet" type="text/css" href="../css/reset.css" media="all">
         <link rel="stylesheet" type="text/css" href="../css/grid.css" media="all">
         <link rel="stylesheet" type="text/css" href="../css/syntax.css" media="all">
@@ -76,7 +80,7 @@
   
   <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     
-    <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">values</span><span class="p">(</span><span class="nx">arguments</span><span class="p">),</span> <span class="nx">id</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="nx">args</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">ident</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">),</span> <span class="nx">id</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="nx">args</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">ident</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">;</span>
     
     <span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="p">(</span><span class="nx">id</span> <span class="k">in</span> <span class="nx">cache</span><span class="p">))</span> <span class="nx">cache</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">callback</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">callback</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
     <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">id</span> <span class="k">in</span> <span class="nx">timeouts</span><span class="p">)</span> <span class="p">{</span>
@@ -121,11 +125,14 @@
   
   <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
     
-    <span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="nx">called</span><span class="p">)</span> <span class="p">(</span><span class="nx">called</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">scope</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="nx">called</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">called</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+      <span class="nx">val</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">scope</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+    <span class="p">}</span>
     
     <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
     
-  <span class="p">}.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">values</span><span class="p">(</span><span class="nx">arguments</span><span class="p">));</span>
+  <span class="p">}.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">));</span>
   
 <span class="p">}</span></pre></div></div></li></ul><div class="clear"></div><div class="clear"></div>    
                 </div>
@@ -165,9 +172,6 @@
             window.location = window.location.toString().replace(/\/([\d\.x]+)\//, '/' + $(this).val() + '/');
         });
         
-        if ( ! window.location.host.match(/jstoolkit\.org/) && window.location.protocol != 'file:')
-            window.location.replace(window.location.href.replace('ollym.github.com/toolkit', 'jstoolkit.org'));
-                
         $('nav#objects a').each(function() {
             if (this.href == window.location.href)
                 $(this).parent('li').addClass('current');

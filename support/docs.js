@@ -1,5 +1,5 @@
 var fs  = require('fs'), http = require('http');
-var pkg = require('../package.json'), ver = pkg.version.split('.'), versions = [];
+var pkg = JSON.parse(fs.readFileSync('package.json')), ver = pkg.version.split('.'), versions = [];
 var grouped = {}, listed = [];
 
 function DocProperty() { }
@@ -100,6 +100,7 @@ Object.defineProperties = function(proto, descriptors) {
     prop.description = lines[0];
     
     var attr = {
+      set last() {},
       get last() {
         var keys = Object.keys(this);
         return keys[keys.length - 1];
@@ -193,8 +194,8 @@ pyg.on('exit', function() {
     p.code = '<div class="highlight"><pre>' + codes[i] + '</pre></div>';
     p.example = '<div class="highlight"><pre>' + examples[i] + '</pre></div>';
   });
-  
-  versions.forEach(function(ver, vindx) {
+    
+  [versions[0]].forEach(function(ver, vindx) {
     
     var base = './docs/' + ver + '/',
         tmpl = doc.toString()

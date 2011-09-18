@@ -1,3 +1,13 @@
+1.4.0 / 2011-09-18 
+==================
+
+  * Migrated testing framework to expresso.
+  * Preparing for browser migration and updated a lot of the docs.
+  * Added: New useful Array#plug key array parameter.
+  * Added: Array shortcut utilities (avoids having to use Func.apply)
+  * Added: Object.enum/Object.enum$ for working with enumerable hashes.
+  * Bugfix: Multiple bug fixes to tests and methods.
+
 1.3.0 / 2011-09-10 
 ==================
 
