@@ -131,7 +131,7 @@ test('Array#clean$', function() {
   
 test('Array#filter$', function() {
   var a = [1,2,3,4,5,6];
-  strictEqual(a.filter$(function(a) { return a.even }), a);
+  strictEqual(a.filter$(function(a) { return a.even() }), a);
   deepEqual(a, [2,4,6]);
 });
   

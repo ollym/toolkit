@@ -27,18 +27,18 @@ test('Number#round', function() {
 });
   
 test('Number#chr', function() {
-  strictEqual((72).chr, 'H');
+  strictEqual((72).chr(), 'H');
 });
   
 test('Number#even', function() {
-  strictEqual((3).even, false);
-  strictEqual((2).even, true);
+  strictEqual((3).even(), false);
+  strictEqual((2).even(), true);
 });
   
 test('Number#odd', function() {
-  strictEqual((1).odd, true);
-  strictEqual((3).odd, true);
-  strictEqual((4).odd, false);
+  strictEqual((1).odd(), true);
+  strictEqual((3).odd(), true);
+  strictEqual((4).odd(), false);
 });
   
 test('Number#radix', function() {

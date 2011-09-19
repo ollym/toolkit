@@ -151,12 +151,7 @@ test('Object.alias', function() {
   var obj = {
     a: 'b',
     fooVal: 'bar',
-    get foo() {
-      return this.fooVal;
-    },
-    set foo(val) {
-      this.fooval = val;
-    }
+    foo: 'bar'
   };
   
   Object.alias(obj, 'foo', 'bat');
