@@ -168,7 +168,8 @@ test('Array#pluck', function() {
       b = { name: 'Bob', age: 21, pass: '0aJdlfsa' },
       c = { name: 'Charlie', age: 31, pass: 'f8fadasa' };
 
-  var arr = [a,b,c].pluck(['name','age']).pluck(['name','age']);
+  var arr = [a,b,c].pluck(['name','age']);
+  
   deepEqual(arr, [{name:'Ann',age:36},{name:'Bob',age:21},{name:'Charlie',age:31}]);
   deepEqual(['a','aa','aaa'].pluck('length'), [1,2,3]);
 });

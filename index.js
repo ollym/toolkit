@@ -1,22 +1,10 @@
-var domDefineProperty = false;
+var domDefineProperty = false, objectIdStore = [], objectDescriptorStore = [];
 
 // Whether we have a working version of Object.defineProperty
 try { Object.defineProperty({}, 'x', {});
 } catch(e) { domDefineProperty=true; }
 
-var hide = function(prototype, properties) {
-  return;
-  if (domDefineProperty) {
-        
-    if ( ! ('__ownPropertyDescriptors__' in prototype))
-      prototype['__ownPropertyDescriptors__'] = {};
-    
-    for (var i = 0; i < properties.length; i++)
-      if ( ! (properties[i] in prototype['__ownPropertyDescriptors__']))
-        prototype['__ownPropertyDescriptors__'][properties[i]] = { writable: true, enumerable: false, configurable: true }
-        
-  }
-}
+
 
 var extend = function(prototype, methods) {
   
@@ -51,12 +39,17 @@ var extend = function(prototype, methods) {
     var method = methods[name];
         
     if (domDefineProperty) {
-      /*
-      if ( ! ('__ownPropertyDescriptors__' in prototype))
-        prototype['__ownPropertyDescriptors__'] = {};
-                
-      prototype['__ownPropertyDescriptors__'][name] = { writable: true, enumerable: false, configurable: true }
-      */
+      
+      var id = -1;
+      for (var i = 0; i < objectIdStore.length; i++)  
+        if (objectIdStore[i] === prototype)
+          id = i;
+      id = id < 0 ? objectIdStore.push(prototype) - 1 : id;
+      
+      if ( ! objectDescriptorStore[id])
+        objectDescriptorStore[id] = {};
+      
+      objectDescriptorStore[id][name] = { writable: true, enumerable: false, configurable: true };
       prototype[name] = method;
 
     } 

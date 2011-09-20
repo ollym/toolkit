@@ -854,27 +854,45 @@ if ( ! Array.prototype.some)
   
 if ( ! Array.prototype.reduce)
   extend(Array.prototype, 'reduce', function reduce(callback /*, value */) {
-    var self = Object(this), value = arguments[1], length = this.length >>> 0, i = 0;
+    var self = Object(this), value = arguments[1], length = this.length >>> 0, i = 0, j = i;
     if ( ! Function.isFunction(callback)) throw new TypeError(callback + ' is not a function.');
+    
     if (arguments.length <= 1) {
-      if ( ! length) throw new TypeError('Array length is 0 and no initial value given.');
+      if ( ! length) throw new TypeError('Reduce of empty array with no initial value.');
+      
+      for (i = -1; j < self.length; j++)
+        if (Object.hasOwnProperty.call(self, String(j))) { i = j; break; }
+      
+      if (i === -1) throw new TypeError('Reduce of empty array with no initial value.');
       value = self[i++];
     }
+    
     for (; i < length; i++)
-      if (i in self) value = callback.call(undefined, value, self[i], i, self);
+      if (Object.hasOwnProperty.call(self, i))
+        value = callback.call(undefined, value, self[i], i, self);
+      
     return value;
   });
   
 if ( ! Array.prototype.reduceRight)
   extend(Array.prototype, 'reduceRight', function reduceRight(callback /*, start */) {
-    var self = Object(this), value = arguments[1], length = this.length >>> 0, i = length -1;
+    var self = Object(this), value = arguments[1], length = this.length >>> 0, i = length -1, j = i;
     if ( ! Function.isFunction(callback)) throw new TypeError(callback + ' is not a function.');
+    
     if (arguments.length <= 1) {
       if ( ! length) throw new TypeError('Array length is 0 and no initial value given.');
+      
+      for (i = -1; j >= 0; j--)
+        if (Object.hasOwnProperty.call(self, String(j))) { i = j; break; }
+      
+      if (i === -1) throw new TypeError('Reduce of empty array with no initial value.');
       value = self[i--];
     }
+    
     for (; i >= 0; i--)
-      if (i in self) value = callback.call(undefined, value, self[i], i, self);
+      if (Object.hasOwnProperty.call(self, i))
+        value = callback.call(undefined, value, self[i], i, self);
+        
     return value;
   });
   
@@ -889,15 +907,30 @@ if ( ! Array.prototype.indexOf)
   
 if ( ! Array.prototype.lastIndexOf)
   extend(Array.prototype, 'lastIndexOf', function lastIndexOf(value /*, index */) {
-    var self = Object(this), length = this.length >>> 0, index = (arguments.length <= 1) ? 0 : Number(arguments[1]);
-    index = index < 0 ? length - Math.abs(index) : index;
-    for (var i = length; i >= index; i--)
-      if ((i in self) && self[i] === value) return i;
-    return -1;
-  });
+    
+    if (this === void 0 || this === null)
+      throw new TypeError();
+      
+    var self = Object(this), length = this.length >>> 0, index = length;
+    if (length === 0) return -1;
+    
+    if (arguments.length > 1) {
+      index = Number(arguments[1]);
+      if (index !== index) index = 0;
+      else if (index !== 0 && index !== (1/0) && index !== -(1/0))
+        index = (index > 0 || -1) * Math.floor(Math.abs(index));
+    }
+    
+    var i = (index >= 0) ? Math.min(index, length -1) : length - Math.abs(index);
 
-hide(Array, ['arguments','length','isArray','name','prototype','caller']);
-hide(Array.prototype, ['length','constructor','concat','map','sort','join','indexOf','filter','some','toString','reduceRight','splice','forEach','shift','unshift','toLocaleString','lastIndexOf','reverse','reduce','pop','push','every','slice']);/**
+    for (; i >= 0; i--) {
+      if ((i in self) && (self[i] === value))
+        return i;  
+    }
+    
+    return -1;
+
+  });/**
  * ECMA5 Polyfills
  */
 
@@ -1186,9 +1219,7 @@ if ( ! Function.prototype.bind)
     
     return bound;
   });
-  
-hide(Function, 'arguments','length','name','prototype','caller');
-hide(Function.prototype, 'bind','arguments','toString','length','call','name','apply','caller','constructor');extend(Number, {
+  extend(Number, {
   
   random: function random(start, end) {
     /**
@@ -1556,13 +1587,7 @@ extend(Number.prototype, {
     return (this / divs.last()).toFixed(digits) + keys.last();
     
   }
-});
-
-/**
- * ECMA5 Pollyfills
- */
-hide(Number,  'NaN','arguments','NEGATIVE_INFINITY','POSITIVE_INFINITY','length','name','MAX_VALUE','prototype','caller','MIN_VALUE');
-hide(Number.prototype, 'toExponential','toString','toLocaleString','toPrecision','valueOf','constructor','toFixed');extend(Object, {
+});extend(Object, {
   
   purify: function purify(object) {
     /**
@@ -1640,12 +1665,10 @@ hide(Number.prototype, 'toExponential','toString','toLocaleString','toPrecision'
      * 
      * @returns string
      */
-    id.store = id.store || [];
-    
-    if ( ! id.store.contains(obj))
-      id.store.push(obj);
+    if ( ! objectIdStore.contains(obj))
+      objectIdStore.push(obj);
 
-    return id.store.indexOf(obj);
+    return objectIdStore.indexOf(obj);
     
   },
   
@@ -1751,15 +1774,15 @@ hide(Number.prototype, 'toExponential','toString','toLocaleString','toPrecision'
      *    // returns true
      *  
      *  Object.isObject(function() { });
-     *    // returns false
+     *    // returns true
      *
-     *  Object.isObject({1:2,3:4}, function() { });
+     *  Object.isObject(123, {});
      *    // returns false
      * 
      * @returns bool
      */
     return Array.prototype.slice.call(arguments).every(function(value) {
-      return (typeof value === 'object' && Object(value) === value);
+      return Object(value) === value;
     });
     
   },
@@ -2246,40 +2269,82 @@ hide(Number.prototype, 'toExponential','toString','toLocaleString','toPrecision'
 
 if ( ! Object.getPrototypeOf)
   extend(Object, 'getPrototypeOf', function getPrototypeOf(object) {
-    return object.__proto__ || object.constructor.prototype;
+    return object.__proto__ || object.constructor.prototype || protoStore[Object.id(object)];
   });
   
 if ( ! Object.getOwnPropertyDescriptor || domDefineProperty) {
-  var oldGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+  var oldGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor, objectDescriptorStore = {};
   extend(Object, 'getOwnPropertyDescriptor', function getOwnPropertyDescriptor(object, property) {
-    var descriptor = { enumerable: true, writable: true, configurable: true }, getter, setter;
-    if (object.nodeType && oldGetOwnPropertyDescriptor)
-      return oldGetOwnPropertyDescriptor(object, property);
-    else if (property == '__ownPropertyDescriptors__' || ! Object.getOwnPropertyNames(object).contains(property)) return undefined;
-    else if (object['__ownPropertyDescriptors__'] && (property in object['__ownPropertyDescriptors__']))
-      descriptor = object['__ownPropertyDescriptors__'][property];
+    if (object.nodeType && oldGetOwnPropertyDescriptor) return oldGetOwnPropertyDescriptor(object, property);
+    if ( ! Object.isObject(object)) throw new TypeError(object + ' is not an object.');
+    if ( ! Object.prototype.hasOwnProperty.call(object, property)) return;
     
-    //TODO: Save the prototype!
+    var descriptor = { enumerable: true, writable: true, configurable: true }, getter, setter, id = Object.id(object);
     
-    if (Object.prototype.__defineGetter__ && (getter = object.__lookupGetter__(property))) {
-      descriptor.writable = false;
-      descriptor.get = getter;
-      if ((setter = object.__lookupSetter__(property)))
+    if ((object === Number && ['NaN','NEGATIVE_INFINITY','POSITIVE_INFINITY','MAX_VALUE','MIN_VALUE'].contains(property)) ||
+        (object === Math && ['LN10','PI','E','LOG10E','SQRT2','LOG2E','SQRT1_2','LN2'].contains(property)) ||
+        (object instanceof Function && ['arguments','length','name','prototype','caller'].contains(property)))
+      descriptor = {configurable:false, writable:false, enumerable:false};
+      
+    if ((object === Math && ['cos','pow','log','tan','sqrt','ceil','asin','abs','max','exp','atan2','random','round','floor','acos','atan','min','sin'].contains(property)) ||
+        (object === String && property === 'fromCharCode'))
+      descriptor = {configurable:true, writable:true, enumerable:false};
+      
+    if (object instanceof RegExp && ['lastIndex','multiline','global','source','ignoreCase'].contains(property))
+      descriptor = {configurable:false, writable:(property == 'lastIndex'), enumerable:false};
+    
+    if ((Array.isArray(object) || String.isString(object)) && property === 'length')
+      descriptor = { configurable:false, writable:true, enumerable:false }
+      
+    else if (objectDescriptorStore[id] && (property in objectDescriptorStore[id]))
+      descriptor = objectDescriptorStore[id][property];
+    
+    if (descriptor.writable === false) {
+      if (Object.prototype.__lookupGetter__ && (getter = object.__lookupGetter__(property))) {
+        descriptor.writable = false;
+        descriptor.get = getter;
+      }
+      if (Object.prototype.__lookupSetter__ && (setter = object.__lookupSetter__(property))) {
+        descriptor.writable = false;
         descriptor.set = setter;
+      }
     }
-    else { descriptor.value = object[property]; }
+    
+    if ( ! ('set' in descriptor || 'get' in descriptor))
+      descriptor.value = object[property];
         
     return descriptor;
   });
 }
 
-if ( ! Object.getOwnPropertyNames)
+if ( ! Object.getOwnPropertyNames) {
   extend(Object, 'getOwnPropertyNames', function getOwnPropertyNames(object) {
-    return Object.keys(object['__ownPropertyDescriptors__'] || {}).concat(Object.keys(object)).unique();
+    
+    var names = [];
+    
+    if (object === Number) names = ['NaN','NEGATIVE_INFINITY','POSITIVE_INFINITY','MAX_VALUE','MIN_VALUE'];
+    else if (object === Math) names = ['LN10','PI','E','LOG10E','SQRT2','LOG2E','SQRT1_2','LN2','cos','pow','log','tan','sqrt','ceil','asin','abs','max','exp','atan2','random','round','floor','acos','atan','min','sin'];
+    else if (object === String) names = ['fromCharCode'];
+        
+    if (object instanceof RegExp) names.push.apply(names, ['lastIndex','multiline','global','source','ignoreCase']);
+    else if (object instanceof Function) names.push.apply(names, ['arguments','length','name','prototype','caller']);
+    else if (Array.isArray(object) || String.isString(object)) names.push('length');
+    else if (Object.prototype.hasOwnProperty.call(object, 'constructor')) names.push('constructor');
+    
+    if (String.isString(object) && ! (1 in (new String('ab')))) names.push.apply(names, Array.range(0, object.length - 1));
+    
+    return names.concat(Object.keys(objectDescriptorStore[Object.id(object)] || {}), Object.keys(object)).unique().filter(function(key) {
+      return Object.prototype.hasOwnProperty.call(object, key);
+    });
   });
+}
   
-if ( ! Object.create)
+if ( ! Object.create) {
+  var protoStore = [];
   extend(Object, 'create', function create(prototype, descriptors) {
+    
+    if (prototype !== null && Object(prototype) !== prototype)
+      throw new TypeError('Object prototype may only be an Object or null');
     
     var object = {};
     
@@ -2288,41 +2353,56 @@ if ( ! Object.create)
       type.prototype = prototype;
       object = new type();
     }
-    
-    object.__ownPropertyDescriptors__ = {};
     if (descriptors !== undefined)
       Object.defineProperties(object, descriptors);
     
-    object.__proto__ = prototype;
+    if (object.__proto__ !== undefined) object.__proto__ = prototype;
+    else protoStore[Object.id(object)] = prototype;
     
     return object;
   });
+}
   
 if ( ! Object.defineProperty || domDefineProperty) {
-  var oldDefineProperty = Object.defineProperty;
+  var oldDefineProperty = Object.defineProperty, definePropertyError = function(object, name, descriptor) {
+    if ( ! Object.isObject(descriptor)) return 'Property description must be an object: ' + descriptor;
+    if ( ! Object.isObject(object)) return 'Object.defineProperty called on non-object';
+    
+    if ('get' in descriptor) {
+      if ( ! object.__defineGetter__) return 'Getters are not supported on this javascript engine.';
+      if (! Function.isFunction(descriptor.get)) return 'Getter must be a function: ' + descriptor.get;
+    }
+    
+    if ('set' in descriptor) {
+      if ( ! object.__defineSetter__) return 'Setters are not supported on this javascript engine.';
+      if (! Function.isFunction(descriptor.set)) return 'Setter must be a function: ' + descriptor.get;
+    }
+    
+    if (('get' in descriptor || 'set' in descriptor) && ('value' in descriptor || descriptor.writable))
+      return 'A property cannot both have accessors and be writable or have a value: ' + object;
+  }
   extend(Object, 'defineProperty', function defineProperty(object, name, descriptor) {
     if (object.nodeType && oldDefineProperty) oldDefineProperty(object, name, descriptor);
-    if (object.__lookupGetter__) {
+    var id = Object.id(object), error, prototype;
+    if ((error = definePropertyError(object, name, descriptor))) throw new TypeError(error);
+    if (object.__defineGetter__) {
       if ((name in object) && (object.__lookupGetter__(name))) {
-        var prototype = object.__proto__;
+        prototype = object.__proto__;
         object.__proto__ = Object.prototype;
         delete object[name];
       }
-      if ('get' in descriptor) object.__defineGetter__(name, descriptor.get);
+      if ('get' in descriptor) object.__defineGetter__(name, descriptor.get);  
       if ('set' in descriptor) object.__defineSetter__(name, descriptor.set);
     }
-    else if ('get' in descriptor || 'set' in descriptor)
-      throw new TypeError('Getters and Setters are not supported on this javascript engine.');
-      
-    if ( ! object['__ownPropertyDescriptors__'])
-      object['__ownPropertyDescriptors__'] = {};
-      
+    if ( ! objectDescriptorStore[id])     objectDescriptorStore[id] = {};
     if ( ! descriptor.writable)     descriptor.writable = false;
     if ( ! descriptor.configurable) descriptor.configurable = false;
     if ( ! descriptor.enumerable)   descriptor.enumerable = false;
-        
-    object[name] = descriptor.value;
-    object['__ownPropertyDescriptors__'][name] = descriptor;
+    
+    if ( ! ('get' in descriptor || 'set' in descriptor))
+      object[name] = descriptor.value;
+    
+    objectDescriptorStore[id][name] = descriptor;
         
     if (prototype) object.__proto__ = prototype;
     
@@ -2332,39 +2412,59 @@ if ( ! Object.defineProperty || domDefineProperty) {
 
 if ( ! Object.defineProperties || domDefineProperty)
   extend(Object, 'defineProperties', function defineProperties(object, descriptors) {
+    if ( ! Object.isObject(object)) throw new TypeError('Object.defineProperties called on non-object');
+    var name, error;
+    for (name in descriptors)
+      if (error = definePropertyError(object, name, descriptors[name]))
+        throw new TypeError(error);
+    
     for (name in descriptors)
       Object.defineProperty(object, name, descriptors[name]);
+      
     return object;
   });
   
 if ( ! Object.seal)
+  var sealedStore = [];
   extend(Object, 'seal', function seal(object) {
-    return object; // Impossible to polyfill
+    if ( ! Object.isObject(object)) throw new TypeError('Object.seal called on non-object');
+    sealedStore[Object.id(object)] = true;
+    return object;
   });
 
 if ( ! Object.isSealed)
   extend(Object, 'isSealed', function isSealed(object) {
-    return false;
+    if ( ! Object.isObject(object)) throw new TypeError('Object.isSealed called on non-object');
+    return !! sealedStore[Object.id(object)];
   });
   
 if ( ! Object.freeze)
+  var frozenStore = [];
   extend(Object, 'freeze', function freeze(object) {
-    return object; // Impossible to polyfill
+    if ( ! Object.isObject(object)) throw new TypeError('Object.freeze called on non-object');
+    frozenStore[Object.id(object)] = true;
+    return object;
   });
 
 if ( ! Object.isFrozen)
   extend(Object, 'isFrozen', function isFrozen(object) {
-    return false;
+    if ( ! Object.isObject(object)) throw new TypeError('Object.isFrozen called on non-object');
+    return !! frozenStore[Object.id(object)];
   });
   
 if ( ! Object.preventExtensions)
+  var preventExtensionsStore = [];
   extend(Object, 'preventExtensions', function preventExtensions(object) {
-    return object; // Impossible to polyfill
+    if ( ! Object.isObject(object)) throw new TypeError('Object.preventExtensions called on non-object');
+    preventExtensionsStore[Object.id(object)] = true;
+    return object;
   });
 
 if ( ! Object.isExtensible)
   extend(Object, 'isExtensible', function isExtensible(object) {
-    return true;
+    if ( ! Object.isObject(object)) throw new TypeError('Object.isExtensible called on non-object');
+    var id = Object.id(object);
+    return ! preventExtensionsStore[id] && ! sealedStore[id];
   });
   
 if ( ! Object.keys)
@@ -2372,7 +2472,7 @@ if ( ! Object.keys)
     if (object !== Object(object)) throw new TypeError('Object.keys called on non-object');
     var keys = [], key;
     for (key in object)
-      if (object.hasOwnProperty(key) && key != '__proto__' && key != '__ownPropertyDescriptors__')
+      if (object.hasOwnProperty(key))
         keys.push(key);
     return keys.filter(function(key) {
       return Object.prototype.propertyIsEnumerable.call(object, key);
@@ -2382,11 +2482,28 @@ if ( ! Object.keys)
 if (domDefineProperty) {
   var oldPropertyIsEnumerable = Object.prototype.propertyIsEnumerable;
   Object.prototype.propertyIsEnumerable = function propertyIsEnumerable(key) {
-    var desc;
-    if ((desc = this.__ownPropertyDescriptors__) && desc[key]) return desc[key].enumerable === true;
-    else return oldPropertyIsEnumerable.call(this, key);
+    var desc = objectDescriptorStore[Object.id(this)];
+    if (desc && desc[key]) return desc[key].enumerable === true;
+    else if (oldPropertyIsEnumerable) oldPropertyIsEnumerable.call(this, key);
+    else { for (var name in this) if (name == key) return true; }
+    return true;
   };
 }extend(String, {
+  
+  isString: function isString(object) {
+    /**
+     * Determines whether the object provided is a string.
+     *
+     * @since 1.5.0
+     * @param object The object to test
+     * @example
+     *  String.isString({}) // false
+     *  String.isString('asd') // true
+     * 
+     * @returns bool
+     */
+    return typeof object === 'string' || object instanceof String;
+  },
   
   UUID: function UUID() {
     /**
@@ -2750,7 +2867,6 @@ extend(String.prototype, {
 /**
  * ECMA5 Polyfills
  */
-var space = "\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF";
 if ( ! String.prototype.trim || space.trim())  {
   extend(String.prototype, 'trim', function trim() {
     return this.trimRight().trimLeft();
@@ -2759,12 +2875,12 @@ if ( ! String.prototype.trim || space.trim())  {
 
 if ( ! String.prototype.trimRight || space.trimRight())  {
   extend(String.prototype, 'trimRight', function trimRight() {
-    return this.remove(new RegExp(space + space + "*$"));
+    return this.remove(/^\s\s*/);
   });
 }
 
 if ( ! String.prototype.trimLeft || space.trimLeft())  {
   extend(String.prototype, 'trimLeft', function trimLeft() {
-    return this.remove(new RegExp("^" + space + space + "*"));
+    return this.remove(new RegExp(/\s\s*$/));
   });
 }})();
