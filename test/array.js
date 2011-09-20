@@ -169,11 +169,6 @@ test('Array#pluck', function() {
       c = { name: 'Charlie', age: 31, pass: 'f8fadasa' };
 
   var arr = [a,b,c].pluck(['name','age']).pluck(['name','age']);
-  
-  delete arr[0].__ownPropertyDescriptors__; delete arr[0].__proto__;
-  delete arr[1].__ownPropertyDescriptors__; delete arr[1].__proto__;
-  delete arr[2].__ownPropertyDescriptors__; delete arr[2].__proto__;
-
   deepEqual(arr, [{name:'Ann',age:36},{name:'Bob',age:21},{name:'Charlie',age:31}]);
   deepEqual(['a','aa','aaa'].pluck('length'), [1,2,3]);
 });
@@ -192,11 +187,6 @@ test('Array#pluck$', function() {
   var arr = [a,b,c];
 
   strictEqual(arr.pluck$(['name', 'age']), arr);
-  
-  delete arr[0].__ownPropertyDescriptors__; delete arr[0].__proto__;
-  delete arr[1].__ownPropertyDescriptors__; delete arr[1].__proto__;
-  delete arr[2].__ownPropertyDescriptors__; delete arr[2].__proto__;
-  
   deepEqual(arr, [{name:'Ann',age:36},{name:'Bob',age:21},{name:'Charlie',age:31}]);
 });
   
