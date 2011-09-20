@@ -1,946 +1,9 @@
-// vim:set ts=4 sts=4 sw=4 st:
-// -- kriskowal Kris Kowal Copyright (C) 2009-2010 MIT License
-// -- tlrobinson Tom Robinson Copyright (C) 2009-2010 MIT License (Narwhal Project)
-// -- dantman Daniel Friesen Copyright(C) 2010 XXX No License Specified
-// -- fschaefer Florian Schäfer Copyright (C) 2010 MIT License
-// -- Irakli Gozalishvili Copyright (C) 2010 MIT License
-// -- kitcambridge Kit Cambridge Copyright (C) 2011 MIT License
-
-/*!
-    Copyright (c) 2009, 280 North Inc. http://280north.com/
-    MIT License. http://github.com/280north/narwhal/blob/master/README.md
-*/
-
-(function (definition) {
-    // RequireJS
-    if (typeof define == "function") {
-        define(function () {
-            definition();
-        });
-    // CommonJS and <script>
-    } else {
-        definition();
-    }
-
-})(function (undefined) {
-
-/**
- * Brings an environment as close to ECMAScript 5 compliance
- * as is possible with the facilities of erstwhile engines.
- *
- * ES5 Draft
- * http://www.ecma-international.org/publications/files/drafts/tc39-2009-050.pdf
- *
- * NOTE: this is a draft, and as such, the URL is subject to change.  If the
- * link is broken, check in the parent directory for the latest TC39 PDF.
- * http://www.ecma-international.org/publications/files/drafts/
- *
- * Previous ES5 Draft
- * http://www.ecma-international.org/publications/files/drafts/tc39-2009-025.pdf
- * This is a broken link to the previous draft of ES5 on which most of the
- * numbered specification references and quotes herein were taken.  Updating
- * these references and quotes to reflect the new document would be a welcome
- * volunteer project.
- *
- * @module
- */
-
-/*whatsupdoc*/
-
-//
-// Function
-// ========
-//
-
-// ES-5 15.3.4.5
-// http://www.ecma-international.org/publications/files/drafts/tc39-2009-025.pdf
-
-if (!Function.prototype.bind) {
-    Function.prototype.bind = function bind(that) { // .length is 1
-        // 1. Let Target be the this value.
-        var target = this;
-        // 2. If IsCallable(Target) is false, throw a TypeError exception.
-        // XXX this gets pretty close, for all intents and purposes, letting
-        // some duck-types slide
-        if (typeof target.apply != "function" || typeof target.call != "function")
-            return new TypeError();
-        // 3. Let A be a new (possibly empty) internal list of all of the
-        //   argument values provided after thisArg (arg1, arg2 etc), in order.
-        // XXX slicedArgs will stand in for "A" if used
-        var args = slice.call(arguments, 1); // for normal call
-        // 4. Let F be a new native ECMAScript object.
-        // 9. Set the [[Prototype]] internal property of F to the standard
-        //   built-in Function prototype object as specified in 15.3.3.1.
-        // 10. Set the [[Call]] internal property of F as described in
-        //   15.3.4.5.1.
-        // 11. Set the [[Construct]] internal property of F as described in
-        //   15.3.4.5.2.
-        // 12. Set the [[HasInstance]] internal property of F as described in
-        //   15.3.4.5.3.
-        // 13. The [[Scope]] internal property of F is unused and need not
-        //   exist.
-        var bound = function () {
-
-            if (this instanceof bound) {
-                // 15.3.4.5.2 [[Construct]]
-                // When the [[Construct]] internal method of a function object,
-                // F that was created using the bind function is called with a
-                // list of arguments ExtraArgs the following steps are taken:
-                // 1. Let target be the value of F's [[TargetFunction]]
-                //   internal property.
-                // 2. If target has no [[Construct]] internal method, a
-                //   TypeError exception is thrown.
-                // 3. Let boundArgs be the value of F's [[BoundArgs]] internal
-                //   property.
-                // 4. Let args be a new list containing the same values as the
-                //   list boundArgs in the same order followed by the same
-                //   values as the list ExtraArgs in the same order.
-
-                var F = function(){};
-                F.prototype = target.prototype;
-                var self = new F;
-
-                var result = target.apply(
-                    self,
-                    args.concat(slice.call(arguments))
-                );
-                if (result !== null && Object(result) === result)
-                    return result;
-                return self;
-
-            } else {
-                // 15.3.4.5.1 [[Call]]
-                // When the [[Call]] internal method of a function object, F,
-                // which was created using the bind function is called with a
-                // this value and a list of arguments ExtraArgs the following
-                // steps are taken:
-                // 1. Let boundArgs be the value of F's [[BoundArgs]] internal
-                //   property.
-                // 2. Let boundThis be the value of F's [[BoundThis]] internal
-                //   property.
-                // 3. Let target be the value of F's [[TargetFunction]] internal
-                //   property.
-                // 4. Let args be a new list containing the same values as the list
-                //   boundArgs in the same order followed by the same values as
-                //   the list ExtraArgs in the same order. 5.  Return the
-                //   result of calling the [[Call]] internal method of target
-                //   providing boundThis as the this value and providing args
-                //   as the arguments.
-
-                // equiv: target.call(this, ...boundArgs, ...args)
-                return target.apply(
-                    that,
-                    args.concat(slice.call(arguments))
-                );
-
-            }
-
-        };
-
-        // XXX bound.length is never writable, so don't even try
-        //
-        // 16. The length own property of F is given attributes as specified in
-        //   15.3.5.1.
-        // TODO
-        // 17. Set the [[Extensible]] internal property of F to true.
-        // TODO
-        // 18. Call the [[DefineOwnProperty]] internal method of F with
-        //   arguments "caller", PropertyDescriptor {[[Value]]: null,
-        //   [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]:
-        //   false}, and false.
-        // TODO
-        // 19. Call the [[DefineOwnProperty]] internal method of F with
-        //   arguments "arguments", PropertyDescriptor {[[Value]]: null,
-        //   [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]:
-        //   false}, and false.
-        // TODO
-        // NOTE Function objects created using Function.prototype.bind do not
-        // have a prototype property.
-        // XXX can't delete it in pure-js.
-        return bound;
-    };
-}
-
-// Shortcut to an often accessed properties, in order to avoid multiple
-// dereference that costs universally.
-// _Please note: Shortcuts are defined after `Function.prototype.bind` as we
-// us it in defining shortcuts.
-var call = Function.prototype.call;
-var prototypeOfArray = Array.prototype;
-var prototypeOfObject = Object.prototype;
-var slice = prototypeOfArray.slice;
-var toString = prototypeOfObject.toString;
-var owns = call.bind(prototypeOfObject.hasOwnProperty);
-
-var defineGetter, defineSetter, lookupGetter, lookupSetter, supportsAccessors;
-// If JS engine supports accessors creating shortcuts.
-if ((supportsAccessors = owns(prototypeOfObject, "__defineGetter__"))) {
-    defineGetter = call.bind(prototypeOfObject.__defineGetter__);
-    defineSetter = call.bind(prototypeOfObject.__defineSetter__);
-    lookupGetter = call.bind(prototypeOfObject.__lookupGetter__);
-    lookupSetter = call.bind(prototypeOfObject.__lookupSetter__);
-}
-
-//
-// Array
-// =====
-//
-
-// ES5 15.4.3.2
-if (!Array.isArray) {
-    Array.isArray = function isArray(obj) {
-        return toString.call(obj) == "[object Array]";
-    };
-}
-
-// ES5 15.4.4.18
-// https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/array/foreach
-if (!prototypeOfArray.forEach) {
-    prototypeOfArray.forEach = function forEach(fun /*, thisp*/) {
-        var self = Object(this),
-            thisp = arguments[1],
-            i = 0,
-            length = self.length >>> 0;
-
-        // If no callback function or if callback is not a callable function
-        if (!fun || !fun.call) {
-            throw new TypeError();
-        }
-
-        while (i < length) {
-            if (i in self) {
-                // Invoke the callback function with call, passing arguments:
-                // context, property value, property key, thisArg object context
-                fun.call(thisp, self[i], i, self);
-            }
-            i++;
-        }
-    };
-}
-
-// ES5 15.4.4.19
-// https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Objects/Array/map
-if (!prototypeOfArray.map) {
-    prototypeOfArray.map = function map(fun /*, thisp*/) {
-        var self = Object(this);
-        var length = self.length >>> 0;
-        if (typeof fun != "function")
-            throw new TypeError();
-        var result = new Array(length);
-        var thisp = arguments[1];
-        for (var i = 0; i < length; i++) {
-            if (i in self)
-                result[i] = fun.call(thisp, self[i], i, self);
-        }
-        return result;
-    };
-}
-
-// ES5 15.4.4.20
-if (!prototypeOfArray.filter) {
-    prototypeOfArray.filter = function filter(fun /*, thisp */) {
-        var self = Object(this);
-        var length = self.length >>> 0;
-        if (typeof fun != "function")
-            throw new TypeError();
-        var result = [];
-        var thisp = arguments[1];
-        for (var i = 0; i < length; i++)
-            if (i in self && fun.call(thisp, self[i], i, self))
-                result.push(self[i]);
-        return result;
-    };
-}
-
-// ES5 15.4.4.16
-if (!prototypeOfArray.every) {
-    prototypeOfArray.every = function every(fun /*, thisp */) {
-        if (this === void 0 || this === null)
-            throw new TypeError();
-        if (typeof fun !== "function")
-            throw new TypeError();
-        var self = Object(this);
-        var length = self.length >>> 0;
-        var thisp = arguments[1];
-        for (var i = 0; i < length; i++) {
-            if (i in self && !fun.call(thisp, self[i], i, self))
-                return false;
-        }
-        return true;
-    };
-}
-
-// ES5 15.4.4.17
-// https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/some
-if (!prototypeOfArray.some) {
-    prototypeOfArray.some = function some(fun /*, thisp */) {
-        if (this === void 0 || this === null)
-            throw new TypeError();
-        if (typeof fun !== "function")
-            throw new TypeError();
-        var self = Object(this);
-        var length = self.length >>> 0;
-        var thisp = arguments[1];
-        for (var i = 0; i < length; i++) {
-            if (i in self && fun.call(thisp, self[i], i, self))
-                return true;
-        }
-        return false;
-    };
-}
-
-// ES5 15.4.4.21
-// https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Objects/Array/reduce
-if (!prototypeOfArray.reduce) {
-    prototypeOfArray.reduce = function reduce(fun /*, initial*/) {
-        var self = Object(this);
-        var length = self.length >>> 0;
-        // Whether to include (... || fun instanceof RegExp)
-        // in the following expression to trap cases where
-        // the provided function was actually a regular
-        // expression literal, which in V8 and
-        // JavaScriptCore is a typeof "function".  Only in
-        // V8 are regular expression literals permitted as
-        // reduce parameters, so it is desirable in the
-        // general case for the shim to match the more
-        // strict and common behavior of rejecting regular
-        // expressions.  However, the only case where the
-        // shim is applied is IE's Trident (and perhaps very
-        // old revisions of other engines).  In Trident,
-        // regular expressions are a typeof "object", so the
-        // following guard alone is sufficient.
-        if (toString.call(fun) != "[object Function]")
-            throw new TypeError();
-
-        // no value to return if no initial value and an empty array
-        if (!length && arguments.length == 1)
-            throw new TypeError();
-
-        var i = 0;
-        var result;
-        if (arguments.length >= 2) {
-            result = arguments[1];
-        } else {
-            do {
-                if (i in self) {
-                    result = self[i++];
-                    break;
-                }
-
-                // if array contains no values, no initial value to return
-                if (++i >= length)
-                    throw new TypeError();
-            } while (true);
-        }
-
-        for (; i < length; i++) {
-            if (i in self)
-                result = fun.call(null, result, self[i], i, self);
-        }
-
-        return result;
-    };
-}
-
-// ES5 15.4.4.22
-// https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Objects/Array/reduceRight
-if (!prototypeOfArray.reduceRight) {
-    prototypeOfArray.reduceRight = function reduceRight(fun /*, initial*/) {
-        var self = Object(this);
-        var length = self.length >>> 0;
-        if (toString.call(fun) != "[object Function]")
-            throw new TypeError();
-        // no value to return if no initial value, empty array
-        if (!length && arguments.length == 1)
-            throw new TypeError();
-
-        var result, i = length - 1;
-        if (arguments.length >= 2) {
-            result = arguments[1];
-        } else {
-            do {
-                if (i in self) {
-                    result = self[i--];
-                    break;
-                }
-
-                // if array contains no values, no initial value to return
-                if (--i < 0)
-                    throw new TypeError();
-            } while (true);
-        }
-
-        do {
-            if (i in this)
-                result = fun.call(null, result, self[i], i, self);
-        } while (i--);
-
-        return result;
-    };
-}
-
-// ES5 15.4.4.14
-// https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/indexOf
-if (!prototypeOfArray.indexOf) {
-    prototypeOfArray.indexOf = function indexOf(sought /*, fromIndex */ ) {
-        if (this === void 0 || this === null)
-            throw new TypeError();
-        var self = Object(this);
-        var length = self.length >>> 0;
-        if (!length)
-            return -1;
-        var i = 0;
-        if (arguments.length > 1)
-            i = toInteger(arguments[1]);
-        // handle negative indices
-        i = i >= 0 ? i : length - Math.abs(i);
-        for (; i < length; i++) {
-            if (i in self && self[i] === sought) {
-                return i;
-            }
-        }
-        return -1;
-    };
-}
-
-// ES5 15.4.4.15
-if (!prototypeOfArray.lastIndexOf) {
-    prototypeOfArray.lastIndexOf = function lastIndexOf(sought /*, fromIndex */) {
-        if (this === void 0 || this === null)
-            throw new TypeError();
-        var self = Object(this);
-        var length = self.length >>> 0;
-        if (!length)
-            return -1;
-        var i = length - 1;
-        if (arguments.length > 1)
-            i = toInteger(arguments[1]);
-        // handle negative indices
-        i = i >= 0 ? i : length - Math.abs(i);
-        for (; i >= 0; i--) {
-            if (i in self && sought === self[i])
-                return i;
-        }
-        return -1;
-    };
-}
-
-//
-// Object
-// ======
-//
-
-// ES5 15.2.3.2
-if (!Object.getPrototypeOf) {
-    // https://github.com/kriskowal/es5-shim/issues#issue/2
-    // http://ejohn.org/blog/objectgetprototypeof/
-    // recommended by fschaefer on github
-    Object.getPrototypeOf = function getPrototypeOf(object) {
-        return object.__proto__ || object.constructor.prototype;
-        // or undefined if not available in this engine
-    };
-}
-
-// ES5 15.2.3.3
-if (!Object.getOwnPropertyDescriptor) {
-    var ERR_NON_OBJECT = "Object.getOwnPropertyDescriptor called on a " +
-                         "non-object: ";
-    Object.getOwnPropertyDescriptor = function getOwnPropertyDescriptor(object, property) {
-        if ((typeof object != "object" && typeof object != "function") || object === null)
-            throw new TypeError(ERR_NON_OBJECT + object);
-        // If object does not owns property return undefined immediately.
-        if (!owns(object, property))
-            return undefined;
-
-        var descriptor, getter, setter;
-
-        // If object has a property then it's for sure both `enumerable` and
-        // `configurable`.
-        descriptor =  { enumerable: true, configurable: true };
-
-        // If JS engine supports accessor properties then property may be a
-        // getter or setter.
-        if (supportsAccessors) {
-            // Unfortunately `__lookupGetter__` will return a getter even
-            // if object has own non getter property along with a same named
-            // inherited getter. To avoid misbehavior we temporary remove
-            // `__proto__` so that `__lookupGetter__` will return getter only
-            // if it's owned by an object.
-            var prototype = object.__proto__;
-            object.__proto__ = prototypeOfObject;
-
-            var getter = lookupGetter(object, property);
-            var setter = lookupSetter(object, property);
-
-            // Once we have getter and setter we can put values back.
-            object.__proto__ = prototype;
-
-            if (getter || setter) {
-                if (getter) descriptor.get = getter;
-                if (setter) descriptor.set = setter;
-
-                // If it was accessor property we're done and return here
-                // in order to avoid adding `value` to the descriptor.
-                return descriptor;
-            }
-        }
-
-        // If we got this far we know that object has an own property that is
-        // not an accessor so we set it as a value and return descriptor.
-        descriptor.value = object[property];
-        return descriptor;
-    };
-}
-
-// ES5 15.2.3.4
-if (!Object.getOwnPropertyNames) {
-    Object.getOwnPropertyNames = function getOwnPropertyNames(object) {
-        return Object.keys(object);
-    };
-}
-
-// ES5 15.2.3.5
-if (!Object.create) {
-    Object.create = function create(prototype, properties) {
-        var object;
-        if (prototype === null) {
-            object = { "__proto__": null };
-        } else {
-            if (typeof prototype != "object")
-                throw new TypeError("typeof prototype["+(typeof prototype)+"] != 'object'");
-            var Type = function () {};
-            Type.prototype = prototype;
-            object = new Type();
-            // IE has no built-in implementation of `Object.getPrototypeOf`
-            // neither `__proto__`, but this manually setting `__proto__` will
-            // guarantee that `Object.getPrototypeOf` will work as expected with
-            // objects created using `Object.create`
-            object.__proto__ = prototype;
-        }
-        if (typeof properties != "undefined")
-            Object.defineProperties(object, properties);
-        return object;
-    };
-}
-
-// ES5 15.2.3.6
-var oldDefineProperty = Object.defineProperty;
-var defineProperty = !!oldDefineProperty;
-if (defineProperty) {
-    // detect IE 8's DOM-only implementation of defineProperty;
-    var subject = {};
-    Object.defineProperty(subject, "", {});
-    defineProperty = "" in subject;
-}
-if (!defineProperty) {
-    var ERR_NON_OBJECT_DESCRIPTOR = "Property description must be an object: ";
-    var ERR_NON_OBJECT_TARGET = "Object.defineProperty called on non-object: "
-    var ERR_ACCESSORS_NOT_SUPPORTED = "getters & setters can not be defined " +
-                                      "on this javascript engine";
-
-    Object.defineProperty = function defineProperty(object, property, descriptor) {
-        if (typeof object != "object" && typeof object != "function")
-            throw new TypeError(ERR_NON_OBJECT_TARGET + object);
-        if (typeof descriptor != "object" || descriptor === null)
-            throw new TypeError(ERR_NON_OBJECT_DESCRIPTOR + descriptor);
-        // make a valiant attempt to use the real defineProperty
-        // for I8's DOM elements.
-        if (oldDefineProperty && object.nodeType)
-            return oldDefineProperty(object, property, descriptor);
-
-        // If it's a data property.
-        if (owns(descriptor, "value")) {
-            // fail silently if "writable", "enumerable", or "configurable"
-            // are requested but not supported
-            /*
-            // alternate approach:
-            if ( // can't implement these features; allow false but not true
-                !(owns(descriptor, "writable") ? descriptor.writable : true) ||
-                !(owns(descriptor, "enumerable") ? descriptor.enumerable : true) ||
-                !(owns(descriptor, "configurable") ? descriptor.configurable : true)
-            )
-                throw new RangeError(
-                    "This implementation of Object.defineProperty does not " +
-                    "support configurable, enumerable, or writable."
-                );
-            */
-
-            if (supportsAccessors && (lookupGetter(object, property) ||
-                                      lookupSetter(object, property)))
-            {
-                // As accessors are supported only on engines implementing
-                // `__proto__` we can safely override `__proto__` while defining
-                // a property to make sure that we don't hit an inherited
-                // accessor.
-                var prototype = object.__proto__;
-                object.__proto__ = prototypeOfObject;
-                // Deleting a property anyway since getter / setter may be
-                // defined on object itself.
-                delete object[property];
-                object[property] = descriptor.value;
-                // Setting original `__proto__` back now.
-                object.__proto__ = prototype;
-            } else {
-                object[property] = descriptor.value;
-            }
-        } else {
-            if (!supportsAccessors)
-                throw new TypeError(ERR_ACCESSORS_NOT_SUPPORTED);
-            // If we got that far then getters and setters can be defined !!
-            if (owns(descriptor, "get"))
-                defineGetter(object, property, descriptor.get);
-            if (owns(descriptor, "set"))
-                defineSetter(object, property, descriptor.set);
-        }
-
-        return object;
-    };
-}
-
-// ES5 15.2.3.7
-if (!Object.defineProperties) {
-    Object.defineProperties = function defineProperties(object, properties) {
-        for (var property in properties) {
-            if (owns(properties, property))
-                Object.defineProperty(object, property, properties[property]);
-        }
-        return object;
-    };
-}
-
-// ES5 15.2.3.8
-if (!Object.seal) {
-    Object.seal = function seal(object) {
-        // this is misleading and breaks feature-detection, but
-        // allows "securable" code to "gracefully" degrade to working
-        // but insecure code.
-        return object;
-    };
-}
-
-// ES5 15.2.3.9
-if (!Object.freeze) {
-    Object.freeze = function freeze(object) {
-        // this is misleading and breaks feature-detection, but
-        // allows "securable" code to "gracefully" degrade to working
-        // but insecure code.
-        return object;
-    };
-}
-
-// detect a Rhino bug and patch it
-try {
-    Object.freeze(function () {});
-} catch (exception) {
-    Object.freeze = (function freeze(freezeObject) {
-        return function freeze(object) {
-            if (typeof object == "function") {
-                return object;
-            } else {
-                return freezeObject(object);
-            }
-        };
-    })(Object.freeze);
-}
-
-// ES5 15.2.3.10
-if (!Object.preventExtensions) {
-    Object.preventExtensions = function preventExtensions(object) {
-        // this is misleading and breaks feature-detection, but
-        // allows "securable" code to "gracefully" degrade to working
-        // but insecure code.
-        return object;
-    };
-}
-
-// ES5 15.2.3.11
-if (!Object.isSealed) {
-    Object.isSealed = function isSealed(object) {
-        return false;
-    };
-}
-
-// ES5 15.2.3.12
-if (!Object.isFrozen) {
-    Object.isFrozen = function isFrozen(object) {
-        return false;
-    };
-}
-
-// ES5 15.2.3.13
-if (!Object.isExtensible) {
-    Object.isExtensible = function isExtensible(object) {
-        return true;
-    };
-}
-
-// ES5 15.2.3.14
-// http://whattheheadsaid.com/2010/10/a-safer-object-keys-compatibility-implementation
-if (!Object.keys) {
-
-    var hasDontEnumBug = true,
-        dontEnums = [
-            "toString",
-            "toLocaleString",
-            "valueOf",
-            "hasOwnProperty",
-            "isPrototypeOf",
-            "propertyIsEnumerable",
-            "constructor"
-        ],
-        dontEnumsLength = dontEnums.length;
-
-    for (var key in {"toString": null})
-        hasDontEnumBug = false;
-
-    Object.keys = function keys(object) {
-
-        if (
-            typeof object != "object" && typeof object != "function"
-            || object === null
-        )
-            throw new TypeError("Object.keys called on a non-object");
-
-        var keys = [];
-        for (var name in object) {
-            if (owns(object, name)) {
-                keys.push(name);
-            }
-        }
-
-        if (hasDontEnumBug) {
-            for (var i = 0, ii = dontEnumsLength; i < ii; i++) {
-                var dontEnum = dontEnums[i];
-                if (owns(object, dontEnum)) {
-                    keys.push(dontEnum);
-                }
-            }
-        }
-
-        return keys;
-    };
-
-}
-
-//
-// Date
-// ====
-//
-
-// ES5 15.9.5.43
-// Format a Date object as a string according to a simplified subset of the ISO 8601
-// standard as defined in 15.9.1.15.
-if (!Date.prototype.toISOString) {
-    Date.prototype.toISOString = function toISOString() {
-        var result, length, value;
-        if (!isFinite(this))
-            throw new RangeError;
-
-        // the date time string format is specified in 15.9.1.15.
-        result = [this.getUTCFullYear(), this.getUTCMonth() + 1, this.getUTCDate(),
-            this.getUTCHours(), this.getUTCMinutes(), this.getUTCSeconds()];
-
-        length = result.length;
-        while (length--) {
-            value = result[length];
-            // pad months, days, hours, minutes, and seconds to have two digits.
-            if (value < 10)
-                result[length] = "0" + value;
-        }
-        // pad milliseconds to have three digits.
-        return result.slice(0, 3).join("-") + "T" + result.slice(3).join(":") + "." +
-            ("000" + this.getUTCMilliseconds()).slice(-3) + "Z";
-    }
-}
-
-// ES5 15.9.4.4
-if (!Date.now) {
-    Date.now = function now() {
-        return new Date().getTime();
-    };
-}
-
-// ES5 15.9.5.44
-if (!Date.prototype.toJSON) {
-    Date.prototype.toJSON = function toJSON(key) {
-        // This function provides a String representation of a Date object for
-        // use by JSON.stringify (15.12.3). When the toJSON method is called
-        // with argument key, the following steps are taken:
-
-        // 1.  Let O be the result of calling ToObject, giving it the this
-        // value as its argument.
-        // 2. Let tv be ToPrimitive(O, hint Number).
-        // 3. If tv is a Number and is not finite, return null.
-        // XXX
-        // 4. Let toISO be the result of calling the [[Get]] internal method of
-        // O with argument "toISOString".
-        // 5. If IsCallable(toISO) is false, throw a TypeError exception.
-        // XXX this gets pretty close, for all intents and purposes, letting
-        // some duck-types slide
-        if (typeof this.toISOString.call != "function")
-            throw new TypeError();
-        // 6. Return the result of calling the [[Call]] internal method of
-        // toISO with O as the this value and an empty argument list.
-        return this.toISOString.call(this);
-
-        // NOTE 1 The argument is ignored.
-
-        // NOTE 2 The toJSON function is intentionally generic; it does not
-        // require that its this value be a Date object. Therefore, it can be
-        // transferred to other kinds of objects for use as a method. However,
-        // it does require that any such object have a toISOString method. An
-        // object is free to use the argument key to filter its
-        // stringification.
-    };
-}
-
-// 15.9.4.2 Date.parse (string)
-// 15.9.1.15 Date Time String Format
-// Date.parse
-// based on work shared by Daniel Friesen (dantman)
-// http://gist.github.com/303249
-if (isNaN(Date.parse("2011-06-15T21:40:05+06:00"))) {
-    // XXX global assignment won't work in embeddings that use
-    // an alternate object for the context.
-    Date = (function(NativeDate) {
-
-        // Date.length === 7
-        var Date = function(Y, M, D, h, m, s, ms) {
-            var length = arguments.length;
-            if (this instanceof NativeDate) {
-                var date = length == 1 && String(Y) === Y ? // isString(Y)
-                    // We explicitly pass it through parse:
-                    new NativeDate(Date.parse(Y)) :
-                    // We have to manually make calls depending on argument
-                    // length here
-                    length >= 7 ? new NativeDate(Y, M, D, h, m, s, ms) :
-                    length >= 6 ? new NativeDate(Y, M, D, h, m, s) :
-                    length >= 5 ? new NativeDate(Y, M, D, h, m) :
-                    length >= 4 ? new NativeDate(Y, M, D, h) :
-                    length >= 3 ? new NativeDate(Y, M, D) :
-                    length >= 2 ? new NativeDate(Y, M) :
-                    length >= 1 ? new NativeDate(Y) :
-                                  new NativeDate();
-                // Prevent mixups with unfixed Date object
-                date.constructor = Date;
-                return date;
-            }
-            return NativeDate.apply(this, arguments);
-        };
-
-        // 15.9.1.15 Date Time String Format. This pattern does not implement
-        // extended years ((15.9.1.15.1), as `Date.UTC` cannot parse them.
-        var isoDateExpression = new RegExp("^" +
-            "(\\d{4})" + // four-digit year capture
-            "(?:-(\\d{2})" + // optional month capture
-            "(?:-(\\d{2})" + // optional day capture
-            "(?:" + // capture hours:minutes:seconds.milliseconds
-                "T(\\d{2})" + // hours capture
-                ":(\\d{2})" + // minutes capture
-                "(?:" + // optional :seconds.milliseconds
-                    ":(\\d{2})" + // seconds capture
-                    "(?:\\.(\\d{3}))?" + // milliseconds capture
-                ")?" +
-            "(?:" + // capture UTC offset component
-                "Z|" + // UTC capture
-                "(?:" + // offset specifier +/-hours:minutes
-                    "([-+])" + // sign capture
-                    "(\\d{2})" + // hours offset capture
-                    ":(\\d{2})" + // minutes offest capture
-                ")" +
-            ")?)?)?)?" +
-        "$");
-
-        // Copy any custom methods a 3rd party library may have added
-        for (var key in NativeDate)
-            Date[key] = NativeDate[key];
-
-        // Copy "native" methods explicitly; they may be non-enumerable
-        Date.now = NativeDate.now;
-        Date.UTC = NativeDate.UTC;
-        Date.prototype = NativeDate.prototype;
-        Date.prototype.constructor = Date;
-
-        // Upgrade Date.parse to handle simplified ISO 8601 strings
-        Date.parse = function parse(string) {
-            var match = isoDateExpression.exec(string);
-            if (match) {
-                match.shift(); // kill match[0], the full match
-                // parse months, days, hours, minutes, seconds, and milliseconds
-                for (var i = 1; i < 7; i++) {
-                    // provide default values if necessary
-                    match[i] = +(match[i] || (i < 3 ? 1 : 0));
-                    // match[1] is the month. Months are 0-11 in JavaScript
-                    // `Date` objects, but 1-12 in ISO notation, so we
-                    // decrement.
-                    if (i == 1)
-                        match[i]--;
-                }
-
-                // parse the UTC offset component
-                var minutesOffset = +match.pop(), hourOffset = +match.pop(), sign = match.pop();
-
-                // compute the explicit time zone offset if specified
-                var offset = 0;
-                if (sign) {
-                    // detect invalid offsets and return early
-                    if (hourOffset > 23 || minuteOffset > 59)
-                        return NaN;
-
-                    // express the provided time zone offset in minutes. The offset is
-                    // negative for time zones west of UTC; positive otherwise.
-                    offset = (hourOffset * 60 + minuteOffset) * 6e4 * (sign == "+" ? -1 : 1);
-                }
-
-                // compute a new UTC date value, accounting for the optional offset
-                return NativeDate.UTC.apply(this, match) + offset;
-            }
-            return NativeDate.parse.apply(this, arguments);
-        };
-
-        return Date;
-    })(Date);
-}
-
-//
-// String
-// ======
-//
-
-// ES5 15.5.4.20
-var ws = "\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF";
-if (!String.prototype.trim || ws.trim()) {
-    // http://blog.stevenlevithan.com/archives/faster-trim-javascript
-    // http://perfectionkills.com/whitespace-deviations/
-    ws = "[" + ws + "]";
-    var trimBeginRegexp = new RegExp("^" + ws + ws + "*"),
-        trimEndRegexp = new RegExp(ws + ws + "*$");
-    String.prototype.trim = function trim() {
-        return String(this).replace(trimBeginRegexp, "").replace(trimEndRegexp, "");
-    };
-}
-
-//
-// Util
-// ======
-//
-
-// http://jsperf.com/to-integer
-var toInteger = function (n) {
-    n = +n;
-    if (n !== n) // isNaN
-        n = -1;
-    else if (n !== 0 && n !== (1/0) && n !== -(1/0))
-        n = (n > 0 || -1) * Math.floor(Math.abs(n));
-    return n;
-};
-
-});/**
+(function() {/**
  * Creates an array containing a list of numbers in the range
  */
-Object.defineProperties(Array, {
+extend(Array, {
   
-  intersect: { value: function intersect(arrays) {
+  intersect: function intersect(arrays) {
     /**
      * Finds the intersection between one or more different arrays. This can be useful so to use the array as a set. Equivalent to the ampersand (&) operator. Equality checks are strict - again use the indexOf method.
      *
@@ -959,9 +22,9 @@ Object.defineProperties(Array, {
       });
     });
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  diff: { value: function diff(arrays) {
+  diff: function diff(arrays) {
     /**
      * Finds values which are unique to only one array from all that are given as parameters (including the current instance). Regarded as the opposite as intersect. Again equality tests are strict.
      *
@@ -980,9 +43,9 @@ Object.defineProperties(Array, {
       return vals.indexOf(a) == vals.lastIndexOf(a);
     });
 
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  union: { value: function union(arrays) {
+  union: function union(arrays) {
     /**
      * Creates an array with distinct values from each of the arrays given as parameters.
      *
@@ -996,9 +59,9 @@ Object.defineProperties(Array, {
      */
     return Array.prototype.concat.apply([], arrays).unique();
 
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  range: { value: function range(start, stop, step) {
+  range: function range(start, stop, step) {
     /**
      * Constructs an array containing a number of integers specified by the parameters
      * 
@@ -1028,13 +91,12 @@ Object.defineProperties(Array, {
 
     return arr;
     
-  }, writable: true, enumerable: false, configurable: true }
-  
+  }
 });
 
-Object.defineProperties(Array.prototype, {
+extend(Array.prototype, {
   
-  swap: { value: function swap(index1, index2) {
+  swap: function swap(index1, index2) {
     /**
      * Swaps two values within the array given their indexes.
      *
@@ -1056,9 +118,9 @@ Object.defineProperties(Array.prototype, {
     
     return this;
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  contains: { value: function contains(values) {
+  contains: function contains(values) {
     /**
      * Checks whether the array obtains a certain value. This uses the internal indexOf() method which enforces strict equality (===).
      *
@@ -1080,9 +142,9 @@ Object.defineProperties(Array.prototype, {
       return !! ~ this.indexOf(arg);
     }.bind(this));
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  remove: { value: function remove() {
+  remove: function remove() {
     /**
      * Removes all instances of the given values from the array. Remove uses the indexOf method which enforces strict equality (===).
      *
@@ -1104,9 +166,9 @@ Object.defineProperties(Array.prototype, {
     
     return this;
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  shuffle: { value: function shuffle() {
+  shuffle: function shuffle() {
     /**
      * Re-orders all values within the array into a random order. The method is simple and relies on Number.random() to generate random numbers which is automatically seeded.
      *
@@ -1125,9 +187,9 @@ Object.defineProperties(Array.prototype, {
         
     return arr;
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  shuffle$: { value: function shuffle$() {
+  shuffle$: function shuffle$() {
     /**
      * The self-modification variant of Array.shuffle.
      *
@@ -1145,9 +207,9 @@ Object.defineProperties(Array.prototype, {
     
     return this;
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  clone: { value: function clone() {
+  clone: function clone() {
     /**
      * Clones the array by copying all the enumerable values into a new one. Any non-enumerable properties you've defined using Object.defineProperties or alike will be lost. If you don't want that, use Object.clone() instead.
      *
@@ -1161,9 +223,9 @@ Object.defineProperties(Array.prototype, {
      */
     return this.slice();
     
-  }, writable: true, enumerable: false, configurable: true  },
+  },
   
-  intersect: { value: function intersect() {
+  intersect: function intersect() {
     /**
      * Finds the intersection between one or more different arrays. This can be useful so to use the array as a set. Equivalent to the ampersand (&) operator. Equality checks are strict - again use the indexOf method.
      *
@@ -1177,9 +239,9 @@ Object.defineProperties(Array.prototype, {
      */
     return Array.intersect(Array.prototype.slice.call(arguments).concat([this]));
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
 
-  diff: { value: function diff() {
+  diff: function diff() {
     /**
      * Finds values which are unique to only one array from all that are given as parameters (including the current instance). Regarded as the opposite as intersect. Again equality tests are strict.
      *
@@ -1194,9 +256,9 @@ Object.defineProperties(Array.prototype, {
      */
     return Array.diff(Array.prototype.slice.call(arguments).concat([this]));
 
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  union: { value: function union() {
+  union: function union() {
     /**
      * Creates an array with distinct values from each of the arrays given as parameters.
      *
@@ -1210,9 +272,9 @@ Object.defineProperties(Array.prototype, {
      */
     return Array.union(Array.prototype.slice.call(arguments).concat([this]));
 
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  chunk: { value: function chunk(size) {
+  chunk: function chunk(size) {
     /**
      * Takes an array and slices it into an array of smaller chunks. Very useful for dealing with groups of items at a time.
      *
@@ -1227,9 +289,9 @@ Object.defineProperties(Array.prototype, {
     for (var arr = []; this.length > 0; arr.push(this.splice(0, size)));
     return arr;
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  chunk$: { value: function chunk$(size) {
+  chunk$: function chunk$(size) {
     /**
      * The self-modification version of Array.chunk.
      *
@@ -1248,9 +310,9 @@ Object.defineProperties(Array.prototype, {
     
     return this;
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  unique: { value: function unique() {
+  unique: function unique() {
     /**
      * Returns a list of unique items within the array. i.e. If there are are 2 identical values, one will be removed. This again uses indexOf() which performs strict equality checks.
      *
@@ -1265,13 +327,15 @@ Object.defineProperties(Array.prototype, {
       return this.indexOf(a) == idx;
     }.bind(this));
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  each: { value: function each(callback) {
+  each: function each(callback) {
     /**
      * Unlike forEach(), each() allows the loop to be broken and a value returned. The callback is called for each item and given (value, index, self) as its parameters. If it returns a value other than undefined the loop will be stopped and that value returned.
      *
      * @since 1.0.0
+     * @param callback The function to call on each item
+     * @param thisArg The value to assign to 'this' on the callback
      * @example
      *  var a = [1,2,3,4,5,6].each(function(val, idx) {
      *    if (val == 2) return idx;
@@ -1279,15 +343,16 @@ Object.defineProperties(Array.prototype, {
      *  // a = 1;
      *
      * @returns mixed
-     */
-    var idx, result;
-    for (idx in this)
-      if ((result = callback.call(null, this[idx], idx, this)) !== undefined)
+     */ 
+    var self = Object(this), thisArg = arguments[1], length = this.length >>> 0, arr = [], result;
+    if ( ! Function.isFunction(callback)) throw new TypeError(callback + ' is not a function.');
+    for (var i = 0; i < length; i++)
+      if ((i in self) && (result = callback.call(thisArg, self[i], i, self)) !== undefined)
         return result;
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  flatten: { value: function flatten(level) {
+  flatten: function flatten(level) {
     /**
      * Takes a multi-dimensional array and merges it upwards. Turning it into a single-dimension array. The level parameter specifies how many levels to go down within the array.
      *
@@ -1306,9 +371,9 @@ Object.defineProperties(Array.prototype, {
       return a.concat((Array.isArray(b) && level != 0) ? b.flatten(level - 1) : [b]);
     }, []);
 
-   }, writable: true, enumerable: false, configurable: true },
+   },
    
-   flatten$: { value: function flatten$(level) {
+   flatten$: function flatten$(level) {
     /**
      * Self-modification version of Array.flatten.
      *
@@ -1330,9 +395,9 @@ Object.defineProperties(Array.prototype, {
       
     return this;
 
-  }, writable: true, enumerable: false, configurable: true },
+  },
 
-  sum: { value: function sum() {
+  sum: function sum() {
     /**
      * Like it sounds, simply add all the integers contained within the array up together.
      *
@@ -1347,9 +412,9 @@ Object.defineProperties(Array.prototype, {
       return Number(a) + Number(b);
     });
 
-  }, writable: true, enumerable: false, configurable: true },
+  },
 
-  product: { value: function product() {
+  product: function product() {
     /**
      * Same as sum, except finds the product of all values within the array. ie. a*b.
      *
@@ -1364,9 +429,9 @@ Object.defineProperties(Array.prototype, {
       return Number(a) * Number(b);
     });
 
-  }, writable: true, enumerable: false, configurable: true },
+  },
 
-  first: { value: function first(num) {
+  first: function first(num) {
     /**
      * Returns the first n-number of items within an array. If no parameter is given - this defaults to 1.
      *
@@ -1383,9 +448,9 @@ Object.defineProperties(Array.prototype, {
      */
     return num ? this.slice(0, num || 1) : this[0];
 
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  last: { value: function last(num) {
+  last: function last(num) {
     /**
      * Returns the last n-number of items within an array. If no parameter is given - this defaults to 1.
      *
@@ -1402,9 +467,9 @@ Object.defineProperties(Array.prototype, {
      */
     return num ? this.slice(this.length - (num || 1)) : this[this.length - 1];
 
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  clean: { value: function clean() {
+  clean: function clean() {
     /**
      * Removes all falsey values from the array. These can be either; NaN,undefined,null,0 or false
      *
@@ -1419,9 +484,9 @@ Object.defineProperties(Array.prototype, {
       return !! val;
     });
 
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  clean$: { value: function clean$() {
+  clean$: function clean$() {
     /**
      * Self modification version of Array.clean.
      *
@@ -1437,9 +502,9 @@ Object.defineProperties(Array.prototype, {
       return !! val;
     });
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  filter$: { value: function filter$(callback, scope) {
+  filter$: function filter$(callback, scope) {
     /**
      * Self modification version of Array.filter.
      *
@@ -1459,9 +524,9 @@ Object.defineProperties(Array.prototype, {
         
     return this;
 
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  map$: { value: function map$(callback, scope) {
+  map$: function map$(callback, scope) {
     /**
      * Self modification version of Array.map.
      *
@@ -1480,9 +545,9 @@ Object.defineProperties(Array.prototype, {
         
     return this;
 
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  invoke: { value: function invoke(callback) {
+  invoke: function invoke(callback) {
     /**
      * Calls a method on each of the objects wihin the array replacing the element with what is returned
      *
@@ -1499,9 +564,9 @@ Object.defineProperties(Array.prototype, {
       return val[callback].apply(val, Array.prototype.slice.call(this, 1));
     }, arguments);
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  invoke$: { value: function invoke$(callback) {
+  invoke$: function invoke$(callback) {
     /**
      * The self modification version of Array#invoke
      *
@@ -1519,9 +584,9 @@ Object.defineProperties(Array.prototype, {
       return val[callback].apply(val, Array.prototype.slice.call(this, 1));
     }, arguments);
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  pluck: { value: function pluck(prop) {
+  pluck: function pluck(prop) {
     /**
      * Gets a property from each of the objects within the array and returns it in a seperate array.
      *
@@ -1548,9 +613,9 @@ Object.defineProperties(Array.prototype, {
       return val[prop];
     });
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  pluck$: { value: function pluck$(prop) {
+  pluck$: function pluck$(prop) {
     /**
      * The self-modification version of Array#pluck
      *
@@ -1581,9 +646,9 @@ Object.defineProperties(Array.prototype, {
       return val[prop];
     });
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  grep: { value: function grep(regex) {
+  grep: function grep(regex) {
     /**
      * Filters the array only returning elements that match the given regex.
      *
@@ -1599,9 +664,9 @@ Object.defineProperties(Array.prototype, {
       return !! val.match(regex);
     });
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  grep$: { value: function grep$(regex) {
+  grep$: function grep$(regex) {
     /**
      * Self modification version of Array#grep
      *
@@ -1618,9 +683,9 @@ Object.defineProperties(Array.prototype, {
       return !! val.match(regex);
     });
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  sort$: { value: function sort$(sort) {
+  sort$: function sort$(sort) {
     /**
      * Self modification version of Array#sort
      *
@@ -1639,9 +704,9 @@ Object.defineProperties(Array.prototype, {
     }, this);
     return this;
 
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  sortBy: { value: function sortBy(cmp, sort) {
+  sortBy: function sortBy(cmp, sort) {
     /**
      * Sorts an array based on a value returned by a mapping function called on each element in the array.
      *
@@ -1674,9 +739,9 @@ Object.defineProperties(Array.prototype, {
       return this[val.key];
     }, this);
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  sortBy$: { value: function sortBy$(cmp, sort) {
+  sortBy$: function sortBy$(cmp, sort) {
     /**
      * The self-modifying version of sortBy
      *
@@ -1696,9 +761,9 @@ Object.defineProperties(Array.prototype, {
     
     return this;
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  fetch: { value: function fetch(order) {
+  fetch: function fetch(order) {
     /**
      * Fetches the values at the given indexes in the order given.
      *
@@ -1728,13 +793,246 @@ Object.defineProperties(Array.prototype, {
       arr[o] = this[i];
     }, this);
     
+    return arr; 
+  }
+});
+
+/**
+ * ECMA5 Pollyfills
+ */
+if ( ! Array.isArray)
+  extend(Array, 'isArray', function isArray(arr) {
+    return Object.prototype.toString.call(arr) === '[object Array]';
+  });
+
+if ( ! Array.prototype.forEach)
+  extend(Array.prototype, 'forEach', function forEach(callback /*, thisArg */) {
+    var self = Object(this), thisArg = arguments[1], length = this.length >>> 0;
+    if ( ! Function.isFunction(callback)) throw new TypeError(callback + ' is not a function.');
+    for (var i = 0; i < length; i++)
+      if (i in self) callback.call(thisArg, self[i], i, self);
+  });
+
+if ( ! Array.prototype.map)
+  extend(Array.prototype, 'map', function map(callback /*, thisArg */) {
+    var self = Object(this), thisArg = arguments[1], length = this.length >>> 0, arr = new Array(length);
+    if ( ! Function.isFunction(callback)) throw new TypeError(callback + ' is not a function.');
+    for (var i = 0; i < length; i++)
+      if (i in self) arr[i] = callback.call(thisArg, self[i], i, self);
     return arr;
+  });
+
+if ( ! Array.prototype.filter)
+  extend(Array.prototype, 'filter', function filter(callback /*, thisArg */) {
+    var self = Object(this), thisArg = arguments[1], length = this.length >>> 0, arr = [];
+    if ( ! Function.isFunction(callback)) throw new TypeError(callback + ' is not a function.');
+    for (var i = 0; i < length; i++)
+      if ((i in self) && callback.call(thisArg, self[i], i, self))
+        arr.push(self[i]);
+    return arr;
+  });
+
+if ( ! Array.prototype.every)
+  extend(Array.prototype, 'every', function every(callback /*, thisArg */) {
+    var self = Object(this), thisArg = arguments[1], length = this.length >>> 0;
+    if ( ! Function.isFunction(callback)) throw new TypeError(callback + ' is not a function.');
+    for (var i = 0; i < length; i++)
+      if ((i in self) && ! callback.call(thisArg, self[i], i, self))
+        return false;
+    return true;
+  });
+  
+if ( ! Array.prototype.some)
+  extend(Array.prototype, 'some', function some(callback /*, start */) {
+    var self = Object(this), start = arguments[1], length = this.length >>> 0;
+    if ( ! Function.isFunction(callback)) throw new TypeError(callback + ' is not a function.');
+    for (var i = 0; i < length; i++)
+      if ((i in self) && callback.call(thisArg, self[i], i, self))
+        return true;
+    return false;
+  });
+  
+if ( ! Array.prototype.reduce)
+  extend(Array.prototype, 'reduce', function reduce(callback /*, value */) {
+    var self = Object(this), value = arguments[1], length = this.length >>> 0, i = 0;
+    if ( ! Function.isFunction(callback)) throw new TypeError(callback + ' is not a function.');
+    if (arguments.length <= 1) {
+      if ( ! length) throw new TypeError('Array length is 0 and no initial value given.');
+      value = self[i++];
+    }
+    for (; i < length; i++)
+      if (i in self) value = callback.call(undefined, value, self[i], i, self);
+    return value;
+  });
+  
+if ( ! Array.prototype.reduceRight)
+  extend(Array.prototype, 'reduceRight', function reduceRight(callback /*, start */) {
+    var self = Object(this), value = arguments[1], length = this.length >>> 0, i = length -1;
+    if ( ! Function.isFunction(callback)) throw new TypeError(callback + ' is not a function.');
+    if (arguments.length <= 1) {
+      if ( ! length) throw new TypeError('Array length is 0 and no initial value given.');
+      value = self[i--];
+    }
+    for (; i >= 0; i--)
+      if (i in self) value = callback.call(undefined, value, self[i], i, self);
+    return value;
+  });
+  
+if ( ! Array.prototype.indexOf)
+  extend(Array.prototype, 'indexOf', function indexOf(value /*, index */) {
+    var self = Object(this), length = this.length >>> 0, index = (arguments.length <= 1) ? 0 : Number(arguments[1]);
+    index = index < 0 ? length - Math.abs(index) : index;
+    for (var i = index; i < length; i++)
+      if ((i in self) && self[i] === value) return i;
+    return -1;
+  });
+  
+if ( ! Array.prototype.lastIndexOf)
+  extend(Array.prototype, 'lastIndexOf', function lastIndexOf(value /*, index */) {
+    var self = Object(this), length = this.length >>> 0, index = (arguments.length <= 1) ? 0 : Number(arguments[1]);
+    index = index < 0 ? length - Math.abs(index) : index;
+    for (var i = length; i >= index; i--)
+      if ((i in self) && self[i] === value) return i;
+    return -1;
+  });
+
+hide(Array, ['arguments','length','isArray','name','prototype','caller']);
+hide(Array.prototype, ['length','constructor','concat','map','sort','join','indexOf','filter','some','toString','reduceRight','splice','forEach','shift','unshift','toLocaleString','lastIndexOf','reverse','reduce','pop','push','every','slice']);/**
+ * ECMA5 Polyfills
+ */
+
+if ( ! Date.now)  {
+ extend(Date, 'now', function now() {
+   return (new Date()).getTime();
+ });
+}
+
+
+// 15.9.4.2 Date.parse (string)
+// 15.9.1.15 Date Time String Format
+// Date.parse
+// based on work shared by Daniel Friesen (dantman)
+// http://gist.github.com/303249
+if (isNaN(Date.parse("2011-06-15T21:40:05+06:00"))) {
+  // XXX global assignment won't work in embeddings that use
+  // an alternate object for the context.
+  Date = (function(NativeDate) {
+
+    // Date.length === 7
+    var Date = function(Y, M, D, h, m, s, ms) {
+      var length = arguments.length;
+      if (this instanceof NativeDate) {
+        var date = length == 1 && String(Y) === Y ? // isString(Y)
+        // We explicitly pass it through parse:
+        new NativeDate(Date.parse(Y)) :
+        // We have to manually make calls depending on argument
+        // length here
+        length >= 7 ? new NativeDate(Y, M, D, h, m, s, ms) :
+        length >= 6 ? new NativeDate(Y, M, D, h, m, s) :
+        length >= 5 ? new NativeDate(Y, M, D, h, m) :
+        length >= 4 ? new NativeDate(Y, M, D, h) :
+        length >= 3 ? new NativeDate(Y, M, D) :
+        length >= 2 ? new NativeDate(Y, M) :
+        length >= 1 ? new NativeDate(Y) :
+        new NativeDate();
+        // Prevent mixups with unfixed Date object
+        date.constructor = Date;
+        return date;
+      }
+      return NativeDate.apply(this, arguments);
+    };
+
+    // 15.9.1.15 Date Time String Format. This pattern does not implement
+    // extended years ((15.9.1.15.1), as `Date.UTC` cannot parse them.
+    var isoDateExpression = new RegExp("^" +
+    "(\\d{4})" + // four-digit year capture
+    "(?:-(\\d{2})" + // optional month capture
+    "(?:-(\\d{2})" + // optional day capture
+    "(?:" + // capture hours:minutes:seconds.milliseconds
+    "T(\\d{2})" + // hours capture
+    ":(\\d{2})" + // minutes capture
+    "(?:" + // optional :seconds.milliseconds
+    ":(\\d{2})" + // seconds capture
+    "(?:\\.(\\d{3}))?" + // milliseconds capture
+    ")?" +
+    "(?:" + // capture UTC offset component
+    "Z|" + // UTC capture
+    "(?:" + // offset specifier +/-hours:minutes
+    "([-+])" + // sign capture
+    "(\\d{2})" + // hours offset capture
+    ":(\\d{2})" + // minutes offest capture
+    ")" +
+    ")?)?)?)?" +
+    "$");
+
+    // Copy any custom methods a 3rd party library may have added
+    for (var key in NativeDate)
+    Date[key] = NativeDate[key];
+
+    // Copy "native" methods explicitly; they may be non-enumerable
+    Date.now = NativeDate.now;
+    Date.UTC = NativeDate.UTC;
+    Date.prototype = NativeDate.prototype;
+    Date.prototype.constructor = Date;
+
+    // Upgrade Date.parse to handle simplified ISO 8601 strings
+    Date.parse = function parse(string) {
+      var match = isoDateExpression.exec(string);
+      if (match) {
+        match.shift(); // kill match[0], the full match
+        // parse months, days, hours, minutes, seconds, and milliseconds
+        for (var i = 1; i < 7; i++) {
+          // provide default values if necessary
+          match[i] = +(match[i] || (i < 3 ? 1 : 0));
+          // match[1] is the month. Months are 0-11 in JavaScript
+          // `Date` objects, but 1-12 in ISO notation, so we
+          // decrement.
+          if (i == 1)
+          match[i]--;
+        }
+
+        // parse the UTC offset component
+        var minutesOffset = +match.pop(), hourOffset = +match.pop(), sign = match.pop();
+
+        // compute the explicit time zone offset if specified
+        var offset = 0;
+        if (sign) {
+          // detect invalid offsets and return early
+          if (hourOffset > 23 || minuteOffset > 59)
+          return NaN;
+
+          // express the provided time zone offset in minutes. The offset is
+          // negative for time zones west of UTC; positive otherwise.
+          offset = (hourOffset * 60 + minuteOffset) * 6e4 * (sign == "+" ? -1 : 1);
+        }
+
+        // compute a new UTC date value, accounting for the optional offset
+        return NativeDate.UTC.apply(this, match) + offset;
+      }
+      return NativeDate.parse.apply(this, arguments);
+    };
+
+    return Date;
+    })(Date);
+  }extend(Function, {
+  
+  isFunction: function compose(func) {
+    /**
+     * Determines whether the provided function is really function and whether it's callable.
+     *
+     * @since 1.5.0
+     * @param func The value to test whether it is a function
+     * @example
+     *  Function.isFunction(Object) // returns true
+     *  Function.isFunction(Math) // returns false
+     *
+     * @returns bool
+     */
+    return (typeof func === 'function') && func.call;
     
-  }, writable: true, enumerable: false, configurable: true }
-  
-});Object.defineProperties(Function, {
-  
-  compose: { value: function compose(funcs) {
+  },
+    
+  compose: function compose(funcs) {
     /**
      * Creates a new function based on the composite of all the functions given. The list of functions can either be given as an array as the first parameter or a continuous set of functions.
      *
@@ -1760,13 +1058,12 @@ Object.defineProperties(Array.prototype, {
       }, arg);
     }
     
-  }, writable: true, enumerable: false, configurable: true }
-  
+  }
 });
 
-Object.defineProperties(Function.prototype, {
+extend(Function.prototype, {
 
-  cache: { value: function cache(time, ident) {
+  cache: function cache(time, ident) {
     /**
      * Caches the result of the function for specified period of time. The ident parameter allows you to specify your own hashing function for the parameters.
      *
@@ -1810,9 +1107,9 @@ Object.defineProperties(Function.prototype, {
       return cache[id];
     }
      
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  delay: { value: function delay(callback, time, scope) {
+  delay: function delay(callback, time, scope) {
     /**
      * Delays a function by a certain amount of time then calls the callback with the result of the function
      *
@@ -1830,9 +1127,9 @@ Object.defineProperties(Function.prototype, {
       callback.apply(scope, [this()].concat(Array.prototype.slice.call(args, 2)));
     }.bind(this, arguments), time);
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  once: { value: function once(scope) {
+  once: function once(scope) {
     /**
      * Caches a function indefinately. Once the callback is called for the first time it will continue to return that same value. Make sure if the function resides within an instantiated object that you have set the scope parameter.
      *
@@ -1868,12 +1165,32 @@ Object.defineProperties(Function.prototype, {
       return val;
       
     }.bind(this, Array.prototype.slice.call(arguments));
+  }
+});
+
+/**
+ * ECMA5 Pollyfills
+ */
+
+if ( ! Function.prototype.bind)
+  extend(Function.prototype, 'bind', function bind(thisArg) {
+    if ( ! Function.isFunction(this)) throw new TypeError(this + ' is not a function.');
+    var args = Array.prototype.slice.call(arguments, 1), self = this, target = function() {};
     
-  }, writable: true, enumerable: false, configurable: true }
+    function bound() {
+      return self.apply(this instanceof target ? this : thisArg, args.concat(Array.prototype.slice.call(arguments)));
+    }
+    
+    target.prototype = this.prototype;
+    bound.prototype = new target();
+    
+    return bound;
+  });
   
-});Object.defineProperties(Number, {
+hide(Function, 'arguments','length','name','prototype','caller');
+hide(Function.prototype, 'bind','arguments','toString','length','call','name','apply','caller','constructor');extend(Number, {
   
-  random: { value: function random(start, end) {
+  random: function random(start, end) {
     /**
      * Random number between two values.
      *
@@ -1891,14 +1208,13 @@ Object.defineProperties(Function.prototype, {
      */  
     return (start = start || 0) + (((end || start + 1) - start) * Math.random());
     
-  }, writable: true, enumerable: false, configurable: true }
-
+  }
 });
 
 
-Object.defineProperties(Number.prototype, {
+extend(Number.prototype, {
   
-  chr: { value: function() {
+  chr: function() {
     /**
      * Gets the current integer's representing string character.
      *
@@ -1911,9 +1227,9 @@ Object.defineProperties(Number.prototype, {
      */
     return String.fromCharCode(this);
     
-  }, enumerable: false, configurable: true },
+  },
   
-  odd: { value: function() {
+  odd: function() {
     /**
      * Determine's whether this integer is an odd number.
      *
@@ -1926,9 +1242,9 @@ Object.defineProperties(Number.prototype, {
      */
     return ! this.even();
     
-  }, enumerable: false, configurable: true },
+  },
   
-  even: { value: function() {
+  even: function() {
     /**
      * Determine's whether this integer is an even number.
      *
@@ -1941,9 +1257,9 @@ Object.defineProperties(Number.prototype, {
      */
     return (this % 2) == 0;
     
-  }, enumerable: false, configurable: true },
+  },
   
-  gcd: { value: function gcd() {
+  gcd: function gcd() {
     /**
      * Calculates the Greatest common divisor between a set of numbers. Also known as the greatest common factor. This uses Stein's binary algorithm.
      *
@@ -1985,9 +1301,9 @@ Object.defineProperties(Number.prototype, {
       
     }, this);
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  lcm: { value: function lcm() {
+  lcm: function lcm() {
     /**
      * Calculates the lowest common multiple between a set of numbers. Uses GCD within the caluclation.
      *
@@ -2003,9 +1319,9 @@ Object.defineProperties(Number.prototype, {
 
     return Math.abs(nums.product() * this) / gcd;
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  ceil: { value: function ceil() {
+  ceil: function ceil() {
     /**
      * Rounds up. Same as Math.ceil().
      *
@@ -2018,9 +1334,9 @@ Object.defineProperties(Number.prototype, {
      */
     return Math.ceil(this);
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  floor: { value: function floor() {
+  floor: function floor() {
     /**
      * Rounds down. Same as Math.floor().
      *
@@ -2033,9 +1349,9 @@ Object.defineProperties(Number.prototype, {
      */
     return Math.floor(this);
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  abs: { value: function abs() {
+  abs: function abs() {
     /**
      * Calculates the magnitude or absolute of a number. Same as Math.abs().
      *
@@ -2048,9 +1364,9 @@ Object.defineProperties(Number.prototype, {
      */
     return Math.abs(this);
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  round: { value: function round(digits) {
+  round: function round(digits) {
     /**
      * Rounds the number to a given number of digits. Negative numbers are possible. This is similar to Ruby's round().
      *
@@ -2080,9 +1396,9 @@ Object.defineProperties(Number.prototype, {
       return Number(this.toFixed(digits));
     }
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  radix: { value: function radix(base, size, character) {
+  radix: function radix(base, size, character) {
     /**
      * Transforms the number to a string base. The string will be padded with 0s if necessary.
      *
@@ -2098,9 +1414,9 @@ Object.defineProperties(Number.prototype, {
      */
     return this.toString(base).pad(-size, (character || '0'));
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  bin: { value: function bin(size, character) {
+  bin: function bin(size, character) {
     /**
      * Binary representation of the number.
      *
@@ -2118,9 +1434,9 @@ Object.defineProperties(Number.prototype, {
      */
     return this.radix(0x02, size, character);
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  oct: { value: function oct(size, character) {
+  oct: function oct(size, character) {
     /**
      * Octal representation of the number.
      *
@@ -2138,9 +1454,9 @@ Object.defineProperties(Number.prototype, {
      */
     return this.radix(0x08, size, character);
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  dec: { value: function dec(size, character) {
+  dec: function dec(size, character) {
     /**
      * Decimal representation of a number.
      *
@@ -2155,9 +1471,9 @@ Object.defineProperties(Number.prototype, {
      */
     return this.radix(0x0A, size, character);
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  hexl: { value: function hexl(size, character) {
+  hexl: function hexl(size, character) {
     /**
      * Hexadecimal representation of the number with lower-case character notations.
      *
@@ -2175,9 +1491,9 @@ Object.defineProperties(Number.prototype, {
      */
     return this.radix(0x10, size, character);
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  hex: { value: function hex(size, character) {
+  hex: function hex(size, character) {
     /**
      * Hexadecimal representation of the number with uppercase-case character notations.
      *
@@ -2195,9 +1511,9 @@ Object.defineProperties(Number.prototype, {
      */
     return this.radix(0x10, size, character).toUpperCase();
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  abbr: { value: function abbr(digits, binary) {
+  abbr: function abbr(digits, binary) {
     /**
      * The shorthand abbreviation for a number. You're a programmer! Normal people aren't. Binary defaults to false. BOOO!
      *
@@ -2239,11 +1555,73 @@ Object.defineProperties(Number.prototype, {
                 
     return (this / divs.last()).toFixed(digits) + keys.last();
     
-  }, writable: true, enumerable: false, configurable: true }
+  }
+});
 
-});Object.defineProperties(Object, {
+/**
+ * ECMA5 Pollyfills
+ */
+hide(Number,  'NaN','arguments','NEGATIVE_INFINITY','POSITIVE_INFINITY','length','name','MAX_VALUE','prototype','caller','MIN_VALUE');
+hide(Number.prototype, 'toExponential','toString','toLocaleString','toPrecision','valueOf','constructor','toFixed');extend(Object, {
   
-  id: { value: function id(obj) {
+  purify: function purify(object) {
+    /**
+     * Reverts all changes made by JSToolkit in order to get descriptors to work. Use this if you're giving the object to other code to deal with.
+     *
+     * @since 1.5.0
+     * @param object The object to revert
+     * @example
+     *  var obj = Object.create(null, { a: { value: 'b' }, b: { value: 'c', configurable: true }});
+     *  Object.purify(obj); // obj is now ready to go!
+     *  
+     *  Socket.io.send(obj);
+     *
+     * @returns self
+     */
+    for (var name in object) {
+      if (name === '__proto__' || name === '__getOwnPropertyDescriptors__')
+        delete object[name];
+      else if (typeof object[name] === 'object')
+        Object.purify(object[name]);
+    }
+        
+    return object;
+  },
+  
+  value: function set(obj, key /*, value*/) {
+    
+    var desc = Object.getOwnPropertyDescriptor(obj, key);
+    if (desc && ! Object.getOwnPropertyDescriptor(obj, key).writable)
+      return obj[key];
+    
+    return (arguments.length === 2) ? obj[key] : (obj[key] = arguments[2]);
+  },
+  
+  remove: function remove(obj, key) {
+    /**
+     * Removes a value from the object respecting property descriptors (configurable = false then the value will not be deleted).
+     *
+     * @since 1.5.0
+     * @param object The object to delete from
+     * @param key The name of the property to delete
+     * @example
+     *  var obj = Object.create(null, { a: { value: 'b' }, b: { value: 'c', configurable: true }});
+     * 
+     *  Object.remove(obj, 'a') // returns false, and value isn't removed.
+     *  Object.remove(obj, 'b') // returns true, and value is removed.
+     * @returns bool
+     */
+     
+    if ( ! Object.getOwnPropertyDescriptor(obj, key).configurable)
+      return false;
+    
+    if (obj.__ownPropertyDescriptors__)
+      delete obj.__ownPropertyDescriptors__[key];
+      
+    return delete obj[key];
+  },
+  
+  id: function id(obj) {
     /**
      * Returns a unique string representing the object instance every variable can have a uuid. Note the UUID is only valid whilst withing the current VM.
      *
@@ -2269,9 +1647,9 @@ Object.defineProperties(Number.prototype, {
 
     return id.store.indexOf(obj);
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  alias: { value: function alias(object, property, alias, complete) {
+  alias: function alias(object, property, alias, complete) {
     /**
      * Creates an alias of a property within an object. A true alias requires getters/setters which can be slow so by default we don't bother. If you still wan't it set complete to true.
      *
@@ -2316,9 +1694,9 @@ Object.defineProperties(Number.prototype, {
     
     return object;
 
-  }, writable: true, enumerable: false, configurable: true },
+  },
 
-  values: { value: function values(obj) {
+  values: function values(obj) {
     /**
      * Gets all the enumerable values within an object.
      *
@@ -2331,15 +1709,15 @@ Object.defineProperties(Number.prototype, {
      * @returns array
      */
     var arr = [];
-    for (key in obj) {
+    Object.keys(obj).forEach(function(key) {
       arr.push(obj[key]);
-    }
+    });
     
     return arr;
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  forEach: { value: function forEach(obj, callback, scope) {
+  forEach: function forEach(obj, callback, scope) {
     /**
      * A fast looping mechanism for objects. Like Array.forEach.
      *
@@ -2360,9 +1738,9 @@ Object.defineProperties(Number.prototype, {
       return callback.call(scope, key, obj[key], obj);
     });
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  isObject: { value: function isObject() {
+  isObject: function isObject() {
     /**
      * Returns whether all the given parameters are objects
      *
@@ -2381,12 +1759,12 @@ Object.defineProperties(Number.prototype, {
      * @returns bool
      */
     return Array.prototype.slice.call(arguments).every(function(value) {
-      return typeof value === 'object' && Object(value) === value;
+      return (typeof value === 'object' && Object(value) === value);
     });
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  each: { value: function each(obj, callback, scope) {
+  each: function each(obj, callback, scope) {
     /**
      * Provides a utility to quickly iterate through enumerable properties of an object.
      *
@@ -2404,12 +1782,13 @@ Object.defineProperties(Number.prototype, {
      */
     var key, result;
     for (key in obj)
-      if ((result = callback.call(scope, key, obj[key], this)) !== undefined)
-        return result;
+      if (key !== '__proto__')
+        if ((result = callback.call(scope, key, obj[key], this)) !== undefined)
+          return result;
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  map: { value : function map(object, callback, scope) {
+  map: function map(object, callback, scope) {
     /**
      * Similar to Array.map except for enumerable object properties.
      *
@@ -2431,9 +1810,9 @@ Object.defineProperties(Number.prototype, {
 
     return obj;
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  map$: { value : function map$(obj, callback, scope) {
+  map$: function map$(obj, callback, scope) {
     /**
      * A self-modification version of Object.map.
      *
@@ -2451,14 +1830,14 @@ Object.defineProperties(Number.prototype, {
      * @returns self
      */
      Object.forEach(obj, function(key, val) {
-       obj[key] = callback.call(scope, key, val);
+       Object.value(obj, key, callback.call(scope, key, val));
      });
      
      return obj;
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  getOwnPropertyDescriptors: { value : function getOwnPropertyDescriptors(object) {
+  getOwnPropertyDescriptors: function getOwnPropertyDescriptors(object) {
     /**
      * Retrieves object property descriptors for every property within an object
      *
@@ -2490,9 +1869,9 @@ Object.defineProperties(Number.prototype, {
 
     return descriptors;
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  reduce: { value : function reduce(obj, callback, start, scope) {
+  reduce: function reduce(obj, callback, start, scope) {
     /**
      * Like Array.reduce except for objects. Reduces the object down into a single value.
      *
@@ -2514,9 +1893,9 @@ Object.defineProperties(Number.prototype, {
     
     return start;
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  merge: { value : function merge(objects, level) {
+  merge: function merge(objects, level) {
     /**
      * Merges more than one enumerable object into 1. This method is by default non-recursive but this can be changed by setting level to -1.
      *
@@ -2559,9 +1938,9 @@ Object.defineProperties(Number.prototype, {
       
     }, {});
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  merge$: { value : function merge$(object, objects, level) {
+  merge$: function merge$(object, objects, level) {
     /**
      * The self-modification version of Object.merge. Except all values are merged into the first parameter
      *
@@ -2591,18 +1970,18 @@ Object.defineProperties(Number.prototype, {
 
     var obj = Object.merge.apply(undefined, objects, level);
 
-    Object.filter$(object, function(key, val) { return (key in obj); });
+    Object.filter$(object, function(key, val) { return Object.hasOwnProperty.call(obj, key) });
     Object.map$(object, function(key, val) { return obj[key]; });
 
     Object.keys(obj).diff(Object.keys(object)).forEach(function(key) {
-      object[key] = obj[key];
+      Object.value(object, key, obj[key]);
     });
 
     return object;
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  clone: { value: function clone(obj, inherit) {
+  clone: function clone(obj, inherit) {
     /**
      * Clones an object by creating a new object with the same parent prototype and then manually adding all the property descriptors.
      *
@@ -2623,12 +2002,14 @@ Object.defineProperties(Number.prototype, {
      * @returns object
      */
     inherit = (inherit === undefined) ? true : false;
+        
+    var obj = Object.create(Object.getPrototypeOf(obj), inherit ? Object.getOwnPropertyDescriptors(obj) : undefined);
+      
+    return obj;
     
-    return Object.create(Object.getPrototypeOf(obj), inherit ? Object.getOwnPropertyDescriptors(obj) : undefined);
-    
-  }, writable: true, enumerable: false, configurable: true },
+  },
 
-  filter: { value : function filter(object, callback, scope) {
+  filter: function filter(object, callback, scope) {
     /**
      * Like Array.filter except for objects. Only enumerable values are filtered.
      *
@@ -2650,9 +2031,9 @@ Object.defineProperties(Number.prototype, {
      */
     return Object.filter$(Object.clone(object), callback, scope);
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  filter$: { value : function filter$(obj, callback, scope) {
+  filter$: function filter$(obj, callback, scope) {
     /**
      * Self-modification version of Object.filter.
      *
@@ -2678,17 +2059,17 @@ Object.defineProperties(Number.prototype, {
     Object.forEach(obj, function(key, val) {
       if (Array.isArray(callback)) {
         if ( ! keys.contains(key))
-          delete obj[key];
+          Object.remove(obj, key);
       }
       else if (callback.call(scope, key, val, obj) === false)
-        delete obj[key];
+        Object.remove(obj, key);
     });
     
     return obj;
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  clean: { value : function clean(obj) {
+  clean: function clean(obj) {
     /**
      * Like Array.clean except for objects. The following values are filtered: NaN, undefined, null, 0 or false
      *
@@ -2704,9 +2085,9 @@ Object.defineProperties(Number.prototype, {
       return !! val;
     });
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  clean$: { value : function clean$(obj) {
+  clean$: function clean$(obj) {
     /**
      * A self-modification version of Object.clean.
      *
@@ -2723,9 +2104,9 @@ Object.defineProperties(Number.prototype, {
       return !! val;
     });
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  size: { value : function size(obj) {
+  size: function size(obj) {
     /**
      * Calculates the number of enumerable properties within the object
      *
@@ -2740,9 +2121,9 @@ Object.defineProperties(Number.prototype, {
      */
     return Object.keys(obj).length;
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  combine: { value : function combine(keys, values) {
+  combine: function combine(keys, values) {
     /**
      * Combines an array of keys and an array of values (of equal lengths) to create a new enumerable object.
      *
@@ -2764,9 +2145,9 @@ Object.defineProperties(Number.prototype, {
     
     return obj;
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  hash: { value : function hash(object) {
+  hash: function hash(object) {
     /**
      * Creates an enumerable wrapper around the given objcet. Useful for simple hashes and not complex classes. Added functions: length, keys(), each(), forEach(), map(), map$(), filter(), filter$(), reduce(), clean(), clean$(), clone(), merge(), merge$()
      *
@@ -2781,10 +2162,9 @@ Object.defineProperties(Number.prototype, {
      */
     return Object.hash$(Object.clone(object));
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  
-  hash$: { value : function hash$(object) {
+  hash$: function hash$(object) {
     /**
      * The self modification version of Object.hash. New methods are defined to the current object rather than a clone.
      *
@@ -2799,69 +2179,216 @@ Object.defineProperties(Number.prototype, {
      * @returns object
      */
     return Object.defineProperties(object, {
-      
-      length: { get: function() {
+
+      size: { value: function() {
         return Object.size(this);
-      }, enumerable: false, configurable: true },
-      
+      }, writable: true, enumerable: false, configurable: true },
+
       keys: { value: function keys(callback, scope) {
         return Object.keys(this);
       }, writable: true, enumerable: false, configurable: true },
-      
+
       each: { value: function each(callback, scope) {
         return Object.each(this, callback, scope);
       }, writable: true, enumerable: false, configurable: true },
-      
+
       forEach: { value: function forEach(callback, scope) {
         return Object.forEach(this, callback, scope);
       }, writable: true, enumerable: false, configurable: true },
-      
+
       map: { value: function map(callback, scope) {
         return Object.map(this, callback, scope);
       }, writable: true, enumerable: false, configurable: true },
-      
+
       map$: { value: function map$(callback, scope) {
         return Object.map$(this, callback, scope);
       }, writable: true, enumerable: false, configurable: true },
-      
+
       reduce: { value: function reduce(callback, start) {
         return Object.reduce(this, callback, start);
       }, writable: true, enumerable: false, configurable: true },
-      
+
       filter: { value: function filter(callback, scope) {
         return Object.filter(this, callback, scope);
       }, writable: true, enumerable: false, configurable: true },
-      
+
       filter$: { value: function filter$(callback, scope) {
         return Object.filter$(this, callback, scope);
       }, writable: true, enumerable: false, configurable: true },
-      
+
       clean: { value: function clean(callback, scope) {
         return Object.clean(this, callback, scope);
       }, writable: true, enumerable: false, configurable: true },
-      
+
       clean$: { value: function clean$(callback, scope) {
         return Object.clean$(this, callback, scope);
       }, writable: true, enumerable: false, configurable: true },
-      
+
       clone: { value: function clone(callback, scope) {
         return Object.clone(this, callback, scope);
       }, writable: true, enumerable: false, configurable: true },
-      
+
       merge: { value: function merge() {
         return Object.merge.apply(undefined, [this].concat(Array.prototype.slice.call(arguments)));
       }, writable: true, enumerable: false, configurable: true },
-      
+
       merge$: { value: function merge$() {
         return Object.merge$.apply(undefined, [this].concat(Array.prototype.slice.call(arguments)));
       }, writable: true, enumerable: false, configurable: true }
-    });
+      
+   });
+  }
+});
+
+/**
+ * ECMA5 Polyfills
+ */
+
+if ( ! Object.getPrototypeOf)
+  extend(Object, 'getPrototypeOf', function getPrototypeOf(object) {
+    return object.__proto__ || object.constructor.prototype;
+  });
+  
+if ( ! Object.getOwnPropertyDescriptor || domDefineProperty) {
+  var oldGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+  extend(Object, 'getOwnPropertyDescriptor', function getOwnPropertyDescriptor(object, property) {
+    var descriptor = { enumerable: true, writable: true, configurable: true }, getter, setter;
+    if (object.nodeType && oldGetOwnPropertyDescriptor)
+      return oldGetOwnPropertyDescriptor(object, property);
+    else if (property == '__ownPropertyDescriptors__' || ! Object.getOwnPropertyNames(object).contains(property)) return undefined;
+    else if (object['__ownPropertyDescriptors__'] && (property in object['__ownPropertyDescriptors__']))
+      descriptor = object['__ownPropertyDescriptors__'][property];
     
-  }, writable: true, enumerable: false, configurable: true }
+    //TODO: Save the prototype!
+    
+    if (Object.prototype.__defineGetter__ && (getter = object.__lookupGetter__(property))) {
+      descriptor.writable = false;
+      descriptor.get = getter;
+      if ((setter = object.__lookupSetter__(property)))
+        descriptor.set = setter;
+    }
+    else { descriptor.value = object[property]; }
+        
+    return descriptor;
+  });
+}
+
+if ( ! Object.getOwnPropertyNames)
+  extend(Object, 'getOwnPropertyNames', function getOwnPropertyNames(object) {
+    return Object.keys(object['__ownPropertyDescriptors__'] || {}).concat(Object.keys(object)).unique();
+  });
   
-});Object.defineProperties(String, {
+if ( ! Object.create)
+  extend(Object, 'create', function create(prototype, descriptors) {
+    
+    var object = {};
+    
+    if (prototype !== null)  {
+      var type = function() {}
+      type.prototype = prototype;
+      object = new type();
+    }
+    
+    object.__ownPropertyDescriptors__ = {};
+    if (descriptors !== undefined)
+      Object.defineProperties(object, descriptors);
+    
+    object.__proto__ = prototype;
+    
+    return object;
+  });
   
-  UUID: { value: function UUID() {
+if ( ! Object.defineProperty || domDefineProperty) {
+  var oldDefineProperty = Object.defineProperty;
+  extend(Object, 'defineProperty', function defineProperty(object, name, descriptor) {
+    if (object.nodeType && oldDefineProperty) oldDefineProperty(object, name, descriptor);
+    if (object.__lookupGetter__) {
+      if ((name in object) && (object.__lookupGetter__(name))) {
+        var prototype = object.__proto__;
+        object.__proto__ = Object.prototype;
+        delete object[name];
+      }
+      if ('get' in descriptor) object.__defineGetter__(name, descriptor.get);
+      if ('set' in descriptor) object.__defineSetter__(name, descriptor.set);
+    }
+    else if ('get' in descriptor || 'set' in descriptor)
+      throw new TypeError('Getters and Setters are not supported on this javascript engine.');
+      
+    if ( ! object['__ownPropertyDescriptors__'])
+      object['__ownPropertyDescriptors__'] = {};
+      
+    if ( ! descriptor.writable)     descriptor.writable = false;
+    if ( ! descriptor.configurable) descriptor.configurable = false;
+    if ( ! descriptor.enumerable)   descriptor.enumerable = false;
+        
+    object[name] = descriptor.value;
+    object['__ownPropertyDescriptors__'][name] = descriptor;
+        
+    if (prototype) object.__proto__ = prototype;
+    
+    return object;
+  });
+}
+
+if ( ! Object.defineProperties || domDefineProperty)
+  extend(Object, 'defineProperties', function defineProperties(object, descriptors) {
+    for (name in descriptors)
+      Object.defineProperty(object, name, descriptors[name]);
+    return object;
+  });
+  
+if ( ! Object.seal)
+  extend(Object, 'seal', function seal(object) {
+    return object; // Impossible to polyfill
+  });
+
+if ( ! Object.isSealed)
+  extend(Object, 'isSealed', function isSealed(object) {
+    return false;
+  });
+  
+if ( ! Object.freeze)
+  extend(Object, 'freeze', function freeze(object) {
+    return object; // Impossible to polyfill
+  });
+
+if ( ! Object.isFrozen)
+  extend(Object, 'isFrozen', function isFrozen(object) {
+    return false;
+  });
+  
+if ( ! Object.preventExtensions)
+  extend(Object, 'preventExtensions', function preventExtensions(object) {
+    return object; // Impossible to polyfill
+  });
+
+if ( ! Object.isExtensible)
+  extend(Object, 'isExtensible', function isExtensible(object) {
+    return true;
+  });
+  
+if ( ! Object.keys)
+  extend(Object, 'keys', function keys(object) {
+    if (object !== Object(object)) throw new TypeError('Object.keys called on non-object');
+    var keys = [], key;
+    for (key in object)
+      if (object.hasOwnProperty(key) && key != '__proto__' && key != '__ownPropertyDescriptors__')
+        keys.push(key);
+    return keys.filter(function(key) {
+      return Object.prototype.propertyIsEnumerable.call(object, key);
+    });
+  });
+  
+if (domDefineProperty) {
+  var oldPropertyIsEnumerable = Object.prototype.propertyIsEnumerable;
+  Object.prototype.propertyIsEnumerable = function propertyIsEnumerable(key) {
+    var desc;
+    if ((desc = this.__ownPropertyDescriptors__) && desc[key]) return desc[key].enumerable === true;
+    else return oldPropertyIsEnumerable.call(this, key);
+  };
+}extend(String, {
+  
+  UUID: function UUID() {
     /**
      * Creates a RFC 4122 compliant UUID. This implementation relies on Number.random(). Even so you can be assured that each generation is pretty much always going to be different.
      *
@@ -2881,17 +2408,14 @@ Object.defineProperties(Number.prototype, {
         case 19: i = (Number.random(0, 16).floor() & 0x3) | 0x8; break;
         default: i = Number.random(0, 16).floor(); break;
       }
-      return '0123456789ABCDEF'[i];
-    }).join('');
-    
-  }, writable: true, enumerable: false, configurable: true }
-  
+      return '0123456789ABCDEF'.charAt(i);
+    }).join(''); 
+  }
 });
 
+extend(String.prototype, {
 
-Object.defineProperties(String.prototype, {
-
-  chars: { value: function chars(obj) {
+  chars: function chars(obj) {
     /**
      * Gets all the enumerable values within an object.
      *
@@ -2908,9 +2432,9 @@ Object.defineProperties(String.prototype, {
       
     return arr;
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  count: { value: function count(substr, mod) {
+  count: function count(substr, mod) {
     /**
      * Counts the number of instances of a given sub string. You can also give some RegEx modifiers to determine what to look for. By default this operation is case-insensitive.
      *
@@ -2928,9 +2452,9 @@ Object.defineProperties(String.prototype, {
      */
     return this.match(RegExp(substr, mod || 'gi')).length;
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  insert: { value: function insert(substr, pos) {
+  insert: function insert(substr, pos) {
     /**
      * Inserts a substring at a given position within the string. Position defaults to 0 which will insert the string onto the beginning (opposite of concat).
      *
@@ -2948,9 +2472,9 @@ Object.defineProperties(String.prototype, {
      */
     return this.substr(0, pos || 0) + substr + this.substr(pos || 0);
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  remove: { value: function remove(substr) {
+  remove: function remove(substr) {
     /**
      * Removes a given string or regular expression from the string
      *
@@ -2964,9 +2488,9 @@ Object.defineProperties(String.prototype, {
      */
     return this.replace(substr, '');
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  reverse: { value: function reverse() {
+  reverse: function reverse() {
     /**
      * Reverses the string's character order.
      *
@@ -2979,9 +2503,9 @@ Object.defineProperties(String.prototype, {
      */
     return this.chars().reverse().join('');
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  ucfirst: { value: function ucfirst() {
+  ucfirst: function ucfirst() {
     /**
      * Converts the first character to an uppercase one.
      *
@@ -2994,9 +2518,9 @@ Object.defineProperties(String.prototype, {
      */
     return this.charAt(0).toUpperCase() + this.substr(1);
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  swapcase: { value: function swapcase() {
+  swapcase: function swapcase() {
     /**
      * Toggle's the case of each character within the string. Uppercase -> Lowercase, Lowercase -> Uppercase.
      *
@@ -3011,9 +2535,9 @@ Object.defineProperties(String.prototype, {
       return /[a-z]/.test(a) ? a.toUpperCase() : a.toLowerCase(); 
     }).join('');
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  rpad: { value: function rpad(len, chars) {
+  rpad: function rpad(len, chars) {
     /**
      * Continues to add a set of characters to the end of the string until it reaches a certain length.
      *
@@ -3034,9 +2558,9 @@ Object.defineProperties(String.prototype, {
     for (var str = this; str.length < len; str += (chars || ' '));
     return str.substr(0, len);
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  lpad: { value: function lpad(len, chars) {
+  lpad: function lpad(len, chars) {
     /**
      * Continues to add a set of characters to the beginning of the string until it reaches a certain length.
      *
@@ -3058,9 +2582,9 @@ Object.defineProperties(String.prototype, {
     for (var str = this; str.length < len; str = (chars + str));
     return str.substr(str.length - len);
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  pad: { value: function pad(len, chars) {
+  pad: function pad(len, chars) {
     /**
      * Continues to add a certain character until the string reaches a certain size. A negative size will perform lpad, a positive size will perform rpad.
      *
@@ -3078,9 +2602,9 @@ Object.defineProperties(String.prototype, {
      */
     return this[len > 0 ? 'rpad' : 'lpad'](Math.abs(len), chars);
     
-  }, writable: true, enumerable: false, configurable: true },
+  },
 
-  soundex: { value: function soundex() {
+  soundex: function soundex() {
     /**
      * Generates a soundex for the given string. A soundex is a letter followed by 3 numbers
      *
@@ -3117,9 +2641,9 @@ Object.defineProperties(String.prototype, {
       .replace(/(\w)\1+/g, '$1')
       .slice(0, 3).rpad(3, '0');
 
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  distance: { value: function distance(c) {
+  distance: function distance(c) {
     /**
      * Calculates the distance between 2 strings using Levenshtein's algorithm.
      *
@@ -3139,10 +2663,10 @@ Object.defineProperties(String.prototype, {
         a[(i *= 1) + 1][(j *= 1) + 1] = Math.min(a[i][j + 1] + 1, a[i + 1][j] + 1, a[i][j] + (s[i] != c[j]));
     return a[l][t];
         
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
   
-  soundex: { value: function soundex() {
+  soundex: function soundex() {
     /**
      * Generates a soundex for the given string. A soundex is a letter followed by 3 numbers
      *
@@ -3165,9 +2689,9 @@ Object.defineProperties(String.prototype, {
       .replace(/[CGJKQSXZ]/g, '2').replace(/[DT]/g, '3').replace(/[L]/g, '4').replace(/[MN]/g, '5')
       .replace(/[R]/g, '6').replace(/(\w)\1+/g, '$1').rpad(3, '0');
 
-  }, writable: true, enumerable: false, configurable: true },
+  },
   
-  sprintf: { value: function sprintf(c) {
+  sprintf: function sprintf(c) {
     /**
      * The classic sprintf function as implemented with currently a limited number of supported tags: b,c,d,f,o,s,u,x,X
      *
@@ -3197,7 +2721,7 @@ Object.defineProperties(String.prototype, {
       
       if (type.match(/[duobxXf]{1}/)) val = Number(val);
       else val = String(val);
-      
+            
       switch (type) {
         
         case 'd':
@@ -3219,8 +2743,28 @@ Object.defineProperties(String.prototype, {
           return val.toString().pad(align + width, padding);
         }
       }
-    });
-        
-  }, writable: true, enumerable: false, configurable: true }
-  
+    });  
+  }
 });
+
+/**
+ * ECMA5 Polyfills
+ */
+var space = "\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF";
+if ( ! String.prototype.trim || space.trim())  {
+  extend(String.prototype, 'trim', function trim() {
+    return this.trimRight().trimLeft();
+  });
+}
+
+if ( ! String.prototype.trimRight || space.trimRight())  {
+  extend(String.prototype, 'trimRight', function trimRight() {
+    return this.remove(new RegExp(space + space + "*$"));
+  });
+}
+
+if ( ! String.prototype.trimLeft || space.trimLeft())  {
+  extend(String.prototype, 'trimLeft', function trimLeft() {
+    return this.remove(new RegExp("^" + space + space + "*"));
+  });
+}})();

@@ -1,5 +1,23 @@
 # ECMA5 Multi-Purpose Javascript Toolkit
 
+## As of 1.5.0 and to the future!
+Many people requested JSToolkit to be available to the browser. I had until now been very specific that I wanted to focus on development for ECMA5 platforms and not be restricted by browser limitations, especially with Object notations and descriptors. However I had a look through some es5-shim libraries and decided to take the plunge and write a fully compatible toolkit library that works on the browser and brings ECMA5 goodness to it. Of course there are some things which you simply can't patch up. But as long as you follow these rules, you should never go wrong:
+
+Every time you use a JSToolkit Object.* method on an object, you must assume it has been tampered with. The reality is that JSToolkit creates a property called `__ownPropertyDescriptors__` and `__proto__` which holds descriptor information for that object's own properties. This is used internally by JSToolkit in all it's processing methods. However in legacy browsers these methods will be made enumerable which is disastrous for many applications, for this reason if you follow these rules you should remain file:
+
+1. delete object['prop'] => Object.remove(object, 'prop'); // Use this if you want to respect the descriptor configurable
+2. object['foo'] = 'bar' => Object.value(object, 'foo', 'bar'); // Use this if you want to respect the descriptor writable
+3. for (key in object)   => Object.forEach(object, function(key, value) { });
+
+And keep clear of:
+
+    Object.prototype.__ownPropertyDescriptors__
+    Object.prototype.__proto__
+
+They're mine!
+
+Once you're finished with JSToolkit processing, a simple call to Object.purify() will clean the object up to get rid of all our rubbish inside it.
+
 ## Goals & Features
 The JS Toolkit has very specific goals - as to not re-invent the wheel. They go as follows:
 

@@ -166,9 +166,15 @@ test('Array#pluck', function() {
   
   var a = { name: 'Ann', age: 36, pass: 's8J2ld0a' },
       b = { name: 'Bob', age: 21, pass: '0aJdlfsa' },
-      c = { name: 'Charlie', age: 31, pass: 'f8fadasa' }
+      c = { name: 'Charlie', age: 31, pass: 'f8fadasa' };
+
+  var arr = [a,b,c].pluck(['name','age']).pluck(['name','age']);
   
-  deepEqual([a,b,c].pluck(['name', 'age']), [{name:'Ann',age:36},{name:'Bob',age:21},{name:'Charlie',age:31}]);
+  delete arr[0].__ownPropertyDescriptors__; delete arr[0].__proto__;
+  delete arr[1].__ownPropertyDescriptors__; delete arr[1].__proto__;
+  delete arr[2].__ownPropertyDescriptors__; delete arr[2].__proto__;
+
+  deepEqual(arr, [{name:'Ann',age:36},{name:'Bob',age:21},{name:'Charlie',age:31}]);
   deepEqual(['a','aa','aaa'].pluck('length'), [1,2,3]);
 });
   
@@ -184,8 +190,13 @@ test('Array#pluck$', function() {
       c = { name: 'Charlie', age: 31, pass: 'f8fadasa' }
   
   var arr = [a,b,c];
-  
+
   strictEqual(arr.pluck$(['name', 'age']), arr);
+  
+  delete arr[0].__ownPropertyDescriptors__; delete arr[0].__proto__;
+  delete arr[1].__ownPropertyDescriptors__; delete arr[1].__proto__;
+  delete arr[2].__ownPropertyDescriptors__; delete arr[2].__proto__;
+  
   deepEqual(arr, [{name:'Ann',age:36},{name:'Bob',age:21},{name:'Charlie',age:31}]);
 });
   
@@ -222,3 +233,5 @@ test('Array#fetch', function() {
   deepEqual([3,2,1,4,5].fetch(2,1,0,3,4), [1,2,3,4,5]);
   deepEqual([1,2,3].fetch(function(n) { return n % 3 }), [3,1,2]);
 });
+
+/* ECMA5 Polyfil Tests */

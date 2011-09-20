@@ -1,5 +1,69 @@
 module('Object');
 
+/* ECMA5 Polyfil Tests */
+
+test('Object.getOwnPropertyDescriptor', function() {
+  
+  var a = Object.create(Object.prototype, {
+    a: { value: 'a' },
+    b: { value: 'b', enumerable: true },
+    c: { value: 'c', enumerable: true }
+  });
+    
+  deepEqual(Object.getOwnPropertyDescriptor(a, 'b'), {value:'b',enumerable:true,writable:false,configurable:false});
+});
+
+test('Object.getOwnPropertyNames', function() {
+
+  var a = Object.create(Object.prototype, {
+    a: { value: 'a' },
+    b: { value: 'b', enumerable: true },
+    c: { value: 'c', enumerable: true }
+  });
+  
+  var b = Object.create(a, {
+    d: { value: 'd' },
+    e: { value: 'e', enumerable: true },
+    f: { value: 'f', enumerable: true }
+  });
+
+  deepEqual(Object.getOwnPropertyNames(b), ['d','e','f']);
+});
+
+test('Object.keys', function() {
+  var obj = Object.create(Object.prototype, {
+    a: { value: 'a' },
+    b: { value: 'b', enumerable: true },
+    c: { value: 'c', enumerable: true }
+  });
+    
+  deepEqual(Object.keys(obj), ['b','c']);
+});
+/* END */
+
+test('Object.clone', function() {
+
+  function a() { }
+  Object.defineProperties(a.prototype, { foo: { value: 'bar' } });
+
+  var obj = new a();
+  obj.boo = 'baz';
+  
+  var clone = Object.clone(obj);
+  obj.bar = 'baz';
+  
+  equal(clone.foo, 'bar');
+  equal(clone.bar, undefined);
+  equal(clone.boo, 'baz');
+
+  a.prototype.bat = 'foo';
+
+  equal(clone.bat, 'foo');
+
+  ok(clone instanceof a);
+  ok(obj !== clone);
+});
+
 test('Object.values', function() {
   deepEqual(Object.values({1:2,3:4}), [2,4]);
 });
@@ -30,7 +94,8 @@ test('Object.map', function() {
     
   obj = Object.map(obj, function(key, val) { return key * val });
 
-  deepEqual(obj, {2:2,3:12});
+  deepEqual(Object.values(obj), [2,12]);
+  deepEqual(Object.keys(obj), ['2','3']);
   deepEqual(obj[5], 6);
 });
   
@@ -43,7 +108,8 @@ test('Object.map$', function() {
   });
     
   strictEqual(Object.map$(obj, function(key, val) { return key * val }), obj);
-  deepEqual(obj, {2:2,3:12});
+  deepEqual(Object.values(obj), [2,12]);
+  deepEqual(Object.keys(obj), ['2','3']);
   deepEqual(obj[5], 6);
 });
   
@@ -82,29 +148,6 @@ test('Object.merge', function() {
   deepEqual(Object.merge([b,a],-1), {a:{b:'c',c:'e'},d:'e'});
 });
   
-test('Object.clone', function() {
-  
-  function a() { }
-  Object.defineProperties(a.prototype, { foo: { value: 'bar' } });
-  
-  var obj = new a();
-  obj.boo = 'baz';
-  
-  var clone = Object.clone(obj);
-  obj.bar = 'baz';
-  
-  equal(clone.foo, 'bar');
-  equal(clone.bar, undefined);
-  equal(clone.boo, 'baz');
-  
-  a.prototype.bat = 'foo';
-  
-  equal(clone.bat, 'foo');
-  
-  ok(clone instanceof a);
-  ok(obj !== clone);
-});
-  
 test('Object.filter', function() {
   
   var obj = Object.create({}, {
@@ -114,8 +157,15 @@ test('Object.filter', function() {
     5: { value: 6, enumerable: false, configurable: true }
   });
   
-  deepEqual(Object.filter(obj, function(key, val) { return val==4 || key == 1; }), {1:2,3:4,4:4});
-  deepEqual(Object.filter(obj, [1,3,'4']), {1:2,3:4,4:4});
+  var a = Object.filter(obj, function(key, val) { return val==4 || key == 1; }),
+      b = Object.filter(obj, [1,3,'4']);
+      
+  deepEqual(Object.keys(a), ['1','3','4']);
+  deepEqual(Object.values(a), [2,4,4]);
+  
+  deepEqual(Object.keys(b), ['1','3','4']);
+  deepEqual(Object.values(a), [2,4,4]);
+     
   equal(Object.filter(obj, [1,3,'4'])[5], 6);
 });
   
@@ -129,15 +179,20 @@ test('Object.filter$', function() {
   });
   
   strictEqual(Object.filter$(obj, function(key, val) { return val==4 || key == 1; }), obj);
-  deepEqual(obj, {1:2,3:4,4:4});
+      
+  deepEqual(Object.keys(obj), ['1','3','4']);
+  deepEqual(Object.values(obj), [2,4,4]);
   
   strictEqual(Object.filter$(obj, [1,'3']), obj);
-  deepEqual(obj, {1:2,3:4});
+  deepEqual(Object.keys(obj), ['1','3']);
+  deepEqual(Object.values(obj), [2,4]);
+  
 });
   
 test('Object.clean', function() {
   var obj = Object.clean({1:undefined, 2:null, 3:false, 4:0, 5:NaN, 6:'foo', 7:'bar'});
-  deepEqual(obj, {6:'foo',7:'bar'});
+  deepEqual(Object.keys(obj), ['6','7']);
+  deepEqual(Object.values(obj), ['foo','bar']);
 });
   
 test('Object.clean$', function() {
@@ -155,18 +210,19 @@ test('Object.alias', function() {
   };
   
   Object.alias(obj, 'foo', 'bat');
-  Object.alias(obj, 'a', 'b', true);
-
-  strictEqual(obj.a, obj.b);
-  obj.a = 'bar';
-  strictEqual(obj.a, obj.b);
+  
+  if (Object.prototype.__looupGetter__) {
+    Object.alias(obj, 'a', 'b', true);
+    strictEqual(obj.a, obj.b);
+    obj.a = 'bar';
+    strictEqual(obj.a, obj.b);
+    obj.b = 'bar';
+    strictEqual(obj.a, obj.b);
+  }
   
   strictEqual(obj.bat, obj.foo);
   obj.bat = 'bar';
   strictEqual(obj.bat, obj.foo);
-  
-  obj.b = 'bar';
-  strictEqual(obj.a, obj.b);
 });
   
 test('Object.size', function() {
@@ -187,4 +243,9 @@ test('Object.UUID', function() {
   
   strictEqual(Object.id(a), Object.id(a));
   notEqual(Object.id(a), Object.id(b));
+});
+
+/** ECMA5 Polyfill **/
+test('Object.getPrototypeOf', function() {
+  
 });
