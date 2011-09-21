@@ -6,7 +6,7 @@ desc "Build JSToolkit source into a minified browser version."
 task :build do
   version = JSON.parse(File.read("./package.json"))['version']
   
-  source = '(function() {'
+  source = '(function() {' << File.read('./index.js')
   Dir.glob("./lib/*.js") do |file|
     source << File.read(file);
   end

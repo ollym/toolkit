@@ -1,4 +1,71 @@
-(function() {/**
+(function() {var domDefineProperty = false, objectIdStore = [], objectDescriptorStore = [];
+
+// Whether we have a working version of Object.defineProperty
+try { Object.defineProperty({}, 'x', {});
+} catch(e) { domDefineProperty=true; }
+
+
+
+var extend = function(prototype, methods) {
+  
+  var title = null;
+  
+  switch (prototype) {
+    case Array:               { title = 'Array.';    break; }
+    case Array.prototype:     { title = 'Array#';    break; }
+    case Function:            { title = 'Function.'; break; }
+    case Function.prototype:  { title = 'Function#'; break; }
+    case Number:              { title = 'Number.';   break; }
+    case Number.prototype:    { title = 'Number#';   break; }
+    case Object:              { title = 'Object.';   break; }
+    case Object.prototype:    { title = 'Object#';   break; }
+    case String:              { title = 'String.';   break; }
+    case String.prototype:    { title = 'String#';   break; }
+    case Math:                { title = 'Math.';     break; }
+    case Date:                { title = 'Date.';     break; }
+    case Date.prototype:      { title = 'Date#';     break; }
+    default: {
+      throw new Error('Override detector found an unknown prototype being extended.');
+    }
+  }
+  
+  if (typeof methods === 'string') {
+    var n = methods, methods = {};
+    methods[n] = arguments[2];
+  }
+  
+  for (name in methods) {
+    if (name == 'propertyIsEnumerable') alert('ho');
+    var method = methods[name];
+        
+    if (domDefineProperty) {
+      
+      var id = -1;
+      for (var i = 0; i < objectIdStore.length; i++)  
+        if (objectIdStore[i] === prototype)
+          id = i;
+      id = id < 0 ? objectIdStore.push(prototype) - 1 : id;
+      
+      if ( ! objectDescriptorStore[id])
+        objectDescriptorStore[id] = {};
+      
+      objectDescriptorStore[id][name] = { writable: true, enumerable: false, configurable: true };
+      prototype[name] = method;
+
+    } 
+    else {
+      Object.defineProperty(prototype, name, {
+        value: method,
+        writable: true,
+        enumerable: false,
+        configurable: true
+      });
+    }
+  }
+}
+
+window.extend = extend;
+/**
  * Creates an array containing a list of numbers in the range
  */
 extend(Array, {
@@ -21,7 +88,6 @@ extend(Array, {
         return arg.contains(val);
       });
     });
-    
   },
   
   diff: function diff(arrays) {
@@ -42,7 +108,6 @@ extend(Array, {
     return vals.filter(function(a) {
       return vals.indexOf(a) == vals.lastIndexOf(a);
     });
-
   },
   
   union: function union(arrays) {
@@ -58,7 +123,6 @@ extend(Array, {
      * @returns array
      */
     return Array.prototype.concat.apply([], arrays).unique();
-
   },
   
   range: function range(start, stop, step) {
@@ -90,11 +154,29 @@ extend(Array, {
     }
 
     return arr;
-    
   }
 });
 
 extend(Array.prototype, {
+  
+  concat$: function concat() {
+    /**
+     * The self-modification version of concat. Merges a second array onto the end of the first.
+     *
+     * @since 1.5.0
+     * @param *arrays The arrays to concat
+     * @example
+     *  var arr = [1,2,3];
+     *  arr.concat$([2,3,4], [5,6,7]);
+     *    // arr = [1,2,3,4,5,6,7]
+     * 
+     * @returns self
+     */
+    var args = Array.prototype.slice.call(arguments).flatten(1);
+    this.splice.apply(this, [this.length, 0].concat(args));
+    
+    return this;
+  },
   
   swap: function swap(index1, index2) {
     /**
@@ -117,7 +199,6 @@ extend(Array.prototype, {
     this[index2] = value;
     
     return this;
-    
   },
   
   contains: function contains(values) {
@@ -141,7 +222,6 @@ extend(Array.prototype, {
     return args.every(function(arg) { 
       return !! ~ this.indexOf(arg);
     }.bind(this));
-    
   },
   
   remove: function remove() {
@@ -165,7 +245,6 @@ extend(Array.prototype, {
     }.bind(this));
     
     return this;
-    
   },
   
   shuffle: function shuffle() {
@@ -186,7 +265,6 @@ extend(Array.prototype, {
     }
         
     return arr;
-    
   },
   
   shuffle$: function shuffle$() {
@@ -206,7 +284,6 @@ extend(Array.prototype, {
     }
     
     return this;
-    
   },
   
   clone: function clone() {
@@ -222,7 +299,6 @@ extend(Array.prototype, {
      * @returns array
      */
     return this.slice();
-    
   },
   
   intersect: function intersect() {
@@ -238,7 +314,6 @@ extend(Array.prototype, {
      * @returns array
      */
     return Array.intersect(Array.prototype.slice.call(arguments).concat([this]));
-    
   },
 
   diff: function diff() {
@@ -255,7 +330,6 @@ extend(Array.prototype, {
      * @returns array
      */
     return Array.diff(Array.prototype.slice.call(arguments).concat([this]));
-
   },
   
   union: function union() {
@@ -271,7 +345,6 @@ extend(Array.prototype, {
      * @returns array
      */
     return Array.union(Array.prototype.slice.call(arguments).concat([this]));
-
   },
   
   chunk: function chunk(size) {
@@ -288,7 +361,6 @@ extend(Array.prototype, {
      */
     for (var arr = []; this.length > 0; arr.push(this.splice(0, size)));
     return arr;
-    
   },
   
   chunk$: function chunk$(size) {
@@ -309,7 +381,6 @@ extend(Array.prototype, {
     }
     
     return this;
-    
   },
   
   unique: function unique() {
@@ -326,7 +397,6 @@ extend(Array.prototype, {
     return this.filter(function(a, idx) {
       return this.indexOf(a) == idx;
     }.bind(this));
-    
   },
   
   each: function each(callback) {
@@ -349,7 +419,6 @@ extend(Array.prototype, {
     for (var i = 0; i < length; i++)
       if ((i in self) && (result = callback.call(thisArg, self[i], i, self)) !== undefined)
         return result;
-    
   },
   
   flatten: function flatten(level) {
@@ -370,8 +439,7 @@ extend(Array.prototype, {
     return this.reduce(function(a,b) {
       return a.concat((Array.isArray(b) && level != 0) ? b.flatten(level - 1) : [b]);
     }, []);
-
-   },
+  },
    
    flatten$: function flatten$(level) {
     /**
@@ -394,7 +462,6 @@ extend(Array.prototype, {
     }
       
     return this;
-
   },
 
   sum: function sum() {
@@ -411,7 +478,6 @@ extend(Array.prototype, {
     return this.reduce(function(a, b) {
       return Number(a) + Number(b);
     });
-
   },
 
   product: function product() {
@@ -428,7 +494,6 @@ extend(Array.prototype, {
     return this.reduce(function(a, b) {
       return Number(a) * Number(b);
     });
-
   },
 
   first: function first(num) {
@@ -447,7 +512,6 @@ extend(Array.prototype, {
      * @returns array
      */
     return num ? this.slice(0, num || 1) : this[0];
-
   },
   
   last: function last(num) {
@@ -466,7 +530,6 @@ extend(Array.prototype, {
      * @returns array
      */
     return num ? this.slice(this.length - (num || 1)) : this[this.length - 1];
-
   },
   
   clean: function clean() {
@@ -483,7 +546,6 @@ extend(Array.prototype, {
     return this.filter(function(val) {
       return !! val;
     });
-
   },
   
   clean$: function clean$() {
@@ -501,7 +563,6 @@ extend(Array.prototype, {
     return this.filter$(function(val) {
       return !! val;
     });
-    
   },
   
   filter$: function filter$(callback, scope) {
@@ -523,7 +584,6 @@ extend(Array.prototype, {
         this.splice(i, 1) && i--;
         
     return this;
-
   },
   
   map$: function map$(callback, scope) {
@@ -544,7 +604,6 @@ extend(Array.prototype, {
       this[i] = callback.call(scope, this[i], i, this);
         
     return this;
-
   },
   
   invoke: function invoke(callback) {
@@ -563,7 +622,6 @@ extend(Array.prototype, {
     return this.map(function(val) {
       return val[callback].apply(val, Array.prototype.slice.call(this, 1));
     }, arguments);
-    
   },
   
   invoke$: function invoke$(callback) {
@@ -583,7 +641,6 @@ extend(Array.prototype, {
     return this.map$(function(val) {
       return val[callback].apply(val, Array.prototype.slice.call(this, 1));
     }, arguments);
-    
   },
   
   pluck: function pluck(prop) {
@@ -612,7 +669,6 @@ extend(Array.prototype, {
       
       return val[prop];
     });
-    
   },
   
   pluck$: function pluck$(prop) {
@@ -645,7 +701,6 @@ extend(Array.prototype, {
         
       return val[prop];
     });
-    
   },
   
   grep: function grep(regex) {
@@ -663,7 +718,6 @@ extend(Array.prototype, {
     return this.filter(function(val) {
       return !! val.match(regex);
     });
-    
   },
   
   grep$: function grep$(regex) {
@@ -682,7 +736,6 @@ extend(Array.prototype, {
     return this.filter$(function(val) {
       return !! val.match(regex);
     });
-    
   },
   
   sort$: function sort$(sort) {
@@ -703,7 +756,6 @@ extend(Array.prototype, {
       this[i] = val;
     }, this);
     return this;
-
   },
   
   sortBy: function sortBy(cmp, sort) {
@@ -738,7 +790,6 @@ extend(Array.prototype, {
     }).map(function(val) {
       return this[val.key];
     }, this);
-    
   },
   
   sortBy$: function sortBy$(cmp, sort) {
@@ -760,7 +811,6 @@ extend(Array.prototype, {
     }, this);
     
     return this;
-    
   },
   
   fetch: function fetch(order) {
@@ -843,8 +893,8 @@ if ( ! Array.prototype.every)
   });
   
 if ( ! Array.prototype.some)
-  extend(Array.prototype, 'some', function some(callback /*, start */) {
-    var self = Object(this), start = arguments[1], length = this.length >>> 0;
+  extend(Array.prototype, 'some', function some(callback /*, thisArg */) {
+    var self = Object(this), thisArg = arguments[1], length = this.length >>> 0;
     if ( ! Function.isFunction(callback)) throw new TypeError(callback + ' is not a function.');
     for (var i = 0; i < length; i++)
       if ((i in self) && callback.call(thisArg, self[i], i, self))
@@ -2330,12 +2380,8 @@ if ( ! Object.getOwnPropertyNames) {
     else if (object instanceof Function) names.push.apply(names, ['arguments','length','name','prototype','caller']);
     else if (Array.isArray(object) || String.isString(object)) names.push('length');
     else if (Object.prototype.hasOwnProperty.call(object, 'constructor')) names.push('constructor');
-    
-    if (String.isString(object) && ! (1 in (new String('ab')))) names.push.apply(names, Array.range(0, object.length - 1));
-    
-    return names.concat(Object.keys(objectDescriptorStore[Object.id(object)] || {}), Object.keys(object)).unique().filter(function(key) {
-      return Object.prototype.hasOwnProperty.call(object, key);
-    });
+        
+    return names.concat(Object.keys(objectDescriptorStore[Object.id(object)] || {})).concat(Object.keys(object)).unique();
   });
 }
   
@@ -2474,9 +2520,15 @@ if ( ! Object.keys)
     for (key in object)
       if (object.hasOwnProperty(key))
         keys.push(key);
-    return keys.filter(function(key) {
+    keys = keys.filter(function(key) {
       return Object.prototype.propertyIsEnumerable.call(object, key);
     });
+    
+    if (String.isString(object) && ! (0 in (new String(' ')))) {
+      keys = keys.concat(Array.range(0, object.length - 1));
+    }
+      
+    return keys.map(String);
   });
   
 if (domDefineProperty) {
@@ -2867,19 +2919,19 @@ extend(String.prototype, {
 /**
  * ECMA5 Polyfills
  */
-if ( ! String.prototype.trim || space.trim())  {
+if ( ! String.prototype.trim)  {
   extend(String.prototype, 'trim', function trim() {
     return this.trimRight().trimLeft();
   });
 }
 
-if ( ! String.prototype.trimRight || space.trimRight())  {
+if ( ! String.prototype.trimRight)  {
   extend(String.prototype, 'trimRight', function trimRight() {
     return this.remove(/^\s\s*/);
   });
 }
 
-if ( ! String.prototype.trimLeft || space.trimLeft())  {
+if ( ! String.prototype.trimLeft)  {
   extend(String.prototype, 'trimLeft', function trimLeft() {
     return this.remove(new RegExp(/\s\s*$/));
   });
