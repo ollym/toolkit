@@ -9,6 +9,16 @@ JSToolkit brings EMCA5 to the browser! Object descriptors configurable, enumerab
 
 JSToolkit doesn't touch the Object.prototype namespace so you should never have to worry about running into trouble when serialising objects or sending objects to other libraries.
 
+## Using Toolkit in Node.JS REPL
+If you want to dive straight into testing some of JST's features in REPL, as of 1.5.0 this is now supported. The main package exports a method called `repl` to use it simply type the following into a new repl window:
+
+    $ node
+    > require('toolkit').repl();
+    toolkit> Array.range(1,9,3);
+    [ 1, 4, 7 ]
+    
+Note this currently requires 1.5.0 which is not available on npm yet.
+
 ## Goals & Features
 The JS Toolkit has very specific goals - as to not re-invent the wheel. They go as follows:
 
