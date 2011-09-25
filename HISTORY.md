@@ -1,8 +1,9 @@
-1.5.0 / master
+1.5.0 / 2011-09-25
 ==================
 
   * Migrated testing framework to QUnit.
   * Added all missing ECMA5 methods from ECMA3.
+  * Added: Array#concat$, String#chunk
   * Added advanced descriptor processing utilities for legacy browsers.
   * Fixed to pass tests on Safari 5.1, Chrome 14 and IE 5.5, 6, 7 and 8
 
