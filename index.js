@@ -4,7 +4,7 @@ var domDefineProperty = false, objectIdStore = [], objectDescriptorStore = [];
 try { Object.defineProperty({}, 'x', {});
 } catch(e) { domDefineProperty=true; }
 
-var extend = function(prototype, methods) {
+var extend = extend || function(prototype, methods) {
   
   var title = null;
   
@@ -62,7 +62,7 @@ var extend = function(prototype, methods) {
   }
 }
 
-if (module && module.exports) {
+if (this.module && module.exports) {
   module.exports.repl = function() {
     var vm = require('vm'), repl = require('repl');
     process.stdin.removeAllListeners('keypress');

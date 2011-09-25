@@ -1,5 +1,5 @@
 var fs  = require('fs'), http = require('http');
-var pkg = JSON.parse(fs.readFileSync('package.json')), ver = pkg.version.split('.'), versions = [];
+var pkg = JSON.parse(fs.readFileSync('package.json')), latest = pkg.version.split('.'), ver = process.argv[2] || latest.join('.'), versions = [];
 var grouped = {}, listed = [];
 
 function DocProperty() { }
@@ -33,8 +33,8 @@ DocProperty.prototype = {
 };
 
 /* START PROPERTY PARSING */
-Object.defineProperties = function(proto, descriptors) {
-  
+var extend = function(proto, properties) {
+
   var object = null, prototype = null, group = null;
     
   switch (proto) {
@@ -63,25 +63,13 @@ Object.defineProperties = function(proto, descriptors) {
     //fds[group] = fs.openSync(dir + pkg.version + '/' + group.toLowerCase() + '.html', 'w');
   }
   
-  for (name in descriptors) {
+  for (name in properties) {
     
-    var descriptor = descriptors[name], prop = new DocProperty(), val = null;
+    var prop = new DocProperty(), val = properties[name];
     
     prop.group = group;
     prop.title = (name[0].toUpperCase() + name.substr(1));
     prop.prototype = prototype;
-
-    if ('get' in descriptor) {
-      val = descriptor.get;
-      prop.mode |= 0x1;
-      if ( ! ('set' in descriptor)) {
-        prop.mode |= 0x2;
-      }
-    }
-    else {
-      prop.mode = 0x4;
-      val = descriptor.value;
-    }
     
     if ( ! (val instanceof Function))
       continue;
@@ -158,7 +146,8 @@ Object.defineProperties = function(proto, descriptors) {
   }
 }
 
-require('../index.js');
+require('../dist/' + ver + '/jst.js');
+
 versions.sort(function(a, b) {
   a = a.split('.'), b = b.split('.');
   return a[0] < b[0] || a[1] < b[1];

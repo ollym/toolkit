@@ -59,3 +59,11 @@ test('String#sprintf', function() {
   strictEqual('%01.2f'.sprintf(12.1), '12.10');
   //TODO: More tests
 });
+
+test('String#btoa', function() {
+  strictEqual('Hello World'.btoa(), 'SGVsbG8gV29ybGQ=');
+});
+
+test('String#atob', function() {
+  strictEqual('SGVsbG8gV29ybGQ='.atob(), 'Hello World');
+});

@@ -1,0 +1,169 @@
+* {
+    border: 0 none; 
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 100%;
+    font-style: inherit;
+    font-weight: inherit;
+    margin: 0;
+    outline: 0;
+    padding: 0;
+    vertical-align: baseline;
+}
+
+body {
+    color: #999;
+    font-size: 12px;
+    line-height: 18px;
+}
+
+*[data-loading] {
+    background: url(../img/loading.gif) no-repeat center;
+    width: 16px;
+    height: 11px;
+}
+
+ul {
+    color: #999;
+    font-size: 12px;
+    line-height: 18px;
+}
+
+p img {
+    margin: 0 10px 10px 0;
+    float: left;
+}
+
+#banner {
+    height: 57px;
+    background: url(../img/banner.png) repeat-x;
+}
+
+#header {
+    background: url(../img/header.png) repeat-x;
+    height: 280px;
+    padding-top: 40px
+}
+
+#header h2, #header h3, #header h4, #header h5 {
+    color: #898989;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 32px;
+    margin-bottom: 8px;
+}
+
+#header h4 {
+    font-size: 14px;
+    line-height: 21px;
+}
+
+#header p {
+    font-size: 12px;
+    line-height: 18px;
+    margin-bottom: 15px;
+}
+
+#content {
+    background: #fafafa;
+    border-bottom: 1px solid #efefef;
+    padding: 35px 0;
+    overflow: hidden;
+}
+
+#home_widgets {
+    background: #fafafa;
+    border-bottom: 1px solid #efefef;
+    border-top: 1px solid #fff;
+    padding: 35px 0;
+}
+
+#content.blog_bg {
+    background: #fafafa url("images/bg_main_content.png") repeat-x top left;
+    padding: 0 0 45px;
+}
+
+#main_column {
+    float: left;
+    margin-right: 20px;
+    width: 620px;
+}
+
+#sidebar {
+    float: left;
+    width: 320px;
+}
+
+#content h1,
+#content h2,
+#content h3,
+#content h4,
+#content h5,
+#content h6 {
+    color: #3f4c58;
+    font-size: 26px;
+    font-weight: bold;
+    line-height: 32px;
+    margin-bottom: 12px;
+}
+
+#content h2 {
+    font-size: 23px;
+    line-height: 29px;
+}
+
+#content h3 {
+    font-size: 20px;
+    line-height: 26px;
+}
+
+#content h4 {
+    font-size: 17px;
+    line-height: 23px;
+}
+
+#content h5 {
+    font-size: 14px;
+    line-height: 17px;
+}
+
+.subtitle {
+    color: #4890c2;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.btn {
+    margin-right: 10px;
+}
+
+#content p {
+    margin-bottom: 15px;
+}
+
+#content ul {
+    margin-bottom: 15px;
+}
+
+#content ul li {
+    margin-left: 15px;
+}
+
+#content p.tagline {
+    margin-top: -8px;
+    font-style: italic;
+}
+
+.release-state {
+    color: green;
+    font-variant: small-caps;
+    letter-spacing: 1px;
+    text-transform: lowercase;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 0 5px;
+}
+
+#latest-issues a.title {
+    color: #4890C2;
+    line-height: 23px;
+}
