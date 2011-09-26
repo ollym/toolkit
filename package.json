@@ -3,7 +3,7 @@
   "description":"An ECMA5 compliant javascript multi-purpose toolkit.",
   "keywords":["ECMA5", "tookit", "utility", "object"],
   "homepage":"http://ollym.github.com/toolkit/",
-  "version":"1.5.1",
+  "version":"1.5.2",
   "author":"Oliver Morgan <ollym@me.com>",
   "contributors":[],
   "repository":{ "type": "git", "url": "git://github.com/ollym/toolkit.git" },

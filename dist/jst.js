@@ -4,7 +4,7 @@
 try { Object.defineProperty({}, 'x', {});
 } catch(e) { domDefineProperty=true; }
 
-if (window && window.__jstExtend__) {
+if (typeof window !== 'undefined' && window.__jstExtend__) {
   var extend = window.__jstExtend__;
 }
 else var extend = function(prototype, methods) {
@@ -64,7 +64,7 @@ else var extend = function(prototype, methods) {
   }
 }
 
-if (this.module && module.exports) {
+if (typeof module !== 'undefined' && module.exports) {
   module.exports.repl = function() {
     var vm = require('vm'), repl = require('repl');
     process.stdin.removeAllListeners('keypress');
@@ -2902,7 +2902,7 @@ extend(String.prototype, {
      *  'Hello World'.btoa()
      *    // returns 'SGVsbG8gV29ybGQ='
      */
-    if (window && window.btoa)
+    if (typeof window !== 'undefined' && window.btoa)
       return window.btoa(this);
     
     var key = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=', output = '', input = this.valueOf();
