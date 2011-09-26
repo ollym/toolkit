@@ -1,0 +1,151 @@
+#content {
+    margin-bottom: 260px;
+}
+
+#repl {
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    background: #272822;
+    color:white;
+    padding: 10px 0;
+}
+
+#repl-prefix, #repl-stdin, #repl-stdio {
+    font-family: 'Droid Sans Mono', sans-serif !important;
+    width: 100%;
+    background: transparent;
+    font-size: 14px !important;
+}
+
+#repl-stdio {
+    height: 220px;
+    overflow-y: scroll;
+    color: white;
+}
+
+#repl-stdin {
+    color:white!important;
+    margin: -17px 0 0 18px;
+}
+
+#repl-stdio .repl-command {
+    padding-left: 8px;
+}
+
+#repl-stdio li .highlight {
+    display: inline-block;
+}
+
+#repl-stdio li.error {
+    color: red!important;
+}
+
+#repl-stdio::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+#repl-stdio::-webkit-scrollbar-thumb:vertical {
+    height: 50px;
+    background-color: #666;
+    -webkit-border-radius: 6px;
+}
+
+#repl-stdio::-webkit-scrollbar-track-piece {
+    background-color: #3b3b3b;
+    -webkit-border-radius: 6px;
+}
+
+#repl-stdio::-webkit-scrollbar-button:start:decrement,
+#repl-stdio::-webkit-scrollbar-button:end:increment  {
+    height: 0;
+}
+
+#header {
+    height: 60px;
+    padding-top: 10px;
+}
+
+#content {
+    padding: 0;
+}
+
+#search {
+    border-bottom: 1px solid #efefef;
+    padding: 15px 0;
+}
+
+#wrapper {
+    border-top: 1px solid white;
+    padding: 15px 0;
+}
+
+.method {
+    float: left;
+    padding: 20px;
+    background: white url(../img/method.png) repeat-x top left;
+    border: 1px solid #E9E9E9;
+    position: relative;
+    border-radius: 6px;
+    width: 238px;
+    margin: 0 10px 20px 10px;
+    -webkit-border-radius: 6px;
+}
+
+.method h4 {
+    margin-bottom: 3px !important;
+    cursor: pointer;
+}
+
+.method .btn {
+    cursor: pointer;
+    position: absolute;
+}
+
+.method .ret {
+    color: #AEAEAE;
+    font-weight: normal;
+    font-size: 12px;
+}
+
+.method .params {
+    color: #4890C2;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.method p {
+    display: none;
+}
+
+.method .params attr:hover {
+    border-bottom: 1px dotted #AEAEAE;
+}
+
+#tooltip {
+    display: none;
+    position: absolute;
+    z-index: 9999;
+}
+
+#tooltip-text {
+    background: white url(../img/tooltip-bg.png) repeat-x bottom left;
+    border: 1px solid #dfdfdf;
+    color: #A6A6A6;
+    font-size: 12px;
+    line-height: 18px;
+    padding: 15px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -webkit-box-shadow: 1px 1px 3px #e4e4e4;
+}
+
+#tooltip-tip {
+    position: relative;
+    z-index: 1;
+    margin-top: -2px;
+    height: 16px;
+    background: url(../img/tooltip.png) bottom right no-repeat;
+}

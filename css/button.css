@@ -1,0 +1,28 @@
+/* ========================== Buttons Styles ========================== */
+.btn {
+    background: url(../img/buttons.png) repeat-x top left;
+    border: 1px solid;  display: block; float: left;
+    font-size: 13px;
+    font-weight: bold;  height: 29px;   line-height: 29px;  padding: 0 22px;
+    border-radius: 4px; -webkit-border-radius: 4px;
+    text-decoration: none;
+}
+.btn.grey {  border-color: #d1d1d1;  color: #555960; text-shadow: 1px 1px 0 #fff;}
+.btn.black {   background-position: 0 -29px;   border-color: #20272c;  color: #fff; text-shadow: 1px 1px 0 #000;}
+.btn.red { background-position: 0 -58px;   border-color: #bf5d44;  color: #fff; text-shadow: 1px 1px 0 #c6382b;}
+.btn.blue { background-position: 0 -87px;   border-color: #4489bf;  color: #fff; text-shadow: 1px 1px 0 #246595;}
+.btn.green { background-position: 0 -116px;  border-color: #75b443;  color: #fff; text-shadow: 1px 1px 0 #579029;}
+.btn.orange {   background-position: 0 -145px;  border-color: #d98129;  color: #fff; text-shadow: 1px 1px 0 #c74928;}
+.btn.violet {   background-position: 0 -174px;  border-color: #b740da;  color: #fff; text-shadow: 1px 1px 0 #9b3eb4;}
+.btn.aqua { background-position: 0 -203px;  border-color: #06bfbf;  color: #fff; text-shadow: 1px 1px 0 #308895;}
+.btn.heather {  background-position: 0 -232px;  border-color: #6f6f6f;  color: #fff; text-shadow: 1px 1px 0 #444; }
+
+.btn.grey:active {  border-color: #d1d1d1;  color: #555960; text-shadow: 1px 1px 0 #fff;}
+.btn.black:active {   background-position: 0 -260px;   border-color: #20272c;  color: #fff; text-shadow: 1px 1px 0 #000;}
+.btn.red:active { background-position: 0 -289px;   border-color: #bf5d44;  color: #fff; text-shadow: 1px 1px 0 #c6382b;}
+.btn.blue:active { background-position: 0 -318px;   border-color: #4489bf;  color: #fff; text-shadow: 1px 1px 0 #246595;}
+.btn.green:active { background-position: 0 -347px;  border-color: #75b443;  color: #fff; text-shadow: 1px 1px 0 #579029;}
+.btn.orange:active {   background-position: 0 -386px;  border-color: #d98129;  color: #fff; text-shadow: 1px 1px 0 #c74928;}
+.btn.violet:active {   background-position: 0 -405px;  border-color: #b740da;  color: #fff; text-shadow: 1px 1px 0 #9b3eb4;}
+.btn.aqua:active { background-position: 0 -434px;  border-color: #06bfbf;  color: #fff; text-shadow: 1px 1px 0 #308895;}
+.btn.heather:active {  background-position: 0 -473px;  border-color: #6f6f6f;  color: #fff; text-shadow: 1px 1px 0 #444; }
