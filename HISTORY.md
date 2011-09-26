@@ -1,3 +1,10 @@
+1.5.1 / 2011-09-26
+==================
+
+  * New AutoDoc generator and website.
+  * Added: String#repeat.
+  * Number of small bug fixes.
+
 1.5.0 / 2011-09-25
 ==================
 
