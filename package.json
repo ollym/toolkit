@@ -8,5 +8,5 @@
   "contributors":[],
   "dependencies":["memstream"],
   "repository":{ "type": "git", "url": "git://github.com/ollym/toolkit.git" },
-  "main":"./dist/1.5.0/jst.min.js" 
+  "main":"./dist/jst.min.js" 
 }
