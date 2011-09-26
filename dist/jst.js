@@ -2584,7 +2584,7 @@ extend(String.prototype, {
     /**
      * Repeats the value of the string a certain number of times.
      *
-     * @since 1.5.0
+     * @since 1.5.1
      * @param [num=1] The number of times to repeat
      * @example
      *  'a'.repeat(5);
