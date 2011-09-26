@@ -6,6 +6,22 @@
         <link href="css/style.css" rel="stylesheet" type="text/css">
         <script type="text/javascript" src="../../dist/1.5.0/jst.js"></script>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+        <script type="text/javascript">
+        var get = $.get, loading = 0;
+        $.get = function(url, callback) {
+            loading++;
+            get(url, function(result) {
+                callback(result);
+                loading--;
+                if (loading == 0) {
+                    $('#loading').hide();
+                    $('#main').css('display', 'block');
+                    $('#main').animate({opacity: 1});
+                    $.get = get;
+                }
+            });
+        }
+        </script>
     </head>
     <body>
         <div id="banner">
@@ -51,59 +67,103 @@
             </div>
         </div>
         <div id="content">
-            <div class="container-12">
+            <div id="loading"><h4>Loading. Please wait.</h4></div>
+            <div class="container-12" style="display:none;opacity:0" id="main">
                 <div class="grid-6 alpha">
-                    <h4>JSToolkit <span id="latest-tag" data-loading> </span><span class="release-state">STABLE</span></h4>
-                    <p id="latest-committer" class="tagline" data-loading></p>
+                    <h4>JSToolkit <span id="latest-tag"> </span><span class="release-state">STABLE</span></h4>
+                    <p id="latest-committer" class="tagline"></p>
                     <h5>Changelog</h5>
-                    <ul id="latest-changelog" data-loading></ul>
-                    <a href="#" title="" class="btn green">Download <span id="latest-size" data-loading></span></a>
-                    <a href="#" title="" class="btn blue">Documentation</a>
+                    <ul id="latest-changelog"></ul>
+                    <a id="latest-download" title="" target="_blank" class="btn green">Download <span id="latest-size"></span></a>
+                    <a id="latest-docs" title="" target="_blank" class="btn blue">Documentation</a>
+                    <a id="latest-source" title="" target="_blank" class="btn orange">Source Tree</a>
                     <script type="text/javascript">
-                    $(function() {
-                        $.get('https://api.github.com/repos/ollym/toolkit/git/refs/tags', function(tags) {
-                            var latest = tags.last().ref.remove('refs/tags/');
-                            $('#latest-tag').removeAttr('data-loading').text(latest);
-                            $.get(tags.last().object.url, function(tag) {
-                                $('#latest-committer').removeAttr('data-loading').html(
-                                    'Released %ss ago by <a href="mailto:%s">%s</a>'.sprintf(
-                                        Date.now() - Date.parse(tag.committer.date), tag.committer.email, tag.committer.name));
-                            });
-                            $.get('https://api.github.com/repos/ollym/toolkit/git/trees/' + tags.last().object.sha, function(tree) {
+                    $.get('https://api.github.com/repos/ollym/toolkit/git/refs/tags', function(tags) {
+
+                        var latest = tags.sortBy('ref', function(a,b) {
+                            a = a.remove('refs/tags/v').split('.'), b = b.remove('refs/tags/v').split('.');
+                            return a[0] < b[0] || a[1] < b[1];
+                        }).last().ref.remove('refs/tags/');
+
+                        $('#latest-tag').removeAttr('data-loading').text(latest);
+                        $.get(tags.last().object.url, function(tag) {
+                            $('#latest-committer').removeAttr('data-loading').html(
+                                'Released %ss ago by <a href="mailto:%s">%s</a>'.sprintf(
+                                    Date.now() - Date.parse(tag.committer.date), tag.committer.email, tag.committer.name));
+                        });
+                        $.get('https://api.github.com/repos/ollym/toolkit/git/trees/' + tags.last().object.sha, function(tree) {
+                            
+                            $('#latest-download').attr('href', 'https://raw.github.com/ollym/toolkit/%s/dist/1.5.0/jst.min.js'
+                                .sprintf(tree.sha));
                                 
-                                // Get the distribution size and url
-                                $.get(tree.tree.each(function(file) {
-                                    if (file.path === 'dist') return file.url;
-                                }), function(blob) {
-                                    console.log(blob);
-                                });
+                            $('#latest-source').attr('href', 'https://github.com/ollym/toolkit/tree/%s'
+                                .sprintf(tree.sha));     
                                 
-                                // Get the changelog
-                                $.get(tree.tree.each(function(file) {
-                                    if (file.path === 'HISTORY.md') return file.url;
-                                }), function(blob) {
-                                    var history = blob.content.atob().split('=================='), 
-                                        idx = history.each(function(ver, i) {
-                                            var match = ver.match(/(\d*\.\d*\.\d*)\s*\/\s*\d*-\d*-\d*\s*$/)
-                                            if (match && match[1] == latest.substr(1)) return i+1;
-                                        }),
-                                        changelog = history[idx].split('\n').map(function(line) {
-                                            return line.trim().remove(/^\*\s*/);
-                                        }).clean().slice(0, -1);
+                            $('#latest-docs').attr('href', 'docs.html?sha=%s'
+                                .sprintf(tree.sha));
+                            
+                            // Get the distribution size and url
+                            $.get(tree.tree.each(function(file) {
+                                if (file.path === 'dist') return file.url;
+                            }), function(blob) {
+                                $.get(blob.tree.each(function(path) {
+                                   if (path.path == latest.substr(1)) return path.url; 
+                                }), function(dist) {
                                     
-                                    $('#latest-changelog').removeAttr('data-loading');
-                                    changelog.forEach(function(change) {
-                                        $('#latest-changelog').append('<li>%s</li>'.sprintf(change));
+                                    var min = dist.tree.each(function(fl) {
+                                       if (fl.path == 'jst.min.js') return fl; 
                                     });
-                               });
+                                    
+                                    $('#latest-size').removeAttr('data-loading')
+                                        .text(min.size.abbr(1,true) + 'b');
+                                });
                             });
-                        }); 
-                    });
+                            
+                            // Get the changelog
+                            $.get(tree.tree.each(function(file) {
+                                if (file.path === 'HISTORY.md') return file.url;
+                            }), function(blob) {
+                                var history = blob.content.atob().split('=================='), 
+                                    idx = history.each(function(ver, i) {
+                                        var match = ver.match(/(\d*\.\d*\.\d*)\s*\/\s*\d*-\d*-\d*\s*$/);
+                                        if (match && match[1] == latest.substr(1)) return i+1;
+                                    }),
+                                    changelog = history[idx].split('\n').map(function(line) {
+                                        return line.trim().remove(/^\*\s*/);
+                                    }).clean().slice(0, -1);
+                                
+                                $('#latest-changelog').removeAttr('data-loading');
+                                changelog.forEach(function(change) {
+                                    $('#latest-changelog').append('<li>%s</li>'.sprintf(change));
+                                });
+                           });
+                        });
+                    }); 
                     </script>
                 </div>
-                <div class="grid-6 omega">
-                    <h4>Recent Issues</h4>
-                    <ul id="latest-issues" data-loading></ul>
+                <div class="grid-6 omega sidebar">
+                    <h4>Recent Commits</h4>
+                    <ul id="latest-commits" data-loading></ul>
+                    <script type="text/javascript">
+                    $.get('https://api.github.com/repos/ollym/toolkit/git/refs/heads/master', function(parent) {
+                        (function next(i, parent) { if (i === 0) { $('#latest-commits').removeAttr('data-loading'); return; }
+                            $.get('https://api.github.com/repos/ollym/toolkit/git/commits/' + parent.sha, function(commit) {
+                                
+                                var tmpl = '<li><a class="title" target="_blank" href="%s">%s</a><p class="tagline">%s</p></li>',
+                                    li = $(tmpl.sprintf('https://github.com/ollym/toolkit/commit/' + commit.sha, commit.message,
+                                        'by <a href="mailto:%s">%s</a> %dms ago'.sprintf(commit.author.email, commit.author.name,
+                                            Date.now() - Date.parse(commit.author.date))));
+                                
+                                if (i == 5) li.addClass('first');
+                                else if (i === 1) li.addClass('last');            
+                                
+                                $('#latest-commits').append(li);
+                                
+                                next(--i, commit.parents[0]);
+                            });
+                        })(5, parent.object);
+                    });
+                    </script>
                 </div>
             </div>
         </div>

@@ -17,9 +17,18 @@ body {
 }
 
 *[data-loading] {
-    background: url(../img/loading.gif) no-repeat center;
-    width: 16px;
-    height: 11px;
+    background: url(../img/loading.gif) no-repeat left;
+    min-width: 16px;
+    min-height: 11px;
+}
+
+span[data-loading] {
+    display: inline-block;
+}
+
+ul[data-loading] {
+    background-position: bottom left;
+    padding-bottom: 16px;
 }
 
 ul {
@@ -163,7 +172,42 @@ p img {
     padding: 0 5px;
 }
 
-#latest-issues a.title {
+#latest-commits {
+    list-style: none;
+}
+
+#latest-commits li a.title {
     color: #4890C2;
-    line-height: 23px;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    margin: 16px 0 12px 0;
+    display: block;
+}
+
+#latest-commits li {
+    border-bottom: 1px solid #EEE;
+    border-top: 1px solid white;
+    margin-left: 0 !important;
+}
+
+#latest-commits li.first {
+    border-top: none;
+}
+
+#latest-commits li.last {
+    border-bottom: none;
+}
+
+.sidebar {
+    padding-left: 19px;
+    margin-left: 0;
+    border-left: 1px solid #eee;
+}
+
+#loading {
+    background: url(../img/spinner.gif) no-repeat center top;
+    padding-top: 43px;
+    font-size: 16px;
+    text-align: center;
 }

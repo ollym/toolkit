@@ -4,7 +4,10 @@
 try { Object.defineProperty({}, 'x', {});
 } catch(e) { domDefineProperty=true; }
 
-var extend = extend || function(prototype, methods) {
+if (window && window.__jstExtend__) {
+  var extend = window.__jstExtend__;
+}
+else var extend = __jstExtend__ || function(prototype, methods) {
   
   var title = null;
   
@@ -33,7 +36,6 @@ var extend = extend || function(prototype, methods) {
   }
   
   for (name in methods) {
-    if (name == 'propertyIsEnumerable') alert('ho');
     var method = methods[name];
         
     if (domDefineProperty) {
