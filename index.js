@@ -7,7 +7,7 @@ try { Object.defineProperty({}, 'x', {});
 if (window && window.__jstExtend__) {
   var extend = window.__jstExtend__;
 }
-else var extend = __jstExtend__ || function(prototype, methods) {
+else var extend = function(prototype, methods) {
   
   var title = null;
   

@@ -14,7 +14,7 @@
         var sha = window.location.search.match(/sha=([^&]+)/)[1];
         $(function() {
             $.get('../../dist/1.5.0/jst.js', function(data) {
-               window.jstExtend = function() { console.log('foo'); }
+               window.__jstExtend__ = function() { console.log('foo'); }
                eval(data);
                Array.range();
             });
