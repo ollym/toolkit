@@ -7,60 +7,13 @@
     bottom: 0px;
     left: 0px;
     right: 0px;
-    background: #272822;
     color:white;
-    padding: 10px 0;
+    padding: 10px;
 }
 
-#repl-prefix, #repl-stdin, #repl-stdio {
-    font-family: 'Droid Sans Mono', sans-serif !important;
-    width: 100%;
-    background: transparent;
-    font-size: 14px !important;
-}
-
-#repl-stdio {
-    height: 220px;
-    overflow-y: scroll;
-    color: white;
-}
-
-#repl-stdin {
-    color:white!important;
-    margin: -17px 0 0 18px;
-}
-
-#repl-stdio .repl-command {
-    padding-left: 8px;
-}
-
-#repl-stdio li .highlight {
-    display: inline-block;
-}
-
-#repl-stdio li.error {
-    color: red!important;
-}
-
-#repl-stdio::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-}
-
-#repl-stdio::-webkit-scrollbar-thumb:vertical {
-    height: 50px;
-    background-color: #666;
-    -webkit-border-radius: 6px;
-}
-
-#repl-stdio::-webkit-scrollbar-track-piece {
-    background-color: #3b3b3b;
-    -webkit-border-radius: 6px;
-}
-
-#repl-stdio::-webkit-scrollbar-button:start:decrement,
-#repl-stdio::-webkit-scrollbar-button:end:increment  {
-    height: 0;
+#repl .console-stdio {
+    width: 940px;
+    margin: 0 auto;
 }
 
 #header {

@@ -1,0 +1,91 @@
+.console * {
+    font-family: monospace !important;
+    font-size: 14px;
+}
+
+.console {
+    background: #0E1628;
+    color: #F4FFFF;
+    padding: 20px;
+}
+
+.console-stdio {
+    border: none;
+    display: block;
+    width: 100%;
+    overflow-y: scroll;
+    resize: none;
+    height: 200px;
+    
+    /* font-family: "Monaco", "Lucida Console","Bitstream Vera Sans Mono","Courier New", monospace; */
+    font-weight: bold;
+    background: transparent;
+}
+.console-cursor {
+    line-height: 115%;
+    position: relative;
+    margin-right: -8px;
+    background: white;
+    display: inline;
+    z-index: 0;
+    opacity: 0.4;
+}
+.console-stdio-block {
+    display: block;
+}
+.console-stdio:focus {
+    outline: none;
+}
+.console-stdio::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+.console-stdio::-webkit-scrollbar-thumb:vertical {
+    height: 50px;
+    background-color: #666;
+    -webkit-border-radius: 6px;
+}
+.console-stdio::-webkit-scrollbar-track-piece {
+    background-color: #3b3b3b;
+    -webkit-border-radius: 6px;
+}
+.console-stdio::-webkit-scrollbar-button:start:decrement,
+.console-stdio::-webkit-scrollbar-button:end:increment  {
+    height: 0;
+}
+
+.console-prompt {
+    color: #FC0;
+    margin-right: 5px;
+}
+.console-stdin {
+    color: white;
+}
+
+.console-str, .console-int, .console-const, .console-bool, .console-func, .console-date, .console-regex {
+    font-weight: normal;
+}
+
+.console-err {
+    color: red;
+}
+
+.console-str {
+    color: #6F0;
+}
+
+.console-int {
+    color: #F93;
+}
+
+.console-const {
+    color: #777;
+}
+
+.console-bool {
+    color: #7CF;
+}
+
+.console-regex {
+    color: #E5E;
+}
