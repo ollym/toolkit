@@ -1,7 +1,5 @@
 $(function() {
-  
-  Array.range = 'foo';
-  
+
   var format = function format(value) {
     
     if (typeof value === 'undefined' || value !== value)

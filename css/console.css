@@ -16,8 +16,6 @@
     overflow-y: scroll;
     resize: none;
     height: 200px;
-    
-    /* font-family: "Monaco", "Lucida Console","Bitstream Vera Sans Mono","Courier New", monospace; */
     font-weight: bold;
     background: transparent;
 }
