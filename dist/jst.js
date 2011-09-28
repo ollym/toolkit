@@ -77,24 +77,28 @@ if (typeof module !== 'undefined' && module.exports) {
     ctx.String = String;
     ctx.Function = Function; 
   }
-}/**
- * Creates an array containing a list of numbers in the range
- */
-extend(Array, {
+}extend(Array, {
   
   intersect: function intersect(arrays) {
     /**
-     * Finds the intersection between one or more different arrays. This can be useful so to use the array as a set. Equivalent to the ampersand (&) operator. Equality checks are strict - again use the indexOf method.
+     * Finds values that are present in all of the given arrays. Equality of values is strict (===).
      *
      * @since 1.4.0
-     * @param arrays An array of arrays to find the intersection
-     * @alias intersection
+     * @param arrays|*array The arrays to find the intersection with.
      * @example
      *  Array.intersect([[2,3,4], [3,4,5]]);
      *    // returns [3]
      *
+     *  Array.intersect([2,3,4], [3,4,5]);
+     *    // returns [3]
+     *
      * @returns array
      */
+    if (arguments.length > 1)
+      arrays = Array.prototype.slice.call(arguments);
+    else if (arguments.length === 0 || arrays.length === 0)
+      return [];
+    
     return arrays.first().filter(function(val) {
       return arrays.every(function(arg) {
         return arg.contains(val);
@@ -104,17 +108,24 @@ extend(Array, {
   
   diff: function diff(arrays) {
     /**
-     * Finds values which are unique to only one array from all that are given as parameters (including the current instance). Regarded as the opposite as intersect. Again equality tests are strict.
+     * Finds values that are present in only 1 of the given arrays. Equality of values is strict (===).
      *
      * @since 1.4.0
-     * @param arrays The arrays to differentiate with
-     * @alias difference
+     * @param arrays|array* The arrays to differentiate with
      * @example
      *  Array.diff([[1,2,3],[2,3,4],[3,4,5]]);
      *    // returns [1,5]
      *
+     *  Array.diff([1,2,3],[2,3,4],[3,4,5]);
+     *    // returns [1,5]
+     *
      * @returns array
      */
+    if (arguments.length > 1)
+      arrays = Array.prototype.slice.call(arguments);
+    else if (arguments.length === 0 || arrays.length === 0)
+      return [];
+      
     var vals = arrays.flatten(1);
 
     return vals.filter(function(a) {
@@ -124,7 +135,7 @@ extend(Array, {
   
   union: function union(arrays) {
     /**
-     * Creates an array with distinct values from each of the arrays given as parameters.
+     * Flattens parameters into a single array and then finds unique values.
      *
      * @since 1.4.0
      * @param arrays The arrays to union
@@ -132,37 +143,58 @@ extend(Array, {
      *  Array.union([[1,2,3],[3,4,5],[5,6,7]]);
      *    // returns [1,2,3,4,5,6,7]
      *
+     *  Array.union([1,2,3],[3,4,5],[5,6,7]);
+     *    // returns [1,2,3,4,5,6,7]
+     *
      * @returns array
      */
+    if (arguments.length > 1)
+      arrays = Array.prototype.slice.call(arguments);
+    else if (arguments.length === 0 || arrays.length === 0)
+      return [];
+    
     return Array.prototype.concat.apply([], arrays).unique();
   },
   
   range: function range(start, stop, step) {
     /**
-     * Constructs an array containing a number of integers specified by the parameters
+     * Constructs an array containing a number of integers specified by the parameters. A RangeError will be raised if you attempt an infinite loop.
      * 
      * @since 1.0.0
-     * @param start The number to start at
+     * @param [start=1] The number to start at
      * @param stop The number to stop at
-     * @param step How many to increment at a time
+     * @param [step=1] How many to increment at a time
      * @example
      *  Array.range(5, 12, 2)
      *    // returns [5,7,9,11]
      *
      *  Array.range(5, 8)
      *    // returns [5,6,7,8]
+     *
+     *  Array.range(5)
+     *    // returns [1,2,3,4,5]
+     *
+     *  Array.range(-3)
+     *    // returns [-1,-2,-3]
      * 
      * @returns array
      */
-    if (stop === undefined) {
-      stop = start;
-      start = 1;
-    }
-
+    if (arguments.length === 1) { stop = start; step = start = (stop < 0 ? -1 : 1); }
+    else if (arguments.length === 0) return [];
+    else if (step === undefined) step = (stop < start ? -1 : 1);
+    else if (step === 0 || isNaN(step)) throw new RangeError('Step must be an valid integer and not be equal to 0.');
+    
+    step = Number(step), stop = Number(stop), start = Number(start);    
     var arr = [];
-
-    for (var i = start; i <= stop; i += (step || 1)) {
-      arr.push(i);
+    
+    if (stop < start) {
+      if (step >= 0) throw new RangeError('Stop must not be greater than start if step is to be positive.');
+      for (var i = start, arr = []; i >= stop; arr.push(i), i += step);
+    }
+    
+    if (stop > start) {
+      if (step <= 0) throw new RangeError('Stop must not be less than start if step is to be negative.');
+      for (var i = start, arr = []; i <= stop; arr.push(i), i += step);
     }
 
     return arr;
@@ -171,7 +203,7 @@ extend(Array, {
 
 extend(Array.prototype, {
   
-  concat$: function concat() {
+  concat$: function concat$() {
     /**
      * The self-modification version of concat. Merges a second array onto the end of the first.
      *
@@ -179,7 +211,9 @@ extend(Array.prototype, {
      * @param *arrays The arrays to concat
      * @example
      *  var arr = [1,2,3];
-     *  arr.concat$([2,3,4], [5,6,7]);
+     *  arr.concat$([4,5], [6,7]) === arr;
+     *    // true
+     *  arr;
      *    // arr = [1,2,3,4,5,6,7]
      * 
      * @returns self
@@ -192,19 +226,41 @@ extend(Array.prototype, {
   
   swap: function swap(index1, index2) {
     /**
-     * Swaps two values within the array given their indexes.
+     * The self modification version of Array#Swap.
      *
-     * @since 1.0.0
-     * @alias switch
+     * @since 1.5.3
+     * @param index1 The index of the first item to swap
+     * @param index2 The index of the value to swap it with
+     * @example
+     *  [5, 10, 15].swap(0,2);
+     *    // returns [15, 10, 5]
+     * 
+     * @returns array
+     */
+    return this.clone().swap$(index1, index2);
+  },
+  
+  swap$: function swap$(index1, index2) {
+    /**
+     * The self modification version of Array#Swap.
+     *
+     * @since 1.5.3
      * @param index1 The index of the first item to swap
      * @param index2 The index of the value to swap it with
      * @example
      *  var arr = [5, 10, 15];
-     *  arr.swap(0,2);
-     *  arr = [15, 10, 5]
+     *  arr.swap(0,2) === arr; // true
+     *  arr;
+     *    // arr = [15, 10, 5]
      * 
      * @returns self
      */
+    if ( ! Object.hasOwnProperty.call(this, Number(index1)))
+      throw new RangeError('Array#swap: index1 does not exist within the array.')
+      
+    if ( ! Object.hasOwnProperty.call(this, Number(index2)))
+      throw new RangeError('Array#swap: index2 does not exist within the array.')
+      
     var value = this[index1];
 
     this[index1] = this[index2];
@@ -229,6 +285,7 @@ extend(Array.prototype, {
      * 
      * @returns bool
      */
+    if (arguments.length === 0) return false;
     args = Array.prototype.slice.call(arguments);
     
     return args.every(function(arg) { 
@@ -236,32 +293,51 @@ extend(Array.prototype, {
     }.bind(this));
   },
   
-  remove: function remove() {
+  remove$: function remove$() {
     /**
-     * Removes all instances of the given values from the array. Remove uses the indexOf method which enforces strict equality (===).
+     * Self modification of Array.remove. Removes given values from the array.
      *
-     * @since 1.0.0
+     * @since 1.5.3
      * @param *values All the values
-     * @alias delete
      * @example
      *  var arr = [5, 2, 5, 7];
-     *  arr.remove(5, 2); // [7]
+     *  arr.remove$(5, 2);
+     *  arr;
+     *    // arr = [5,7]
      * 
      * @returns self
      */
-    args = Array.prototype.slice.call(arguments);
-      
-    args.forEach(function(arg) {
-      if (this.contains(arg))
-        this.splice(this.indexOf(arg), 1);
-    }.bind(this));
+    if (arguments.length === 0) return this;
+    exclude = Array.prototype.slice.call(arguments);
     
-    return this;
+    return this.filter$(function(val) {
+      return ! exclude.contains(val);
+    });
+  },
+  
+  remove: function remove() {
+    /**
+     * Removes given values from a clone of the array and returns it.
+     *
+     * @since 1.5.3
+     * @param *values All the values
+     * @example
+     *  [5, 2, 5, 7].remove(5, 2);
+     *    // returns [5,7]
+     * 
+     * @returns array
+     */
+    if (arguments.length === 0) return this.clone();
+    exclude = Array.prototype.slice.call(arguments);
+    
+    return this.filter(function(val) {
+      return ! exclude.contains(val); 
+    });
   },
   
   shuffle: function shuffle() {
     /**
-     * Re-orders all values within the array into a random order. The method is simple and relies on Number.random() to generate random numbers which is automatically seeded.
+     * Re-orders all values within the array into a random order.
      *
      * @since 1.0.0
      * @example
@@ -273,7 +349,7 @@ extend(Array.prototype, {
     var arr = this.clone();
 
     for (var index = 0; index < arr.length - 1; index++) {
-      arr.swap(index, Number.random(index, arr.length - 1).round());
+      arr.swap$(index, Number.random(index, arr.length - 1).round());
     }
         
     return arr;
@@ -286,13 +362,14 @@ extend(Array.prototype, {
      * @since 1.3.0
      * @example
      *  var arr = ['a','b','c'];
-     *  arr.shuffle$();
+     *  arr.shuffle$() === arr; // true
+     *  arr;
      *    // arr will be something like b,a,c
      *
      * @returns self
      */
     for (var index = 0; index < this.length - 1; index++) {
-      this.swap(index, Number.random(index, this.length - 1).round());
+      this.swap$(index, Number.random(index, this.length - 1).round());
     }
     
     return this;
@@ -300,13 +377,13 @@ extend(Array.prototype, {
   
   clone: function clone() {
     /**
-     * Clones the array by copying all the enumerable values into a new one. Any non-enumerable properties you've defined using Object.defineProperties or alike will be lost. If you don't want that, use Object.clone() instead.
+     * Clones all array values. This will remove any user-defined properties. If you don't want this use Object.clone() instead.
      *
      * @since 1.0.0
      * @example
      *  var a = [1,2,3], b = a.clone();
-     *  a == b // false
-     *  a.join(',') == b.join(',') // true
+     *  a == b; // false
+     *  a.join(',') == b.join(','); // true
      *
      * @returns array
      */
@@ -315,7 +392,7 @@ extend(Array.prototype, {
   
   intersect: function intersect() {
     /**
-     * Finds the intersection between one or more different arrays. This can be useful so to use the array as a set. Equivalent to the ampersand (&) operator. Equality checks are strict - again use the indexOf method.
+     * Finds values that are contained within all given arrays.
      *
      * @since 1.0.0
      * @param *values The arrays to intersect with
@@ -330,7 +407,7 @@ extend(Array.prototype, {
 
   diff: function diff() {
     /**
-     * Finds values which are unique to only one array from all that are given as parameters (including the current instance). Regarded as the opposite as intersect. Again equality tests are strict.
+     * Finds all values that are only contained in 1 of the supplied arrays.
      *
      * @since 1.0.0
      * @alias difference
@@ -346,7 +423,7 @@ extend(Array.prototype, {
   
   union: function union() {
     /**
-     * Creates an array with distinct values from each of the arrays given as parameters.
+     * Merges all the arrays and finds the unique values within it.
      *
      * @since 1.3.0
      * @param *arrays The arrays to union
@@ -382,9 +459,10 @@ extend(Array.prototype, {
      * @since 1.3.0
      * @param size The size of the array chunks
      * @example
-     *  var a = [1,2,3,4,5,6]
-     *  a.chunk$(2);
-     *  // a = [[1,2],[3,4],[5,6]]
+     *  var arr = [1,2,3,4,5,6]
+     *  arr.chunk$(2) === arr;
+     *  arr;
+     *    // arr = [[1,2],[3,4],[5,6]]
      *
      * @returns self
      */
@@ -397,7 +475,7 @@ extend(Array.prototype, {
   
   unique: function unique() {
     /**
-     * Returns a list of unique items within the array. i.e. If there are are 2 identical values, one will be removed. This again uses indexOf() which performs strict equality checks.
+     * Clones the array and removes any duplicate values from it.
      *
      * @since 1.0.0
      * @example
@@ -419,10 +497,10 @@ extend(Array.prototype, {
      * @param callback The function to call on each item
      * @param thisArg The value to assign to 'this' on the callback
      * @example
-     *  var a = [1,2,3,4,5,6].each(function(val, idx) {
+     *  [1,2,3,4,5,6].each(function(val, idx) {
      *    if (val == 2) return idx;
      *  });
-     *  // a = 1;
+     *  // returns 2
      *
      * @returns mixed
      */ 
@@ -460,9 +538,10 @@ extend(Array.prototype, {
      * @since 1.3.0
      * @param level How deep to go
      * @example
-     *  var a = [[1,2],[[3]],4,5];
-     *  a.flatten$();
-     *   // a = [1,2,3,4,5]
+     *  var arr = [[1,2],[[3]],4,5];
+     *  arr.flatten$() === arr
+     *  arr;
+     *   // arr = [1,2,3,4,5]
      *
      * @returns self
      */
@@ -566,9 +645,10 @@ extend(Array.prototype, {
      *
      * @since 1.3.0
      * @example
-     *  var a = [1,null,2,0];
-     *  a.clean()
-     *    // returns [2,3]
+     *  var arr = [1,null,2,0];
+     *  arr.clean() === arr; // true
+     *  arr;
+     *    // arr = [2,3]
      *
      * @returns self
      */
@@ -585,9 +665,10 @@ extend(Array.prototype, {
      * @param callback Will be called on each element. The value returned will become the new value.
      * @param scope The value of this in the callback.
      * @example
-     *  var a = [1,2,3,4,5,6];
-     *  a.filter(function(n) { return n.even() });
-     *    // a = [2,4,6]
+     *  var arr = [1,2,3,4,5,6];
+     *  arr.filter$(function(n) { return n.even() }) === arr; // true
+     *  arr;
+     *    // arr = [2,4,6]
      *
      * @returns self
      */
@@ -606,9 +687,10 @@ extend(Array.prototype, {
      * @param callback Will be called on each element. The value returned will become the new value.
      * @param scope The value of this in the callback.
      * @example
-     *  var a = [1,2,3];
-     *  a.map(function(n) { return n * n });
-     *    // a = [1,4,9]
+     *  var arr = [1,2,3];
+     *  arr.map$(function(n) { return n * n }) === arr;
+     *  arr;
+     *    // arr == [1,4,9]
      *
      * @returns self
      */
@@ -644,8 +726,9 @@ extend(Array.prototype, {
      * @param property The name of the property within each object to call.
      * @param *params Any params to pass to the function.
      * @example
-     *  var a = [1.142,2.321,3.754];
-     *  a.invoke('round', 2)
+     *  var arr = [1.142,2.321,3.754];
+     *  arr.invoke$('round', 2) === arr;
+     *  arr;
      *    // a = [1.14,2.32,3.75]
      *
      * @returns self
@@ -666,9 +749,9 @@ extend(Array.prototype, {
      *    // returns [5, 5, 4, 2, 4]
      *
      *  // Since 1.4.0:
-     *  var a = { name: 'Ann', age: 36, pass: 's8J2ld0a' },
-     *      b = { name: 'Bob', age: 21, pass: '0aJdlfsa' },
-     *      c = { name: 'Charlie', age: 31, pass: 'f8fadasa' }
+     *  var a = { name: 'Ann', age: 36, pass: 's8J2ld0a' };
+     *  var b = { name: 'Bob', age: 21, pass: '0aJdlfsa' };
+     *  var c = { name: 'Charlie', age: 31, pass: 'f8fadasa' };
      *  
      *  [a,b,c].pluck(['name', 'age']);
      *    // returns [{ name: 'Ann', age: 36 }, { name: 'Bob', age: 21 }, { name: 'Charlie', age: 31 }]
@@ -690,17 +773,16 @@ extend(Array.prototype, {
      * @since 1.3.0
      * @param property|array The name of the property or array of keys to pluck.
      * @example
-     *  var a = ['hello','world','this','is','nice'];
-     *  a.pluck('length');
-     *    // a = [5, 5, 4, 2, 4]
+     *  var arr = ['hello','world','this','is','nice'];
+     *  arr.pluck$('length') === a; // true
+     *    // arr = [5, 5, 4, 2, 4]
      *
      *  // Since 1.4.0:
      *  var a = { name: 'Ann', age: 36, pass: 's8J2ld0a' },
-     *      b = { name: 'Bob', age: 21, pass: '0aJdlfsa' },
-     *      c = { name: 'Charlie', age: 31, pass: 'f8fadasa' }
+     *  var b = { name: 'Bob', age: 21, pass: '0aJdlfsa' },
+     *  var c = { name: 'Charlie', age: 31, pass: 'f8fadasa' }
      *  
      *  var arr = [a,b,c];
-     *
      *  arr.pluck$(['name', 'age']);
      *    // arr = [{ name: 'Ann', age: 36 }, { name: 'Bob', age: 21 }, { name: 'Charlie', age: 31 }]
      *    // Note that the original objects are left intact!
@@ -739,10 +821,10 @@ extend(Array.prototype, {
      * @since 1.3.0
      * @param regex The regular expression to match
      * @example
-     *  var a = ['hello','world','this','is','cool'];
-     *  a.grep(/(.)\1/); // Words with letters that repeat
-     *    // a = ['hello', 'cool']
-     *
+     *  var arr = ['hello','world','this','is','cool'];
+     *  arr.grep(/(.)\1/) === arr; // true
+     *  arr;
+     *  // arr = ['hello', 'cool']
      * @returns self
      */
     return this.filter$(function(val) {
@@ -757,9 +839,10 @@ extend(Array.prototype, {
      * @since 1.3.0
      * @param [callback] The comparison function
      * @example
-     *  var a = ['d','b','a','c','e'];
-     *  a.sort$();
-     *    // a = ['a','b','c','d','e']
+     *  var arr = ['d','b','a','c','e'];
+     *  arr.sort$() == arr; // true
+     *  arr;
+     *    // arr = ['a','b','c','d','e']
      *
      * @returns self
      */
@@ -812,9 +895,10 @@ extend(Array.prototype, {
      * @param mapping The mapping callback to apply to each value.
      * @param [comparison] The comparison callback used in the sort afterwords.
      * @example
-     *  var a = ['hello','world','this','is','nice']
-     *  a.sortBy('length');
-     *    // a = ['is', 'this', 'nice', 'hello', 'world']
+     *  var arr = ['hello','world','this','is','nice']
+     *  arr.sortBy('length') === arr; // true
+     *  arr;
+     *    // arr = ['is', 'this', 'nice', 'hello', 'world']
      *
      * @returns self
      */
@@ -992,7 +1076,41 @@ if ( ! Array.prototype.lastIndexOf)
     
     return -1;
 
-  });/**
+  });extend(Date.prototype, {
+  
+  fuzzyDiff: function fuzzyDiff(date, suffix, prefix) {
+    
+    if ( ! (date instanceof Date))
+      date = new Date(date);
+    
+    var delta = this.getTime() - date.getTime();
+    var units = {
+      second: 1000,
+      minute: 60000,
+      hour: 3600000,
+      day: 86400000,
+      year: 31557600000
+    };
+    
+    var keys = Object.keys(units), divs = Object.values(units);
+    
+    for (var i = 0; i < divs.length; i++) {
+      if ((delta / divs[i]) < 1) {
+                
+        var time = (delta / divs[i - 1]), key = keys[i - 1];
+        if (time > 1) key += 's'; 
+        
+        if (arguments.length < 3) prefix = (time.round() == time) ? 'exactly' : 'about';
+        if (arguments.length < 2) suffix = 'ago';
+        
+        return '%s %d %s %s'.sprintf(prefix, time.round(), key, suffix);
+      }
+    }
+  }
+});
+
+
+/**
  * ECMA5 Polyfills
  */
 
@@ -2559,7 +2677,7 @@ if (domDefineProperty) {
      *
      * @since 1.2.0
      * @example
-     *  String.uuid()
+     *  String.UUID()
      *    // returns something like '89996AE3-6FBB-428299C78-670C095256631' 
      * 
      * @returns string
@@ -2594,22 +2712,21 @@ extend(String.prototype, {
      */
     var str = '';
     
-    for (var i = 0, str = ''; i < num; i++)
+    for (var i = 0, str = ''; i < (num || 1); i++)
       str += this;
       
     return str;
     
   },
 
-  chars: function chars(obj) {
+  chars: function chars() {
     /**
-     * Gets all the enumerable values within an object.
+     * Gets all the characters within the string and puts them in an array.
      *
      * @since 1.2.0
-     * @param object
      * @example
-     *  Object.values({1:2,3:4});
-     *    // returns [2,4] 
+     *  'abc'.chars();
+     *    // returns ['a','b','c'] 
      * 
      * @returns array
      */
