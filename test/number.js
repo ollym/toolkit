@@ -1,4 +1,22 @@
 module('Number');
+
+test('Number.pow', function() {
+  strictEqual((1).pow.name, 'pow');
+  strictEqual((2).pow(3), Math.pow(2,3));
+});
+
+test('Number.ordinal', function() {
+  strictEqual((1).ordinal.name, 'ordinal');
+  strictEqual((1).ordinal(), '1st');
+  strictEqual((2).ordinal(), '2nd');
+  strictEqual((3).ordinal(), '3rd');
+  strictEqual((4).ordinal(), '4th');
+  strictEqual((5.61).ordinal(), '6th');
+  strictEqual((5.61).ordinal(false), 'th');
+  strictEqual((5123121).ordinal(), '5123121st');
+  strictEqual((11).ordinal(false), 'th');
+  strictEqual((13).ordinal(false), 'th');
+});
   
 test('Number.random', function() {
   

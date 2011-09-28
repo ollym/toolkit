@@ -3,9 +3,9 @@
 
   * Major fixes to the online REPL
   * Added loads more tests to test edge-cases.
-  * Array#Swap => Array#Swap$
-  * Added new method Array#Swap
-
+  * Array#Swap => Array#Swap$ - Was considered a bug in the API which needed changing
+  * Added new methods Array#Swap, Date#fuzzyDiff, Number#ordinal, RegExp.escape, Number#pow
+  * Deprecate Number#odd and Number#even these will be re-named to isOdd and isEven in 1.6.0  
 
 1.5.2 / 2011-09-26
 ==================

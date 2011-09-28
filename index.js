@@ -25,6 +25,8 @@ else var extend = function(prototype, methods) {
     case Math:                { title = 'Math.';     break; }
     case Date:                { title = 'Date.';     break; }
     case Date.prototype:      { title = 'Date#';     break; }
+    case RegExp:              { title = 'RegExp.';   break; }
+    case RegExp.prototype:    { title = 'RegExp#';   break; }
     default: {
       throw new Error('Override detector found an unknown prototype being extended.');
     }
