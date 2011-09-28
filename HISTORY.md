@@ -1,3 +1,12 @@
+1.5.2 / master
+==================
+
+  * Major fixes to the online REPL
+  * Added loads more tests to test edge-cases.
+  * Array#Swap => Array#Swap$
+  * Added new method Array#Swap
+
+
 1.5.2 / 2011-09-26
 ==================
 
