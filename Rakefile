@@ -4,7 +4,7 @@ require 'yui/compressor'
 
 desc "Build JSToolkit source into a minified browser version."
 task :build do  
-  source = '(function() {' << File.read('./index.js')
+  source = '(function () {' << File.read('./index.js')
   Dir.glob("./lib/*.js") do |file|
     source << File.read(file);
   end

@@ -1,16 +1,17 @@
 module('Object');
 
-test('Object.follow', function() {
+test('Object.follow', function () {
   strictEqual(Object.follow.name, 'follow');
   
   var obj = {a:{b:{c:'d'}}};
   strictEqual(Object.follow(obj, ['a', 'b', 'c']), 'd');
   strictEqual(Object.follow(obj, ['a', 'c']), undefined);
-  strictEqual(Object.follow(obj, ['a', 'b']), a.b);
-  strictEqual(Object.follow(obj, 'a.b'), a.b);
+  strictEqual(Object.follow(obj, ['a', 'b']), obj.a.b);
+  strictEqual(Object.follow(obj, 'a.b'), obj.a.b);
+  strictEqual(Object.follow(obj, 'a,b', ','), obj.a.b);
 });
 
-test('Object.clone', function() {
+test('Object.clone', function () {
 
   function a() { }
   Object.defineProperties(a.prototype, { foo: { value: 'bar' } });
@@ -33,19 +34,19 @@ test('Object.clone', function() {
   ok(obj !== clone);
 });
 
-test('Object.values', function() {
+test('Object.values', function () {
   deepEqual(Object.values({1:2,3:4}), [2,4]);
 });
   
-test('Object.isObject', function() {
+test('Object.isObject', function () {
   ok(Object.isObject({}));
-  ok(Object.isObject(new (function() { })));
+  ok(Object.isObject(new (function () { })));
   equal(Object.isObject(123), false);
 });
   
-test('Object.each', function() {
+test('Object.each', function () {
   
-  var j = 0, r = Object.each({ foo: 1, bar: 2, baz: 3 }, function(key, val) {
+  var j = 0, r = Object.each({ foo: 1, bar: 2, baz: 3 }, function (key, val) {
     j = key; if (val == 2) return 'foo';
   });
   
@@ -53,7 +54,7 @@ test('Object.each', function() {
   strictEqual(j,'bar');
 });
   
-test('Object.map', function() {
+test('Object.map', function () {
   
   var obj = Object.create(Object.prototype, {
     2: { value: 2, enumerable: true, writable: false }, // Test non-writable values
@@ -61,14 +62,14 @@ test('Object.map', function() {
     5: { value: 6, enumerable: false }          // Test non-enumerable values
   });
     
-  obj = Object.map(obj, function(key, val) { return key * val });
+  obj = Object.map(obj, function (key, val) { return key * val });
 
   deepEqual(Object.values(obj), [2,12]);
   deepEqual(Object.keys(obj), ['2','3']);
   deepEqual(obj[5], 6);
 });
   
-test('Object.map$', function() {
+test('Object.map$', function () {
   
   var obj = Object.create(Object.prototype, {
     2: { value: 2, enumerable: true, writable: false }, // Test non-writable values
@@ -76,17 +77,17 @@ test('Object.map$', function() {
     5: { value: 6, enumerable: false }          // Test non-enumerable values
   });
     
-  strictEqual(Object.map$(obj, function(key, val) { return key * val }), obj);
+  strictEqual(Object.map$(obj, function (key, val) { return key * val }), obj);
   deepEqual(Object.values(obj), [2,12]);
   deepEqual(Object.keys(obj), ['2','3']);
   deepEqual(obj[5], 6);
 });
   
-test('Object.getOwnPropertyDescriptors', function() {
+test('Object.getOwnPropertyDescriptors', function () {
   
   desc = {
     bar: 
-     { value: function() { },
+     { value: function () { },
      writable: false,
      enumerable: false,
      configurable: false },
@@ -101,7 +102,7 @@ test('Object.getOwnPropertyDescriptors', function() {
   deepEqual(Object.getOwnPropertyDescriptors(obj), desc);
 });
   
-test('Object.merge', function() {
+test('Object.merge', function () {
   
   var a = {
     a: { b: 'c' },
@@ -117,7 +118,7 @@ test('Object.merge', function() {
   deepEqual(Object.merge([b,a],-1), {a:{b:'c',c:'e'},d:'e'});
 });
   
-test('Object.filter', function() {
+test('Object.filter', function () {
   
   var obj = Object.create({}, {
     1: { value: 2, enumerable: true, configurable: true },
@@ -126,7 +127,7 @@ test('Object.filter', function() {
     5: { value: 6, enumerable: false, configurable: true }
   });
   
-  var a = Object.filter(obj, function(key, val) { return val==4 || key == 1; }),
+  var a = Object.filter(obj, function (key, val) { return val==4 || key == 1; }),
       b = Object.filter(obj, [1,3,'4']);
       
   deepEqual(Object.keys(a), ['1','3','4']);
@@ -138,7 +139,7 @@ test('Object.filter', function() {
   equal(Object.filter(obj, [1,3,'4'])[5], 6);
 });
   
-test('Object.filter$', function() {
+test('Object.filter$', function () {
   
   var obj = Object.create({}, {
     1: { value: 2, enumerable: true, configurable: true },
@@ -147,7 +148,7 @@ test('Object.filter$', function() {
     5: { value: 6, enumerable: false, configurable: true }
   });
   
-  strictEqual(Object.filter$(obj, function(key, val) { return val==4 || key == 1; }), obj);
+  strictEqual(Object.filter$(obj, function (key, val) { return val==4 || key == 1; }), obj);
       
   deepEqual(Object.keys(obj), ['1','3','4']);
   deepEqual(Object.values(obj), [2,4,4]);
@@ -158,19 +159,19 @@ test('Object.filter$', function() {
   
 });
   
-test('Object.clean', function() {
+test('Object.clean', function () {
   var obj = Object.clean({1:undefined, 2:null, 3:false, 4:0, 5:NaN, 6:'foo', 7:'bar'});
   deepEqual(Object.keys(obj), ['6','7']);
   deepEqual(Object.values(obj), ['foo','bar']);
 });
   
-test('Object.clean$', function() {
+test('Object.clean$', function () {
   var obj = {1:undefined, 2:null, 3:false, 4:0, 5:NaN, 6:'foo', 7:'bar'};
   strictEqual(Object.clean$(obj), obj);
   deepEqual(obj, {6:'foo',7:'bar'});
 });
   
-test('Object.alias', function() {
+test('Object.alias', function () {
   
   var obj = {
     a: 'b',
@@ -194,11 +195,11 @@ test('Object.alias', function() {
   strictEqual(obj.bat, obj.foo);
 });
   
-test('Object.size', function() {
+test('Object.size', function () {
   strictEqual(Object.size({1:2,3:4,5:6}), 3);
 });
   
-test('Object.merge$', function() {
+test('Object.merge$', function () {
   
   var obj = {1:2,3:4,5:6};
   
@@ -206,7 +207,7 @@ test('Object.merge$', function() {
   deepEqual(obj, {1:2,3:4,5:6,6:7})
 });
   
-test('Object.UUID', function() {
+test('Object.UUID', function () {
   
   var a = {}, b = {};
   
@@ -216,7 +217,7 @@ test('Object.UUID', function() {
 
 /* ECMA5 Polyfil Tests */
 
-test('Object.defineProperty', function() {
+test('Object.defineProperty', function () {
   
   var obj = {};
   
@@ -228,13 +229,13 @@ test('Object.defineProperty', function() {
   
   raises(Object.defineProperty.bind(null, obj, 'name', 'string'), TypeError); // 3
   raises(Object.defineProperty.bind(null, obj, 'name', 1), TypeError); // 4
-  raises(Object.defineProperty.bind(null, obj, 'name', {value:1,get:function(){}}), TypeError); // 6
-  raises(Object.defineProperty.bind(null, obj, 'name', {value:1,set:function(){}}), TypeError); // 7
-  raises(Object.defineProperty.bind(null, obj, 'name', {writable:true,get:function(){}}), TypeError); // 8
+  raises(Object.defineProperty.bind(null, obj, 'name', {value:1,get:function (){}}), TypeError); // 6
+  raises(Object.defineProperty.bind(null, obj, 'name', {value:1,set:function (){}}), TypeError); // 7
+  raises(Object.defineProperty.bind(null, obj, 'name', {writable:true,get:function (){}}), TypeError); // 8
   raises(Object.defineProperty.bind(null, obj, 'name', {get:123}), TypeError); // 9
 });
 
-test('Object.getOwnPropertyDescriptor', function() {
+test('Object.getOwnPropertyDescriptor', function () {
   
   var a = Object.create(Object.prototype, {
     a: { value: 'a' },
@@ -245,7 +246,7 @@ test('Object.getOwnPropertyDescriptor', function() {
   deepEqual(Object.getOwnPropertyDescriptor(a, 'b'), {value:'b',enumerable:true,writable:false,configurable:false});
 });
 
-test('Object.getOwnPropertyNames', function() {
+test('Object.getOwnPropertyNames', function () {
 
   var a = Object.create(Object.prototype, {
     a: { value: 'a' },
@@ -262,7 +263,7 @@ test('Object.getOwnPropertyNames', function() {
   deepEqual(Object.getOwnPropertyNames(b), ['d','e','f']);
 });
 
-test('Object.keys', function() {
+test('Object.keys', function () {
   var obj = Object.create(Object.prototype, {
     a: { value: 'a' },
     b: { value: 'b', enumerable: true },

@@ -1,4 +1,4 @@
-(function() {var domDefineProperty = false, objectIdStore = [], objectDescriptorStore = [];
+(function () {var domDefineProperty = false, objectIdStore = [], objectDescriptorStore = [];
 
 // Whether we have a working version of Object.defineProperty
 try { Object.defineProperty({}, 'x', {});
@@ -7,7 +7,7 @@ try { Object.defineProperty({}, 'x', {});
 if (typeof window !== 'undefined' && window.__jstExtend__) {
   var extend = window.__jstExtend__;
 }
-else var extend = function(prototype, methods) {
+else var extend = function (prototype, methods) {
   
   var title = null;
   
@@ -65,7 +65,7 @@ else var extend = function(prototype, methods) {
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports.repl = function() {
+  module.exports.repl = function () {
     var vm = require('vm'), repl = require('repl');
     process.stdin.removeAllListeners('keypress');
     var ctx = repl.start('toolkit> ').context;
@@ -99,8 +99,8 @@ if (typeof module !== 'undefined' && module.exports) {
     else if (arguments.length === 0 || arrays.length === 0)
       return [];
     
-    return arrays.first().filter(function(val) {
-      return arrays.every(function(arg) {
+    return arrays.first().filter(function (val) {
+      return arrays.every(function (arg) {
         return arg.contains(val);
       });
     });
@@ -128,7 +128,7 @@ if (typeof module !== 'undefined' && module.exports) {
       
     var vals = arrays.flatten(1);
 
-    return vals.filter(function(a) {
+    return vals.filter(function (a) {
       return vals.indexOf(a) == vals.lastIndexOf(a);
     });
   },
@@ -288,7 +288,7 @@ extend(Array.prototype, {
     if (arguments.length === 0) return false;
     args = Array.prototype.slice.call(arguments);
     
-    return args.every(function(arg) { 
+    return args.every(function (arg) { 
       return !! ~ this.indexOf(arg);
     }.bind(this));
   },
@@ -310,7 +310,7 @@ extend(Array.prototype, {
     if (arguments.length === 0) return this;
     exclude = Array.prototype.slice.call(arguments);
     
-    return this.filter$(function(val) {
+    return this.filter$(function (val) {
       return ! exclude.contains(val);
     });
   },
@@ -330,7 +330,7 @@ extend(Array.prototype, {
     if (arguments.length === 0) return this.clone();
     exclude = Array.prototype.slice.call(arguments);
     
-    return this.filter(function(val) {
+    return this.filter(function (val) {
       return ! exclude.contains(val); 
     });
   },
@@ -484,7 +484,7 @@ extend(Array.prototype, {
      *
      * @returns array
      */
-    return this.filter(function(a, idx) {
+    return this.filter(function (a, idx) {
       return this.indexOf(a) == idx;
     }.bind(this));
   },
@@ -497,7 +497,7 @@ extend(Array.prototype, {
      * @param callback The function to call on each item
      * @param thisArg The value to assign to 'this' on the callback
      * @example
-     *  [1,2,3,4,5,6].each(function(val, idx) {
+     *  [1,2,3,4,5,6].each(function (val, idx) {
      *    if (val == 2) return idx;
      *  });
      *  // returns 2
@@ -526,7 +526,7 @@ extend(Array.prototype, {
     if (level === undefined) level = -1;
     else if (level == 0) return this.clone();
 
-    return this.reduce(function(a,b) {
+    return this.reduce(function (a,b) {
       return a.concat((Array.isArray(b) && level != 0) ? b.flatten(level - 1) : [b]);
     }, []);
   },
@@ -566,7 +566,7 @@ extend(Array.prototype, {
      *
      * @returns int
      */
-    return this.reduce(function(a, b) {
+    return this.reduce(function (a, b) {
       return Number(a) + Number(b);
     });
   },
@@ -582,7 +582,7 @@ extend(Array.prototype, {
      *
      * @returns int
      */
-    return this.reduce(function(a, b) {
+    return this.reduce(function (a, b) {
       return Number(a) * Number(b);
     });
   },
@@ -634,7 +634,7 @@ extend(Array.prototype, {
      *
      * @returns array
      */
-    return this.filter(function(val) {
+    return this.filter(function (val) {
       return !! val;
     });
   },
@@ -652,7 +652,7 @@ extend(Array.prototype, {
      *
      * @returns self
      */
-    return this.filter$(function(val) {
+    return this.filter$(function (val) {
       return !! val;
     });
   },
@@ -666,7 +666,7 @@ extend(Array.prototype, {
      * @param scope The value of this in the callback.
      * @example
      *  var arr = [1,2,3,4,5,6];
-     *  arr.filter$(function(n) { return n.even() }) === arr; // true
+     *  arr.filter$(function (n) { return n.even() }) === arr; // true
      *  arr;
      *    // arr = [2,4,6]
      *
@@ -688,7 +688,7 @@ extend(Array.prototype, {
      * @param scope The value of this in the callback.
      * @example
      *  var arr = [1,2,3];
-     *  arr.map$(function(n) { return n * n }) === arr;
+     *  arr.map$(function (n) { return n * n }) === arr;
      *  arr;
      *    // arr == [1,4,9]
      *
@@ -713,7 +713,7 @@ extend(Array.prototype, {
      *
      * @returns array
      */
-    return this.map(function(val) {
+    return this.map(function (val) {
       return val[callback].apply(val, Array.prototype.slice.call(this, 1));
     }, arguments);
   },
@@ -733,7 +733,7 @@ extend(Array.prototype, {
      *
      * @returns self
      */
-    return this.map$(function(val) {
+    return this.map$(function (val) {
       return val[callback].apply(val, Array.prototype.slice.call(this, 1));
     }, arguments);
   },
@@ -758,7 +758,7 @@ extend(Array.prototype, {
      *
      * @returns array
      */
-    return this.map(function(val) {
+    return this.map(function (val) {
       if (Array.isArray(prop))
         return Object.filter(val, prop);
       
@@ -789,7 +789,7 @@ extend(Array.prototype, {
      *
      * @returns self
      */
-    return this.map$(function(val) {
+    return this.map$(function (val) {
       if (Array.isArray(prop))
         return Object.filter(val, prop);
         
@@ -809,7 +809,7 @@ extend(Array.prototype, {
      *
      * @returns array
      */
-    return this.filter(function(val) {
+    return this.filter(function (val) {
       return !! val.match(regex);
     });
   },
@@ -827,7 +827,7 @@ extend(Array.prototype, {
      *  // arr = ['hello', 'cool']
      * @returns self
      */
-    return this.filter$(function(val) {
+    return this.filter$(function (val) {
       return !! val.match(regex);
     });
   },
@@ -847,7 +847,7 @@ extend(Array.prototype, {
      * @returns self
      */
     var sorted = (typeof sort === 'function') ? this.sort(sort) : this.sort();
-    sorted.forEach(function(val, i) {
+    sorted.forEach(function (val, i) {
       this[i] = val;
     }, this);
     return this;
@@ -861,7 +861,7 @@ extend(Array.prototype, {
      * @param mapping The mapping callback to apply to each value.
      * @param [comparison] The comparison callback used in the sort afterwords.
      * @example
-     *  ['hello','world','this','is','nice'].sortBy(function(s) { return s.length; }); // Sort by length
+     *  ['hello','world','this','is','nice'].sortBy(function (s) { return s.length; }); // Sort by length
      *    // returns ['is', 'this', 'nice', 'hello', 'world']
      *
      *  ['hello','world','this','is','nice'].sortBy('length');
@@ -873,16 +873,16 @@ extend(Array.prototype, {
       return (typeof sort === 'function') ? this.sort(sort) : this.sort();
 
     if (sort === undefined)
-      sort = function(a,b) { return String(a) - String(b) };
+      sort = function (a,b) { return String(a) - String(b) };
 
     // Get the values we intend to sort
-    var arr = this[typeof cmp === 'function' ? 'map' : 'pluck'](cmp).map(function(val, i) {
+    var arr = this[typeof cmp === 'function' ? 'map' : 'pluck'](cmp).map(function (val, i) {
       return { key: i, val: val };
     });
 
-    return arr.sort(function(a,b) {
+    return arr.sort(function (a,b) {
       return sort(a.val, b.val);
-    }).map(function(val) {
+    }).map(function (val) {
       return this[val.key];
     }, this);
   },
@@ -902,7 +902,7 @@ extend(Array.prototype, {
      *
      * @returns self
      */
-    this.sortBy(cmp, sort).forEach(function(v, i) {
+    this.sortBy(cmp, sort).forEach(function (v, i) {
       this[i] = v;
     }, this);
     
@@ -922,7 +922,7 @@ extend(Array.prototype, {
      *  ['d','b','a','c','e'].fetch(2,1,3);
      *    // returns ['a','b','c']
      *
-     *  [1,2,3,4,5,6].fetch(function(n,i) { return n % 6; });
+     *  [1,2,3,4,5,6].fetch(function (n,i) { return n % 6; });
      *    // returns [6,1,2,3,4,5]
      *
      * @returns array
@@ -935,7 +935,7 @@ extend(Array.prototype, {
       
     var arr = [];
     
-    order.forEach(function(o, i) {
+    order.forEach(function (o, i) {
       arr[o] = this[i];
     }, this);
     
@@ -1137,10 +1137,10 @@ extend(Date, {
 if (isNaN(Date.parse("2011-06-15T21:40:05+06:00"))) {
   // XXX global assignment won't work in embeddings that use
   // an alternate object for the context.
-  Date = (function(NativeDate) {
+  Date = (function (NativeDate) {
 
     // Date.length === 7
-    var Date = function(Y, M, D, h, m, s, ms) {
+    var Date = function (Y, M, D, h, m, s, ms) {
       var length = arguments.length;
       if (this instanceof NativeDate) {
         var date = length == 1 && String(Y) === Y ? // isString(Y)
@@ -1273,8 +1273,8 @@ if (isNaN(Date.parse("2011-06-15T21:40:05+06:00"))) {
     
     funcs = funcs.reverse();
     
-    return function(arg) {
-      return funcs.reduce(function(a,b) {
+    return function (arg) {
+      return funcs.reduce(function (a,b) {
         return b(a);
       }, arg);
     }
@@ -1292,7 +1292,7 @@ extend(Function.prototype, {
      * @param time The number of milliseconds before deleting the cache.
      * @param ident A callback used to map arguments to ids.
      * @example
-     *  var fibonacci = function(n) {
+     *  var fibonacci = function (n) {
      *    return n < 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
      *  };
      *  // fibonacci(50) will take a several minutes to complete
@@ -1303,13 +1303,13 @@ extend(Function.prototype, {
      * @returns function
      */
     time = isNaN(time) ? -1 : time;
-    ident = ident || function(id) {
+    ident = ident || function (id) {
       return (typeof id == 'object') ? Object.id(id) : id.toString();
     }
     
     var cache = {}, callback = this, timeouts = {};
     
-    return function() {
+    return function () {
       
       var args = Array.prototype.slice.call(arguments), id = '(' + args.map(ident).join(',') + ')';
       
@@ -1320,7 +1320,7 @@ extend(Function.prototype, {
       }
 
       if (time > 0) {
-        timeouts[id] = setTimeout(function() {
+        timeouts[id] = setTimeout(function () {
           delete cache[id];
         }, time);
       }
@@ -1338,13 +1338,13 @@ extend(Function.prototype, {
      * @param time The number of milliseconds before calling the function.
      * @param scope The value of this within the callback.
      * @example
-     *  Date.now.delay(function(now, then) {
+     *  Date.now.delay(function (now, then) {
      *    log(now - then); // > 50 (Or very near it!)
      *  }, 50, Date.now());
      * 
      * @returns function
      */
-    return setTimeout(function(args) {
+    return setTimeout(function (args) {
       callback.apply(scope, [this()].concat(Array.prototype.slice.call(args, 2)));
     }.bind(this, arguments), time);
     
@@ -1358,7 +1358,7 @@ extend(Function.prototype, {
      * @param scope Unfortunately the original function will loose it's scope. Re-add it here.
      * @example
      *  function A() { this.foo = 'bar'; }
-     *  A.prototype.getFoo = function() { return this.foo; }
+     *  A.prototype.getFoo = function () { return this.foo; }
      *
      *  var obj = new A();
      *  obj.getFoo = obj.getFoo.once(); // INCORRECT! don't forget scope!
@@ -1376,7 +1376,7 @@ extend(Function.prototype, {
      */
     var called = false, val = null;
     
-    return function(args) {
+    return function (args) {
       
       if ( ! called) {
         called = true;
@@ -1396,7 +1396,7 @@ extend(Function.prototype, {
 if ( ! Function.prototype.bind)
   extend(Function.prototype, 'bind', function bind(thisArg) {
     if ( ! Function.isFunction(this)) throw new TypeError(this + ' is not a function.');
-    var args = Array.prototype.slice.call(arguments, 1), self = this, target = function() {};
+    var args = Array.prototype.slice.call(arguments, 1), self = this, target = function () {};
     
     function bound() {
       return self.apply(this instanceof target ? this : thisArg, args.concat(Array.prototype.slice.call(arguments)));
@@ -1433,7 +1433,7 @@ if ( ! Function.prototype.bind)
 
 extend(Number.prototype, {
   
-  chr: function() {
+  chr: function () {
     /**
      * Gets the current integer's representing string character.
      *
@@ -1448,7 +1448,7 @@ extend(Number.prototype, {
     
   },
   
-  odd: function() {
+  odd: function () {
     /**
      * Determine's whether this integer is an odd number.
      *
@@ -1463,7 +1463,7 @@ extend(Number.prototype, {
     
   },
   
-  even: function() {
+  even: function () {
     /**
      * Determine's whether this integer is an even number.
      *
@@ -1490,7 +1490,7 @@ extend(Number.prototype, {
      * 
      * @returns integer
      */
-    return Array.prototype.slice.call(arguments).reduce(function(a, b) {
+    return Array.prototype.slice.call(arguments).reduce(function (a, b) {
       
       if (a == 0 || b == 0)
         return a | b;
@@ -1867,12 +1867,12 @@ extend(Number.prototype, {
     
       if (('get' in desc ) || ('value' in desc)) {
         delete desc['value'], delete desc['writable'];
-        desc.get = function() {
+        desc.get = function () {
           return object[property];
         }
       }
 
-      desc.set = function(val) {
+      desc.set = function (val) {
         return object[property] = val;
       }
 
@@ -1896,7 +1896,7 @@ extend(Number.prototype, {
      * @returns array
      */
     var arr = [];
-    Object.keys(obj).forEach(function(key) {
+    Object.keys(obj).forEach(function (key) {
       arr.push(obj[key]);
     });
     
@@ -1913,7 +1913,7 @@ extend(Number.prototype, {
      * @param function The callback that takes parameters (key, value, object)
      * @param scope The value of this in the callback function.
      * @example
-     *  Object.forEach({1:2,3:4}, function(key, val, obj) {
+     *  Object.forEach({1:2,3:4}, function (key, val, obj) {
      *    log(key + ':' + val)
      *  });
      *  // > 1:2
@@ -1921,7 +1921,7 @@ extend(Number.prototype, {
      * 
      * @returns void
      */
-    return Object.keys(obj).forEach(function(key) {
+    return Object.keys(obj).forEach(function (key) {
       return callback.call(scope, key, obj[key], obj);
     });
     
@@ -1937,7 +1937,7 @@ extend(Number.prototype, {
      *  Object.isObject({1:2,3:4});
      *    // returns true
      *  
-     *  Object.isObject(function() { });
+     *  Object.isObject(function () { });
      *    // returns true
      *
      *  Object.isObject(123, {});
@@ -1945,7 +1945,7 @@ extend(Number.prototype, {
      * 
      * @returns bool
      */
-    return Array.prototype.slice.call(arguments).every(function(value) {
+    return Array.prototype.slice.call(arguments).every(function (value) {
       return Object(value) === value;
     });
     
@@ -1960,7 +1960,7 @@ extend(Number.prototype, {
      * @param function The callback that takes parameters (key, value, object)
      * @param scope The value of this in the callback function.
      * @example
-     *  var ret = Object.each({1:2,3:4}, function(key, val, obj) {
+     *  var ret = Object.each({1:2,3:4}, function (key, val, obj) {
      *    return (key + ':' + val);
      *  });
      *  // ret = 1:2
@@ -1984,7 +1984,7 @@ extend(Number.prototype, {
      * @param function The callback that takes parameters (value, key) and should return a new value
      * @param scope The value of this in the callback function.
      * @example
-     *  Object.map({1:2,3:4}, function(key, val) {
+     *  Object.map({1:2,3:4}, function (key, val) {
      *    return key * val;
      *  });
      *  // returns {1:2,3:12}
@@ -2009,14 +2009,14 @@ extend(Number.prototype, {
      * @param scope The value of this in the callback function.
      * @example
      *  var obj = {1:2,3:4};
-     *  Object.map(obj, function(key, val) {
+     *  Object.map(obj, function (key, val) {
      *    return key * val;
      *  });
      *  // obj = {1:2,3:12}
      * 
      * @returns self
      */
-     Object.forEach(obj, function(key, val) {
+     Object.forEach(obj, function (key, val) {
        Object.value(obj, key, callback.call(scope, key, val));
      });
      
@@ -2050,7 +2050,7 @@ extend(Number.prototype, {
      */
     var descriptors = {};
 
-    Object.getOwnPropertyNames(object).forEach(function(key) {
+    Object.getOwnPropertyNames(object).forEach(function (key) {
       descriptors[key] = Object.getOwnPropertyDescriptor(object, key);
     });
 
@@ -2067,14 +2067,14 @@ extend(Number.prototype, {
      * @param callback The function to call on each iteration
      * @param [start=undefined] The initial value
      * @example
-     *  Object.reduce({1:2,3:4}, function(group, key, val) {
+     *  Object.reduce({1:2,3:4}, function (group, key, val) {
      *    return group + key + val;
      *  }, 0);
      *  // returns 10 (0+1+2+3+4)
      * 
      * @returns mixed
      */
-    Object.forEach(obj, function(key, val) {
+    Object.forEach(obj, function (key, val) {
       start = callback.call(scope, start, key, obj[key]);
     });
     
@@ -2111,8 +2111,8 @@ extend(Number.prototype, {
     
     level = (level === undefined) ? 0 : level;
     
-    return objects.reduce(function(group, obj) {
-      Object.forEach(obj, function(key, val) {
+    return objects.reduce(function (group, obj) {
+      Object.forEach(obj, function (key, val) {
         if ( ! val in group || level == 0 || ! Object.isObject(group[key]) || ! Object.isObject(val)) {
           group[key] = val;
         }
@@ -2157,10 +2157,10 @@ extend(Number.prototype, {
 
     var obj = Object.merge.apply(undefined, objects, level);
 
-    Object.filter$(object, function(key, val) { return Object.hasOwnProperty.call(obj, key) });
-    Object.map$(object, function(key, val) { return obj[key]; });
+    Object.filter$(object, function (key, val) { return Object.hasOwnProperty.call(obj, key) });
+    Object.map$(object, function (key, val) { return obj[key]; });
 
-    Object.keys(obj).diff(Object.keys(object)).forEach(function(key) {
+    Object.keys(obj).diff(Object.keys(object)).forEach(function (key) {
       Object.value(object, key, obj[key]);
     });
 
@@ -2205,7 +2205,7 @@ extend(Number.prototype, {
      * @param callback|array The callback to call on each property or an array of keys.
      * @param scope The value of this in the callback function.
      * @example
-     *  Object.filter({1:2,3:4,5:6}, function(key, val, object) {
+     *  Object.filter({1:2,3:4,5:6}, function (key, val, object) {
      *    return key == 3;
      *  });
      *  // returns {3:4} 
@@ -2230,7 +2230,7 @@ extend(Number.prototype, {
      * @param scope The value of this in the callback function.
      * @example
      *  var obj = {1:2,3:4,5:6};
-     *  Object.filter$(obj, function(key, val, object) {
+     *  Object.filter$(obj, function (key, val, object) {
      *    return key == 3;
      *  });
      *  // obj = {3:4} 
@@ -2243,7 +2243,7 @@ extend(Number.prototype, {
      * @returns self
      */
     if (Array.isArray(callback)) var keys = callback.invoke('toString');
-    Object.forEach(obj, function(key, val) {
+    Object.forEach(obj, function (key, val) {
       if (Array.isArray(callback)) {
         if ( ! keys.contains(key))
           Object.remove(obj, key);
@@ -2268,7 +2268,7 @@ extend(Number.prototype, {
      * 
      * @returns object
      */
-    return Object.filter(obj, function(key, val) {
+    return Object.filter(obj, function (key, val) {
       return !! val;
     });
     
@@ -2287,7 +2287,7 @@ extend(Number.prototype, {
      * 
      * @returns object
      */
-    return Object.filter$(obj, function(key, val) {
+    return Object.filter$(obj, function (key, val) {
       return !! val;
     });
     
@@ -2326,7 +2326,7 @@ extend(Number.prototype, {
      */
     var obj = {};
     
-    keys.forEach(function(key, i) {
+    keys.forEach(function (key, i) {
       obj[key] = values[i];
     });
     
@@ -2367,7 +2367,7 @@ extend(Number.prototype, {
      */
     return Object.defineProperties(object, {
 
-      size: { value: function() {
+      size: { value: function () {
         return Object.size(this);
       }, writable: true, enumerable: false, configurable: true },
 
@@ -2509,7 +2509,7 @@ if ( ! Object.create) {
     var object = {};
     
     if (prototype !== null)  {
-      var type = function() {}
+      var type = function () {}
       type.prototype = prototype;
       object = new type();
     }
@@ -2524,7 +2524,7 @@ if ( ! Object.create) {
 }
   
 if ( ! Object.defineProperty || domDefineProperty) {
-  var oldDefineProperty = Object.defineProperty, definePropertyError = function(object, name, descriptor) {
+  var oldDefineProperty = Object.defineProperty, definePropertyError = function (object, name, descriptor) {
     if ( ! Object.isObject(descriptor)) return 'Property description must be an object: ' + descriptor;
     if ( ! Object.isObject(object)) return 'Object.defineProperty called on non-object';
     
@@ -2634,7 +2634,7 @@ if ( ! Object.keys)
     for (key in object)
       if (object.hasOwnProperty(key))
         keys.push(key);
-    keys = keys.filter(function(key) {
+    keys = keys.filter(function (key) {
       return Object.prototype.propertyIsEnumerable.call(object, key);
     });
     
@@ -2682,7 +2682,7 @@ if (domDefineProperty) {
      * 
      * @returns string
      */
-    return Array.range(0, 35).map(function(i) {
+    return Array.range(0, 35).map(function (i) {
       switch (i) {
         case 8:
         case 13:
@@ -2834,7 +2834,7 @@ extend(String.prototype, {
      * 
      * @returns string
      */
-    return this.chars().map(function(a) {
+    return this.chars().map(function (a) {
       return /[a-z]/.test(a) ? a.toUpperCase() : a.toLowerCase(); 
     }).join('');
     
@@ -3005,7 +3005,7 @@ extend(String.prototype, {
      *
      * @returns string
      */
-    this.chars().chunk(len).map(function(chars) {
+    this.chars().chunk(len).map(function (chars) {
       return chars.join('');
     });
   },
@@ -3051,7 +3051,7 @@ extend(String.prototype, {
      *    // returns 'Hello World'
      */
     var key = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=', output = '', input = this;
-    return input.split("\n").map(function(line) {
+    return input.split("\n").map(function (line) {
       var output = '';
       for (i = 0; i < line.length; i += 4) {
         var e1 = key.indexOf(line.charAt(i)),
@@ -3087,7 +3087,7 @@ extend(String.prototype, {
     var vals = arguments, regex = /%%|%(?:(\d+)[\$#])?([+-])?('.|0| )?(\d*)(?:\.(\d+))?([bcdfosuxX])/g;
     var index = 0;
     
-    return this.replace(regex, function(substr, flags, align, padding, width, precision, type) {
+    return this.replace(regex, function (substr, flags, align, padding, width, precision, type) {
       
       if (substr == '%%') return '%';
       

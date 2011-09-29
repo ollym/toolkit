@@ -39,7 +39,7 @@ else {
           if ( ! objectDescriptorStore[id])
             objectDescriptorStore[id] = {};
           
-          objectDescriptorStore[id][name] = (typeof method === 'function') ?
+          objectDescriptorStore[id][name] = 
             { writable: (typeof method === 'function'), enumerable: false, configurable: (typeof method === 'function') };
             
           prototype[name] = method;

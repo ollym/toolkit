@@ -1,11 +1,11 @@
 module('Number');
 
-test('Number.pow', function() {
+test('Number.pow', function () {
   strictEqual((1).pow.name, 'pow');
   strictEqual((2).pow(3), Math.pow(2,3));
 });
 
-test('Number.ordinal', function() {
+test('Number.ordinal', function () {
   strictEqual((1).ordinal.name, 'ordinal');
   strictEqual((1).ordinal(), '1st');
   strictEqual((2).ordinal(), '2nd');
@@ -18,7 +18,7 @@ test('Number.ordinal', function() {
   strictEqual((13).ordinal(false), 'th');
 });
   
-test('Number.random', function() {
+test('Number.random', function () {
   
   var r = Number.random;
   
@@ -30,60 +30,60 @@ test('Number.random', function() {
   ok(r(100, 1000) <= 1000);
 });
   
-test('Number#gcd', function() {
+test('Number#gcd', function () {
   strictEqual((12).gcd(6,9), 3);
 });
   
-test('Number#lcm', function() {
+test('Number#lcm', function () {
   strictEqual((21).lcm(6), 42);
 });
   
-test('Number#round', function() {
+test('Number#round', function () {
   strictEqual((1.5).round(), 2);
   strictEqual((1.52).round(1), 1.5);
   strictEqual((15).round(-1), 20);
 });
   
-test('Number#chr', function() {
+test('Number#chr', function () {
   strictEqual((72).chr(), 'H');
 });
   
-test('Number#even', function() {
+test('Number#even', function () {
   strictEqual((3).even(), false);
   strictEqual((2).even(), true);
 });
   
-test('Number#odd', function() {
+test('Number#odd', function () {
   strictEqual((1).odd(), true);
   strictEqual((3).odd(), true);
   strictEqual((4).odd(), false);
 });
   
-test('Number#radix', function() {
+test('Number#radix', function () {
   strictEqual((127).radix(8, 5), '00177');
 });
   
-test('Number#bin', function() {
+test('Number#bin', function () {
   strictEqual((15).bin(8), '00001111');
 });
   
-test('Number#oct', function() {
+test('Number#oct', function () {
   strictEqual((127).oct(4), '0177');
 });
   
-test('Number#dec', function() {
+test('Number#dec', function () {
   strictEqual((80).dec(4), '0080');
 });
   
-test('Number#hexl', function() {
+test('Number#hexl', function () {
   strictEqual((1023).hexl(), '3ff');
 });
   
-test('Number#hex', function() {
+test('Number#hex', function () {
   strictEqual((1023).hex(), '3FF');
 });
   
-test('Number#abbr', function() {
+test('Number#abbr', function () {
   strictEqual((1023).abbr(), '1k');
   strictEqual((999).abbr(), '999');
   strictEqual((1e26).abbr(), '100Y');

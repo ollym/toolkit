@@ -1,6 +1,6 @@
 module('Function')
 
-test('Function.compose', function() {
+test('Function.compose', function () {
   
   function a(val) { return val ^ 2; }
   function b(val) { return val / 2; }
@@ -10,34 +10,34 @@ test('Function.compose', function() {
   strictEqual(a(b(5)), c(5));
 });
   
-test('Function#cache', function() {
+test('Function#cache', function () {
   
-  var value = 1, getVal = (function() { return value; }).cache();
+  var value = 1, getVal = (function () { return value; }).cache();
   
   strictEqual(getVal(), 1);
   value = 2;
   
-  setTimeout(function() {
+  setTimeout(function () {
     
     strictEqual(getVal(), 1);
     strictEqual(getVal(1), 2);
     
-    var getValueTimeOut = function() { return value; }.cache(20);
+    var getValueTimeOut = function () { return value; }.cache(20);
     
     getValueTimeOut();
     value = 3;
 
-    setTimeout(function() { strictEqual(getValueTimeOut(), 2) }, 10);
-    setTimeout(function() { strictEqual(getValueTimeOut(), 3) }, 50);
+    setTimeout(function () { strictEqual(getValueTimeOut(), 2) }, 10);
+    setTimeout(function () { strictEqual(getValueTimeOut(), 3) }, 50);
     
   }, 5);
 });
   
-test('Function#delay', function() {
+test('Function#delay', function () {
   
   var called = false;
   
-  Date.now.delay(function(now, then, foo) {
+  Date.now.delay(function (now, then, foo) {
     
     called = true;
     
@@ -46,16 +46,16 @@ test('Function#delay', function() {
     
   }, 50, Date.now(), 'foo');
   
-  setTimeout(function() {
+  setTimeout(function () {
     
     ok(called);
     
   }, 100)
 });
   
-test('Function#once', function() {
+test('Function#once', function () {
   
-  var value = 3, once = function() { return value; }.once();
+  var value = 3, once = function () { return value; }.once();
   
   strictEqual(once(), 3);
   
