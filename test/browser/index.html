@@ -6,14 +6,14 @@
         var forEach = Array.prototype.forEach;
         
         if (forEach) {
-            forEach.call(['isArray','forEach','map','filter','every','sum','reduce','reduceRight','indexOf','lastIndexOf'], function(name) {
+            forEach.call(['isArray','forEach','map','filter','every','sum','reduce','reduceRight','indexOf','lastIndexOf'], function (name) {
                 Array.prototype[name] = false;
             });
 
-            forEach.call(['bind'], function(name) {
+            forEach.call(['bind'], function (name) {
                 Function.prototype[name] = false;
             });
-            forEach.call(['getPrototypeOf','getOwnPropertyDescriptor','getOwnPropertyNames','create','defineProperty','defineProperties','seal','isSealed','freeze','isFrozen','preventExtensions','isExtensible','keys'], function(name) {
+            forEach.call(['getPrototypeOf','getOwnPropertyDescriptor','getOwnPropertyNames','create','defineProperty','defineProperties','seal','isSealed','freeze','isFrozen','preventExtensions','isExtensible','keys'], function (name) {
                 Object[name] = false;
             });
         }

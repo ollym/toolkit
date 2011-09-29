@@ -109,7 +109,7 @@ test('Array#intersect', function () {
   var a = [1,2,3], b = [2,3,4], c = [3,4,5]
   deepEqual(a.intersect(b,c), [3]);
   deepEqual([a,b,c].intersect(), [3]);
-  deepEqual(a.intersect(1), a);
+  deepEqual(a.intersect(1), [1]);
   deepEqual([].intersect(), []);
 });
   
