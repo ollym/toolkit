@@ -1,7 +1,35 @@
 # ECMA5 Multi-Purpose Javascript Toolkit
+Documentation is at: jstoolkit.org
 
-## Using Toolkit in Node.JS REPL
-If you want to dive straight into testing some of JST's features in REPL, as of 1.5.0 this is now supported. The main package exports a method called `repl` to use it simply type the following into a new repl window:
+## Features
+* Emulates ECMA5 Object features in legacy browsers. http://ejohn.org/blog/ecmascript-5-objects-and-properties/
+* Over 86 native object prototypes extensions.
+* Fully portable and tested on multiple platforms.
+
+## Design Philosophy
+* Written in pure optimised javascript.
+* Use JST methods within JST wherever possible.
+* Lightweight, fast and small. Suitable for mobile devices.
+
+## Avoided
+* Overlapping frameworks like JQuery, Prototype etc.
+* Full i18n / l10n compatibility. Although 90% of JST methods are locale-independent, JST is english-only.
+* Monolithic code-base and be-all-and-end-all integrated library.
+
+## Installation and Getting Started
+
+### Browser
+If you plan to use JSToolkit in the browser it is advised that you link `jst.min.js` in a script tag in your header. You can find `jst.min.js` in the `dist/` folder of this repository or from the website jstoolkit.org and click the download button.
+
+### Node.JS / NPM
+Using JSToolkit in Node.JS is incredibly easy. Simply install the package using a simple command:
+
+    npm install toolkit -g
+
+And to setup the integrated methods simply put `require('toolkit')` anywhere within your script.
+
+#### Node.JS REPL
+Because of the way Node.JS's REPL works, you cannot use toolkit as you would normally so we have provided a special integrated repl that works with JSToolkit.
 
     $ node
     > require('toolkit').repl();
@@ -18,36 +46,13 @@ The JS Toolkit has very specific goals - as to not re-invent the wheel. They go 
 * Eases development by extending type prototypes safely. Object.prototype is left untouched.
 * Use accelerated native functions and fully embrace the new ECMA5 specification.
 
-## Installation
-It is recommended that you install toolkit globally. It's designed to be a totally generic turbo-charger for javascript's native objects and will hopefully continue to expand and flourish.
-
-> Note if you plan to use it *ensure you include it as an npm dependency* specifying the major version version range. See the versioning section below.
-
-    npm install -g toolkit
-    
-You can also install it locally into the node_modules folder of the current directory by using the following command:
-
-    npm install toolkit
-
 ## Contributing
-Contributions would be absolutely fantastic. Please don't hold back, I can only take it so far on my own! However there should be some formality to this especially if we have conflicting ideas.
+Please follow the following steps to contributing.
 
-* If you plan to make a change create an issue first and say that you plan to fix it yourself.
-* I will then reply to that issue with any ideas/contributions I have.
-* Submit a pull request with a commend ending in something like "Fixes #<ISSUE ID>" So that the issue is linked to the commit and will automatically close it when I pull your request.
-    
-Code should follow the style as the rest of the library. Soft 2-space tabs, plenty of whitespace. Re-use methods internally as much as possible - this helps avoid redundant code and is also easier to maintain. If you find yourself writing a lot of code for one small function maybe another function is needed to make it easier/more compact?
-
-The obvious applies:
-
-* Full test coverage of all your code.
-* Do comment blocks for all your functions. Include an example and parameter descriptions.
-
-> Note: Never touch /docs/ everything here is generated automatically.
-
-As always your name will be added to a contributors list and forever praised.
-
-Peace x
+1. Check whether an issue containing your fix/feature is already open, if not create one.
+2. Fork the JSToolkit repository and create a branch for fix. Like `feature/Array#foobar` or `bugfix/Array#diff`
+3. Make all commits relating to your issue to that branch and once ready put it into a pull request referencing the issue.
+4. Be sure to include full unit-tests for your change and ensure they pass! We use QUnit as our testing framework.
 
 ## License
 (The MIT License)
