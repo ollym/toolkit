@@ -1,13 +1,5 @@
 module('Array');
   
-test('Array.intersect', function() {
-  strictEqual(Array.intersect.name, 'intersect');
-  deepEqual(Array.intersect([[1,2,3],[2,3,4],[3,4,5]]), [3]);
-  deepEqual(Array.intersect([1,2,3],[2,3,4],[3,4,5]), [3]);
-  deepEqual(Array.intersect([]), []);
-  deepEqual(Array.intersect(), []);
-});
-  
 test('Array.diff', function() {
   strictEqual(Array.diff.name, 'diff');
   deepEqual(Array.diff([[1,2,3],[2,3,4],[3,4,5]]), [1,5]);
@@ -127,8 +119,16 @@ test('Array#clone', function() {
 });
   
 test('Array#intersect', function() {
+  strictEqual([].intersect.name, 'intersect');
+  strictEqual([].intersection.name, 'intersection');
+  
   var a = [1,2,3], b = [2,3,4], c = [3,4,5]
   deepEqual(a.intersect(b,c), [3]);
+
+    deepEqual(Array.intersect([[1,2,3],[2,3,4],[3,4,5]]), [3]);
+    deepEqual(Array.intersect([1,2,3],[2,3,4],[3,4,5]), [3]);
+    deepEqual(Array.intersect([]), []);
+    deepEqual(Array.intersect(), []);
 });
   
 test('Array#diff', function() {
