@@ -1,12 +1,10 @@
 module('Number');
 
 test('Number.pow', function () {
-  strictEqual((1).pow.name, 'pow');
   strictEqual((2).pow(3), Math.pow(2,3));
 });
 
 test('Number.ordinal', function () {
-  strictEqual((1).ordinal.name, 'ordinal');
   strictEqual((1).ordinal(), '1st');
   strictEqual((2).ordinal(), '2nd');
   strictEqual((3).ordinal(), '3rd');

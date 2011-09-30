@@ -2,7 +2,6 @@ module('Array');
 
 test('Array.range', function () {
   var $R = Array.range;
-  strictEqual($R.name, 'range');                   // 1
   deepEqual($R(3), [1,2,3]);                       // 2
   deepEqual($R('a','a'), []);                      // 3
   deepEqual($R(1,5,2), [1,3,5]);                   // 4
@@ -18,7 +17,6 @@ test('Array.range', function () {
 
 test('Array#concat$', function () {
   var arr = [1,2,3];
-  strictEqual(arr.concat$.name, 'concat$');
   strictEqual(arr.concat$(4,5,6), arr);
   deepEqual(arr, [1,2,3,4,5,6]);
   deepEqual(arr.concat$(), [1,2,3,4,5,6]);
@@ -27,32 +25,29 @@ test('Array#concat$', function () {
 test('Array#swap', function () {
   // Rest of the tests are covered by swap$
   var arr = [1,2,3];
-  strictEqual(arr.swap.name, 'swap');
   ok(arr.swap(2, 0) !== arr);
   deepEqual(arr.swap(2, 0), [3,2,1]);
 });
   
 test('Array#swap$', function () {
   var arr = [1,2,3];
-  strictEqual(arr.swap$.name, 'swap$');                         // 1
-  strictEqual(arr.swap$(2,0), arr);                             // 2
-  deepEqual(arr,[3,2,1]);                                       // 3
-  deepEqual([1,2,3].swap$(2,'0'), [3,2,1]);                     // 4
-  raises(function () { [1,2,3].swap$(1,3) }, RangeError);        // 5
-  raises(function () { [1,2,3].swap$(-1,2) }, RangeError);       // 6
-  raises(function () { [1,2,3].swap$() }, RangeError);           // 7
-  raises(function () { [1,2,3].swap$(1,'length') }, RangeError); // 8
+  strictEqual(arr.swap$(2,0), arr);                             // 1
+  deepEqual(arr,[3,2,1]);                                       // 2
+  deepEqual([1,2,3].swap$(2,'0'), [3,2,1]);                     // 3
+  raises(function () { [1,2,3].swap$(1,3) }, RangeError);        // 4
+  raises(function () { [1,2,3].swap$(-1,2) }, RangeError);       // 5
+  raises(function () { [1,2,3].swap$() }, RangeError);           // 6
+  raises(function () { [1,2,3].swap$(1,'length') }, RangeError); // 7
   
   arr.foo = 'bar';
-  raises(function () { arr.swap$(0,'foo') }, RangeError);        // 9
+  raises(function () { arr.swap$(0,'foo') }, RangeError);        // 8
   
   arr = new Array(5);
   arr[3] = 2, arr[1] = 1;
-  deepEqual(arr.swap$(1,3), [,2,,1,,]);                         // 10
+  deepEqual(arr.swap$(1,3), [undefined,2,undefined,1,undefined]);                         // 9
 });
   
 test('Array#contains', function () {
-  strictEqual([].contains.name, 'contains');    // 1
   ok([1,2,3].contains(1,2));                    // 2
   strictEqual([1,2,3].contains(4), false);      // 3
   strictEqual([1,2,3].contains(), false);       // 4
@@ -61,7 +56,6 @@ test('Array#contains', function () {
 
 test('Array#remove', function () {
   var a = [1,2,3];
-  strictEqual(a.remove.name, 'remove');
   ok(a.remove(2,3) !== a);
   deepEqual(a.remove(2,3), [1,2,3].remove$(2,3));
   // Further testing is done in #remove$
@@ -72,7 +66,6 @@ test('Array#remove$', function () {
   var arr = [1,2,3];
   arr.foo = 'bar';
 
-  strictEqual(arr.remove$.name, 'remove$');
   deepEqual(arr.remove$(2,3), [1]);
   
   arr.foo = 'bar';
@@ -83,14 +76,12 @@ test('Array#remove$', function () {
   
 test('Array#shuffle', function () {
   var a = [1,2,3], b = a.shuffle();
-  strictEqual(a.shuffle.name, 'shuffle');
   notStrictEqual(b, a);
   ok(a.contains(1,2,3));
 });
   
 test('Array#shuffle$', function () {
   var a = [1,2,3], b = a.shuffle$();
-  strictEqual(a.shuffle$.name, 'shuffle$');
   strictEqual(a, b);
   ok(a.contains(1,2,3));
 });
@@ -103,9 +94,6 @@ test('Array#clone', function () {
 });
   
 test('Array#intersect', function () {
-  strictEqual([].intersect.name, 'intersect');
-  strictEqual(Array.prototype.intersection, Array.prototype.intersect);
-  
   var a = [1,2,3], b = [2,3,4], c = [3,4,5]
   deepEqual(a.intersect(b,c), [3]);
   deepEqual([a,b,c].intersect(), [3]);
@@ -114,7 +102,6 @@ test('Array#intersect', function () {
 });
   
 test('Array#diff', function () {
-  strictEqual(Array.prototype.diff.name, 'diff');
   var a = [1,2,3], b = [2,3,4], c = [3,4,5]
   deepEqual(a.diff(b,c), [1,5]);
   deepEqual([a,b,c].diff(), [1,5]);
@@ -123,7 +110,6 @@ test('Array#diff', function () {
 });
 
 test('Array#union', function () {
-  strictEqual(Array.prototype.union.name, 'union');
   var a = [1,2,3], b = [3,4,5], c = [5,6,7];
   deepEqual(a.union(b,c), [1,2,3,4,5,6,7]);
   deepEqual([[1,2,3],[2,3,4],[3,4,5]].union(), [1,2,3,4,5]);

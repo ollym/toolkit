@@ -53,7 +53,3 @@ else {
     }
   }
 }
-
-alias = function (prototype, original, alias) {
-  extend(prototype, alias, prototype[original]);
-}

@@ -1,8 +1,6 @@
 module('Object');
 
 test('Object.follow', function () {
-  strictEqual(Object.follow.name, 'follow');
-  
   var obj = {a:{b:{c:'d'}}};
   strictEqual(Object.follow(obj, ['a', 'b', 'c']), 'd');
   strictEqual(Object.follow(obj, ['a', 'c']), undefined);
