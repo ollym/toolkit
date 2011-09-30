@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+<head>
+<title>Benchmark.js test page | jsPerf</title>
+<!-- http://jsperf.com/benchmark-js-test-page -->
+<meta charset="utf-8">
+<meta name="description" content="This is just a test document for Benchmark.js.">
+<link rel="stylesheet" href="css/main.css">
+<script>document.documentElement.className='js'</script>
+<!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+<body>
+<article>
+  <hgroup>
+    <h1>JSToolkit Comparison Benchmarks</h1>
+    <h2>JavaScript performance comparison</h2>
+  </hgroup>
+  
+  <section id="runner">
+    <h2>Test runner</h2>
+
+    <p id="firebug"><strong>Warning! For accurate results, please disable Firebug before running the tests. <a href="http://jsperf.com/faq#firebug-warning">(Why?)</a></strong></p>
+
+    <p id="java"><strong>Java applet disabled.</strong></p>
+
+    <p id="status">
+      <noscript>
+        <strong>
+          To run the tests, please
+          <a href="http://enable-javascript.com/">enable JavaScript</a>
+          and reload the page.
+        </strong>
+      </noscript>
+    </p>
+
+    <div id="controls">
+      <button id="run" type="button"></button>
+    </div>
+
+    <table id="test-table">
+      <caption>Testing in <span id="user-agent"></span></caption>
+      <thead>
+      <tr>
+        <th colspan="2">Test</th>
+        <th title="Operations per second (higher is better)">Ops/sec</th>
+      </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+
+    <p>
+      You can <a href="#" rel="nofollow">edit these tests or add even more tests to this page</a>
+      by appending <code>/edit</code> to the URL.
+    </p>
+  </section>
+
+  <section>
+    <h2 id="results">Compare results of other browsers</h2>
+    <div id="bs-results"></div>
+  </section>
+</article>
+
+<footer></footer>
+
+<script type="text/javascript">
+  window.__jstExtend = function (prototype, methods) {
+    if (arguments.length === 3) {
+      var n = methods, methods = {};
+      methods[n] = arguments[2];
+    }
+    for (var name in methods) {
+      var method = methods[name];
+      Object.defineProperty(prototype, '__' + name, {
+        value: method, writable: (typeof method === 'function'), enumerable: false, configurable: (typeof method === 'function')
+      });
+    }
+  }
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/prototype/1.7.0.0/prototype.js"></script>
+<script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+
+<script src="js/dist/underscore.js"></script>
+<script src="../dist/jst.js"></script>
+<script src="js/dist/sugar.js"></script>
+
+<script src="js/platform.js"></script>
+<script src="js/benchmark.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/browserscope.js"></script>
+
+<script>
+  ui.browserscope.key = 'agt1YS1wcm9maWxlcnINCxIEVGVzdBjTlbUIDA';
+  ui.browserscope.selector = '#bs-results';
+  
+  var add = ui.add, id = 0;
+  ui.add = function(name, fn) {
+      id += 1;
+      $('#test-table tbody').append($('<tr><th scope="row" id="title-' + id + '"><div>' + name + '</div></th><td><pre><code>' + fn.toString().replace('.__', '.') + '</code></pre></td><td id="results-' + id + '" class="results"></td></tr>'));
+      return add.call(ui, name, fn);
+  }
+  
+  ui.add('Underscore.JS', function() {
+    _.uniq(['a','b','b','c','c','c','d','d','f','f','j','k']);
+  });
+  
+  ui.add('Sugar.JS', function() {
+    ['a','b','b','c','c','c','d','d','f','f','j','k'].unique();
+  });
+  
+  ui.add('JSToolkit', function() {
+    ['a','b','b','c','c','c','d','d','f','f','j','k'].__unique();
+  });
+  
+  ui.add('JQuery', function() {
+    $.unique(['a','b','b','c','c','c','d','d','f','f','j','k']);
+  });
+  
+  ui.add('Prototype.JS', function() {
+    $A(['a','b','b','c','c','c','d','d','f','f','j','k']).unique();
+  });
+  
+  try {
+    var arr = [1, 5, 4, 2, 3],
+        i = 1;
+
+    function init() {
+      window.console && console.log('init called');
+    }
+  } catch(e) { }
+</script>
+</body>
+</html>

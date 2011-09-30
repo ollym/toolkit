@@ -205,9 +205,64 @@ $.getJSONP('https://api.github.com/repos/ollym/toolkit/git/blobs/%s'.sprintf(sha
                         var grid = $('<div class="method %s" id="%d"><p>%s</p></div>'.sprintf(
                                 ((i%3) == 0) ? 'alpha' : ((i+1)%3) == 0 ? 'omega' : '',
                                 method.listedid, method.description));
-                            example = $('<a data-cmd="example" class="btn green">Run Example</a>');                                
-
+                            example = $('<a class="btn green">Run Example</a>');
+                        
+                        var name = method.section.replace('.prototype', '#') + method.title.toLowerCase();
                         grid.append(example);
+                        
+                        if (name in window.jstBenchmarks) {
+                            
+                            var bench = $('<a class="btn orange" style="margin-left:105px">Benchmark</a>').appendTo(grid);
+                                
+                            bench.click(function() {
+                                
+                                var table = $('<table class="benchmark"><tbody></tbody></table>').insertBefore($(this).prev());
+                                bench.remove();
+                            
+                                Object.each(window.jstBenchmarks[name], function(key, meta) {
+                                    table.find('tbody').append('<tr><td>' + key + '</td><td style="width:100%" data-key="' + key + '" data-loading></td></tr>');
+                                });
+                                
+                                var results = [], length = Object.size(window.jstBenchmarks[name]);
+                                
+                                result = function(benchmark) {
+                                    
+                                    if (results.push(benchmark) === length) {
+                                        var max = Math.max.apply(null, results.pluck('hz'));
+                                        results.forEach(function(benchmark) {
+                                            var speed = $('<div class="speed" title="'+benchmark.hz.round()+' ops/sec"></div>');
+                                            speed.css('width', ((benchmark.hz * 100) / max).round() + '%');
+                                            var curr = table.find('[data-key="' + benchmark.name + '"]')
+                                                .removeAttr('data-loading').append(speed);
+                                            
+                                            if (benchmark.hz == max) {
+                                                curr.prev().css({
+                                                    'font-weight': 'bold',
+                                                    color: 'black'
+                                                });
+                                            }
+                                        });
+                                    }
+                                };
+                            
+                                Object.each(window.jstBenchmarks[name], function(key, meta) {
+                                   var frame = $('<iframe src="js/bench/sandbox/'+meta.sandbox+'.html">').appendTo('body');
+                                   frame.load(function() {
+                                   
+                                       var win = frame[0].contentWindow, doc = win.document, script = doc.createElement('script');
+                                       win.result = function(res) {
+                                           result(this[0]);
+                                       };
+                               
+                                       script.async = true;
+                                       script.text = 'var test = ' + meta.fn.toString() + ';' + 
+                                        "(new Benchmark.Suite).on('complete', window.result).add('"+key+"', test).run(true);";
+                                       doc.head.appendChild(script);
+                                   });
+                                });
+                            });
+                        }
+
                         grid.prepend(title);
                 
                         title.click(function() {

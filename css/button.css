@@ -17,12 +17,12 @@
 .btn.aqua { background-position: 0 -203px;  border-color: #06bfbf;  color: #fff; text-shadow: 1px 1px 0 #308895;}
 .btn.heather {  background-position: 0 -232px;  border-color: #6f6f6f;  color: #fff; text-shadow: 1px 1px 0 #444; }
 
-.btn.grey:active {  border-color: #d1d1d1;  color: #555960; text-shadow: 1px 1px 0 #fff;}
-.btn.black:active {   background-position: 0 -260px;   border-color: #20272c;  color: #fff; text-shadow: 1px 1px 0 #000;}
-.btn.red:active { background-position: 0 -289px;   border-color: #bf5d44;  color: #fff; text-shadow: 1px 1px 0 #c6382b;}
-.btn.blue:active { background-position: 0 -318px;   border-color: #4489bf;  color: #fff; text-shadow: 1px 1px 0 #246595;}
-.btn.green:active { background-position: 0 -347px;  border-color: #75b443;  color: #fff; text-shadow: 1px 1px 0 #579029;}
-.btn.orange:active {   background-position: 0 -386px;  border-color: #d98129;  color: #fff; text-shadow: 1px 1px 0 #c74928;}
-.btn.violet:active {   background-position: 0 -405px;  border-color: #b740da;  color: #fff; text-shadow: 1px 1px 0 #9b3eb4;}
-.btn.aqua:active { background-position: 0 -434px;  border-color: #06bfbf;  color: #fff; text-shadow: 1px 1px 0 #308895;}
-.btn.heather:active {  background-position: 0 -473px;  border-color: #6f6f6f;  color: #fff; text-shadow: 1px 1px 0 #444; }
+.btn.grey:active {  background-position: 0 -474px; }
+.btn.black:active {   background-position: 0 -474px; }
+.btn.red:active { background-position: 0 -435px; }
+.btn.blue:active { background-position: 0 -406px; }
+.btn.green:active { background-position: 0 -377px; }
+.btn.orange:active {   background-position: 0 -348px; }
+.btn.violet:active {   background-position: 0 -318px;}
+.btn.aqua:active { background-position: 0 -289px; }
+.btn.heather:active {  background-position: 0 -260px; }

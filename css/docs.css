@@ -37,12 +37,12 @@
 
 .method {
     float: left;
-    padding: 20px;
+    padding: 10px;
     background: white url(../img/method.png) repeat-x top left;
     border: 1px solid #E9E9E9;
     position: relative;
     border-radius: 6px;
-    width: 238px;
+    width: 278px;
     margin: 0 10px 20px 10px;
     -webkit-border-radius: 6px;
 }
@@ -55,6 +55,10 @@
 .method .btn {
     cursor: pointer;
     position: absolute;
+    margin-bottom: -10px;
+    line-height: 16px;
+    height: 16px;
+    padding: 2px 5px;
 }
 
 .method .ret {
@@ -75,6 +79,21 @@
 
 .method .params attr:hover {
     border-bottom: 1px dotted #AEAEAE;
+}
+
+.method .benchmark {
+    margin: 10px 0 15px 0;
+}
+
+.method .benchmark td:first-child {
+    padding-right: 3px;
+}
+
+.method .benchmark .speed {
+    color: white;
+    height: 11px;
+    font-size: 12px;
+    background: green;
 }
 
 #tooltip {
