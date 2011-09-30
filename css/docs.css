@@ -94,6 +94,7 @@
     height: 11px;
     font-size: 12px;
     background: green;
+    width: 0px;
 }
 
 #tooltip {

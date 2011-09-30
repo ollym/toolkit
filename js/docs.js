@@ -230,10 +230,11 @@ $.getJSONP('https://api.github.com/repos/ollym/toolkit/git/blobs/%s'.sprintf(sha
                                     if (results.push(benchmark) === length) {
                                         var max = Math.max.apply(null, results.pluck('hz'));
                                         results.forEach(function(benchmark) {
-                                            var speed = $('<div class="speed" title="'+benchmark.hz.round()+' ops/sec"></div>');
-                                            speed.css('width', ((benchmark.hz * 100) / max).round() + '%');
-                                            var curr = table.find('[data-key="' + benchmark.name + '"]')
-                                                .removeAttr('data-loading').append(speed);
+                                            var speed = $('<div class="speed" title="'+benchmark.hz.round()+' ops/sec"></div>'),
+                                                curr = table.find('[data-key="' + benchmark.name + '"]')
+                                                  .removeAttr('data-loading').append(speed);
+                                            
+                                            speed.animate({width: ((benchmark.hz * 100) / max).round() + '%'});
                                             
                                             if (benchmark.hz == max) {
                                                 curr.prev().css({
@@ -247,16 +248,18 @@ $.getJSONP('https://api.github.com/repos/ollym/toolkit/git/blobs/%s'.sprintf(sha
                             
                                 Object.each(window.jstBenchmarks[name], function(key, meta) {
                                    var frame = $('<iframe src="js/bench/sandbox/'+meta.sandbox+'.html">').appendTo('body');
+                                   frame.css('display', 'none');
                                    frame.load(function() {
                                    
                                        var win = frame[0].contentWindow, doc = win.document, script = doc.createElement('script');
                                        win.result = function(res) {
+                                           frame.remove();
                                            result(this[0]);
                                        };
                                
                                        script.async = true;
                                        script.text = 'var test = ' + meta.fn.toString() + ';' + 
-                                        "(new Benchmark.Suite).on('complete', window.result).add('"+key+"', test).run(true);";
+                                        "(new Benchmark.Suite).on('complete', window.result).add('"+key+"',test,{maxTime:5}).run(true);";
                                        doc.head.appendChild(script);
                                    });
                                 });
