@@ -69,7 +69,7 @@ $.getJSONP('https://api.github.com/repos/ollym/toolkit/git/blobs/%s'.sprintf(sha
             }
         };
 
-        window.__jstExtend__ = function(proto, properties) {
+        window.__jstExtend = function(proto, properties) {
   
             var object = null, prototype = null, group = null;
 
