@@ -1,5 +1,10 @@
 module('Function')
 
+test('Function.isFunction', function () {
+  strictEqual(Function.isFunction(Object), true);
+  strictEqual(Function.isFunction(Math), false);
+});
+
 test('Function.compose', function () {
   
   function a(val) { return val ^ 2; }

@@ -147,7 +147,7 @@ extend(Array.prototype, {
      * @param index2 The index of the value to swap it with
      * @example
      *  var arr = [5, 10, 15];
-     *  arr.swap(0,2) === arr; // true
+     *  arr.swap$(0,2) === arr; // true
      *  arr;
      *    // arr = [15, 10, 5]
      * 
@@ -199,7 +199,7 @@ extend(Array.prototype, {
      * @param *values All the values
      * @example
      *  var arr = [5, 2, 5, 7];
-     *  arr.remove$(5, 2);
+     *  arr.remove$(5, 2) === arr; // true
      *  arr;
      *    // arr = [5,7]
      * 
@@ -239,7 +239,7 @@ extend(Array.prototype, {
      *
      * @since 1.0.0
      * @example
-     *  var arr = ['a','b','c'].shuffle();
+     *  ['a','b','c'].shuffle();
      *    // returns something like b,a,c
      *
      * @returns array
@@ -303,8 +303,8 @@ extend(Array.prototype, {
      *  [[2,3,4],[1,2,3],[3,4,5]].intersect();
      *    // returns [3]
      *
-     *  [1,2,3].intersect(2,[3,4]);
-     *    // returns [2,3]
+     *  [1,2,3].intersect(2,[2,3]);
+     *    // returns [2]
      *
      * @returns array
      */
@@ -372,6 +372,9 @@ extend(Array.prototype, {
      *  [[1,2,3], [3,4,5], [5,6,7]].union();
      *    // returns [1,2,3,4,5,6,7]
      *
+     *  [1,2,3].union(4,[5,6]);
+     *    // returns [1,2,3,4,5,6,7]
+     *
      * @returns array
      */
     var values = this.concat.apply(this, Array.prototype.slice.call(arguments)).flatten(1);
@@ -425,7 +428,7 @@ extend(Array.prototype, {
      *
      * @since 1.0.0
      * @example
-     *  [1,2,2,3,4,3].unqiue()
+     *  [1,2,2,3,4,3].unique()
      *    // returns [1,2,3,4]
      *
      * @returns array
@@ -593,7 +596,7 @@ extend(Array.prototype, {
      * @since 1.3.0
      * @example
      *  var arr = [1,null,2,0];
-     *  arr.clean() === arr; // true
+     *  arr.clean$() === arr; // true
      *  arr;
      *    // arr = [2,3]
      *
@@ -696,9 +699,9 @@ extend(Array.prototype, {
      *    // returns [5, 5, 4, 2, 4]
      *
      *  // Since 1.4.0:
-     *  var a = { name: 'Ann', age: 36, pass: 's8J2ld0a' };
-     *  var b = { name: 'Bob', age: 21, pass: '0aJdlfsa' };
-     *  var c = { name: 'Charlie', age: 31, pass: 'f8fadasa' };
+     *  var a = { name: 'Ann', age: 36, pass: 's8J2ld0a' },
+     *      b = { name: 'Bob', age: 21, pass: '0aJdlfsa' },
+     *      c = { name: 'Charlie', age: 31, pass: 'f8fadasa' };
      *  
      *  [a,b,c].pluck(['name', 'age']);
      *    // returns [{ name: 'Ann', age: 36 }, { name: 'Bob', age: 21 }, { name: 'Charlie', age: 31 }]
@@ -721,16 +724,18 @@ extend(Array.prototype, {
      * @param property|array The name of the property or array of keys to pluck.
      * @example
      *  var arr = ['hello','world','this','is','nice'];
-     *  arr.pluck$('length') === a; // true
+     *  arr.pluck$('length') === arr; // true
+     *  arr;
      *    // arr = [5, 5, 4, 2, 4]
      *
      *  // Since 1.4.0:
      *  var a = { name: 'Ann', age: 36, pass: 's8J2ld0a' },
-     *  var b = { name: 'Bob', age: 21, pass: '0aJdlfsa' },
-     *  var c = { name: 'Charlie', age: 31, pass: 'f8fadasa' }
+     *      b = { name: 'Bob', age: 21, pass: '0aJdlfsa' },
+     *      c = { name: 'Charlie', age: 31, pass: 'f8fadasa' };
      *  
      *  var arr = [a,b,c];
-     *  arr.pluck$(['name', 'age']);
+     *  arr.pluck$(['name', 'age']) === arr;
+     *  arr;
      *    // arr = [{ name: 'Ann', age: 36 }, { name: 'Bob', age: 21 }, { name: 'Charlie', age: 31 }]
      *    // Note that the original objects are left intact!
      *
@@ -769,7 +774,7 @@ extend(Array.prototype, {
      * @param regex The regular expression to match
      * @example
      *  var arr = ['hello','world','this','is','cool'];
-     *  arr.grep(/(.)\1/) === arr; // true
+     *  arr.grep$(/(.)\1/) === arr; // true
      *  arr;
      *  // arr = ['hello', 'cool']
      * @returns self
@@ -843,7 +848,7 @@ extend(Array.prototype, {
      * @param [comparison] The comparison callback used in the sort afterwords.
      * @example
      *  var arr = ['hello','world','this','is','nice']
-     *  arr.sortBy('length') === arr; // true
+     *  arr.sortBy$('length') === arr; // true
      *  arr;
      *    // arr = ['is', 'this', 'nice', 'hello', 'world']
      *
@@ -1038,13 +1043,12 @@ if ( ! Array.prototype.lastIndexOf)
      *  (new Date()).fuzzyDiff(Date.now() - 5000)
      *    // returns 'about 5 seconds ago'
      *
-     *  (new Date()).fuzzyDiff('2011-09-20')
-     *    // returns 'about 8 days ago'
-     *
      * @returns string
      */
     if ( ! (date instanceof Date))
       date = new Date(date);
+      
+    // TODO: Needs better parsing!
     
     var delta = this.getTime() - date.getTime(),
         units = {
@@ -1058,7 +1062,7 @@ if ( ! Array.prototype.lastIndexOf)
     var keys = Object.keys(units), divs = Object.values(units);
     
     for (var i = 0; i < divs.length; i++) {
-      if ((delta / divs[i]) < 1) {
+      if ((delta / divs[i]) < 1 || i == divs.length) {
                 
         var time = (delta / divs[i - 1]), key = keys[i - 1];
         if (time > 1) key += 's'; 
@@ -1200,7 +1204,7 @@ if (isNaN(Date.parse("2011-06-15T21:40:05+06:00"))) {
     })(Date);
   }extend(Function, {
   
-  isFunction: function compose(func) {
+  isFunction: function isFunction(func) {
     /**
      * Determines whether the provided function is really function and whether it's callable.
      *
@@ -1212,7 +1216,7 @@ if (isNaN(Date.parse("2011-06-15T21:40:05+06:00"))) {
      *
      * @returns bool
      */
-    return (typeof func === 'function') && func.call;
+    return (typeof func === 'function') && !! func.call;
     
   },
     
@@ -1223,10 +1227,10 @@ if (isNaN(Date.parse("2011-06-15T21:40:05+06:00"))) {
      * @since 1.2.0
      * @param funcs* The functions to create the composite
      * @example
-     *  function A(a) { return a ^ 2 }
-     *  function B(a) { return a / 2 }
-     *  var C = Function.compose(A, B);
-     *  C(5) // Same as A(B(5))
+     *  var a = function(val) { return val ^ 2; },
+     *      b = function(val) { return val / 2; };
+     *  var c = Function.compose(a, b);
+     *  c(5) == a(b(5));
      *
      * @returns function
      */
@@ -1255,12 +1259,14 @@ extend(Function.prototype, {
      * @param time The number of milliseconds before deleting the cache.
      * @param ident A callback used to map arguments to ids.
      * @example
-     *  var fibonacci = function (n) {
+     *  var fibonacci = function(n) {
      *    return n < 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
      *  };
+     *  fibonacci(35);
      *  // fibonacci(50) will take a several minutes to complete
      *
-     *  var fibonacci = fibonacci.cache();
+     *  fibonacci = fibonacci.cache();
+     *  fibonacci(35);
      *  // fibonacci(1000) will now take roughly 13ms to complete!
      * 
      * @returns function
@@ -1320,20 +1326,15 @@ extend(Function.prototype, {
      * @since 1.4.0
      * @param scope Unfortunately the original function will loose it's scope. Re-add it here.
      * @example
-     *  function A() { this.foo = 'bar'; }
-     *  A.prototype.getFoo = function () { return this.foo; }
+     *  var FooGetter = function() { this.foo = 'bar'; }
+     *  FooGetter.prototype.getFoo = function () { return this.foo; }
      *
-     *  var obj = new A();
-     *  obj.getFoo = obj.getFoo.once(); // INCORRECT! don't forget scope!
-     *  obj.getFoo = obj.getFoo.once(obj); // Correct :)
+     *  var obj = new FooGetter();
+     *  obj.getFoo = obj.getFoo.once(obj);
      *
-     *  obj.getFoo();
-     *    // returns 'bar'
-     *
+     *  obj.getFoo(); // returns 'bar'
      *  obj.foo = 'bat';
-     *
-     *  obj.getFoo();
-     *    // returns 'bar' again!
+     *  obj.getFoo(); // returns 'bar' again!
      * 
      * @returns function
      */
@@ -1380,10 +1381,10 @@ if ( ! Function.prototype.bind)
      * @param [start=0] A number to start from
      * @param [end=1] A number to go to
      * @example
-     *  Math.random(100, 1000)
+     *  Number.random(100, 1000)
      *    // returns something like 521.61242932 (between 100 and 1000)
      *
-     *  Math.random()
+     *  Number.random()
      *    // returns something like 0.61242932 (between 0 and 1)
      * 
      * @returns int
@@ -1422,6 +1423,9 @@ extend(Number.prototype, {
      *
      *  (32).ordinal(false)
      *    // returns 'nd'
+     *
+     *  12.31.ordinal()
+     *    // returns '12th'
      *
      */
     append = (arguments.length === 0) ? true : !! append;
@@ -1534,7 +1538,7 @@ extend(Number.prototype, {
      * @since 1.1.0
      * @param *int The numbers to calculate
      * @example
-     *  (21).gcd(6)
+     *  (21).lcm(6)
      *    // returns 42
      * 
      * @returns integer
@@ -1600,11 +1604,8 @@ extend(Number.prototype, {
      *  1.5.round()
      *    // returns 2
      *
-     *  (1).round(1)
-     *    // returns '1.0'
-     *
-     *  (15).round(-1)
-     *    // returns 20
+     *  19231.32.round(-3)
+     *    // returns 1900
      * 
      * @returns integer
      */
@@ -1689,7 +1690,7 @@ extend(Number.prototype, {
      * @param [pad='0'] The character to pad.
      * @example
      *  (80).dec(4);
-     *    returns '0080'
+     *    // returns '0080'
      * 
      * @returns string
      */
@@ -1746,13 +1747,13 @@ extend(Number.prototype, {
      * @param [binary=false] Whether the devisor should be a power of 2.
      * @example
      *  (1024).abbr();
-     *    returns '1K'
+     *    // returns '1K'
      *
      *  (1024).abbr(3);
-     *    returns '1.024K'
+     *    // returns '1.024K'
      *
      *  (1024).abbr(3, true);
-     *    returns '1.000K'
+     *    // returns '1.000K'
      * 
      * @returns string
      */
@@ -1801,7 +1802,7 @@ extend(Number.prototype, {
      *  Object.follow(obj, 'a/b', '/') === obj.a.b;
      *    // returns true
      *
-     *  @returns mixed
+     * @returns mixed
      */
     if ( ! Array.isArray(keys)) {
       if (typeof keys !== 'string')
@@ -1816,7 +1817,7 @@ extend(Number.prototype, {
     }, obj);
   },
   
-  value: function set(obj, key /*, value*/) {
+  value: function value(obj, key /*, value*/) {
     
     var desc = Object.getOwnPropertyDescriptor(obj, key);
     if (desc && ! Object.getOwnPropertyDescriptor(obj, key).writable)
@@ -1833,10 +1834,14 @@ extend(Number.prototype, {
      * @param object The object to delete from
      * @param key The name of the property to delete
      * @example
-     *  var obj = Object.create(null, { a: { value: 'b' }, b: { value: 'c', configurable: true }});
+     *  var obj = Object.create(null, {
+     *    a: { value: 'b' },
+     *    b: { value: 'c', configurable: true }
+     *  });
      * 
      *  Object.remove(obj, 'a') // returns false, and value isn't removed.
      *  Object.remove(obj, 'b') // returns true, and value is removed.
+     *
      * @returns bool
      */
      
@@ -1863,7 +1868,7 @@ extend(Number.prototype, {
      *  Object.id(a) == Object.id(b)
      *    // false
      *
-     *  Object.id(a) == Object.id(b)
+     *  Object.id(a) == Object.id(a)
      *    // true
      * 
      * @returns string
@@ -1888,11 +1893,7 @@ extend(Number.prototype, {
      *  var obj = {1:2,3:4};
      *  Object.alias(obj, 3, 6);
      *  
-     *  log(obj[3] == obj[6]) // > true
-     *  
-     *  obj[3] = 5;
-     *
-     *  log(obj[3] == obj[6]) // > true
+     *  obj[3] === obj[6]
      * 
      * @returns self
      */
@@ -1999,10 +2000,10 @@ extend(Number.prototype, {
      * @param function The callback that takes parameters (key, value, object)
      * @param scope The value of this in the callback function.
      * @example
-     *  var ret = Object.each({1:2,3:4}, function (key, val, obj) {
+     *  Object.each({1:2,3:4}, function (key, val, obj) {
      *    return (key + ':' + val);
      *  });
-     *  // ret = 1:2
+     *  // returns '1:2'
      * 
      * @returns mixed
      */
@@ -2048,9 +2049,10 @@ extend(Number.prototype, {
      * @param scope The value of this in the callback function.
      * @example
      *  var obj = {1:2,3:4};
-     *  Object.map(obj, function (key, val) {
+     *  Object.map$(obj, function (key, val) {
      *    return key * val;
-     *  });
+     *  }) === obj;
+     *  obj;
      *  // obj = {1:2,3:12}
      * 
      * @returns self
@@ -2108,8 +2110,8 @@ extend(Number.prototype, {
      * @example
      *  Object.reduce({1:2,3:4}, function (group, key, val) {
      *    return group + key + val;
-     *  }, 0);
-     *  // returns 10 (0+1+2+3+4)
+     *  }, '0');
+     *  // returns '01234'
      * 
      * @returns mixed
      */
@@ -2271,12 +2273,14 @@ extend(Number.prototype, {
      *  var obj = {1:2,3:4,5:6};
      *  Object.filter$(obj, function (key, val, object) {
      *    return key == 3;
-     *  });
+     *  }) === obj;
+     *  obj;
      *  // obj = {3:4} 
      *
      *  // Since 1.4.0:
      *  var obj = {1:2,3:4,5:6};
-     *  Object.filter$(obj, [1,3]);
+     *  Object.filter$(obj, [1,3]) === obj;
+     *  obj;
      *  // obj = {1:2,3:4}
      * 
      * @returns self
@@ -2321,7 +2325,8 @@ extend(Number.prototype, {
      * @param object The object you want to clean
      * @example
      *  var obj = {1:false,2:0,3:NaN,4:null,5:6};
-     *  Object.clean(obj);
+     *  Object.clean$(obj) === obj;
+     *  obj;
      *    // obj = {5:6} 
      * 
      * @returns object
@@ -2381,8 +2386,10 @@ extend(Number.prototype, {
      * @param object The object we're going to wrap
      * @example
      *  var obj = Object.hash({a:1,b:2,c:3,d:4});
-     *  obj.length // returns 4
-     *  // length, keys(), each(), forEach(), map(), map$(), filter(), filter$(), reduce(), clean(), clean$(), clone(), merge(), merge$()
+     *  obj.keys();
+     *  obj.size();
+     *  obj.values();
+     *  // size(), keys(), each(), forEach(), map(), map$(), filter(), filter$(), reduce(), clean(), clean$(), clone(), merge(), merge$()
      * 
      * @returns object
      */
@@ -2399,8 +2406,10 @@ extend(Number.prototype, {
      * @example
      *  var obj = {a:1,b:2,c:3,d:4};
      *  Object.hash$(obj);
-     *  obj.length // returns 4
-     *  // length, keys(), each(), forEach(), map(), map$(), filter(), filter$(), reduce(), clean(), clean$(), clone(), merge(), merge$()
+     *  obj.keys();
+     *  obj.size();
+     *  obj.values();
+     *  // size(), keys(), each(), forEach(), map(), map$(), filter(), filter$(), reduce(), clean(), clean$(), clone(), merge(), merge$()
      * 
      * @returns object
      */
@@ -2860,18 +2869,25 @@ extend(String.prototype, {
     
   },
   
-  remove: function remove(substr) {
+  remove: function remove(substr, modifiers) {
     /**
      * Removes a given string or regular expression from the string
      *
      * @since 1.2.0
      * @param substr The sub string or regex
+     * @param [modifiers='gmi'] The regex modifiers
      * @example
-     *  'abbc'.remove('b')
+     *  'abBc'.remove('b')
      *    // returns 'ac'
+     *
+     *  'abBc'.remove('b', 'g)
+     *    // returns 'aBc'
      * 
      * @returns string
      */
+    if ( ! (substr instanceof RegExp))
+      substr = new RegExp(substr, modifiers || 'gmi');
+    
     return this.replace(substr, '');
     
   },
@@ -3037,7 +3053,8 @@ extend(String.prototype, {
      * @param string The string to find the distance from
      * @see http://en.wikipedia.org/wiki/Levenshtein_distance
      * @example
-     * 
+     *  'hello'.distance('world');
+     *  
      * @returns string
      */
     var s, l = (s = this.split("")).length, t = (c = c.split("")).length, i, j, m, n;
@@ -3088,7 +3105,7 @@ extend(String.prototype, {
      *
      * @returns string
      */
-    this.chars().chunk(len).map(function (chars) {
+    return this.chars().chunk(len).map(function (chars) {
       return chars.join('');
     });
   },
@@ -3127,7 +3144,7 @@ extend(String.prototype, {
      * 
      * @since 1.5.0
      * @example
-     *  'SGVsbG8gV29ybGQ='.btoa()
+     *  'SGVsbG8gV29ybGQ='.atob()
      *    // returns 'Hello World'
      */
     var key = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=', output = '', input = this;
@@ -3161,6 +3178,9 @@ extend(String.prototype, {
      * @example
      *  '%01.2f'.sprintf(12.1)
      *    // returns '12.10'
+     *
+     *  'Hello %s, %s'.sprintf('world', 'How are you?')
+     *    // returns 'Hello world, How are you?'
      * 
      * @returns string
      */

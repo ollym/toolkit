@@ -13,6 +13,19 @@ test('String#count', function () {
   strictEqual('abAb'.count('ab'), 2);
   strictEqual('abAb'.count('ab', 'g'), 1);
 });
+
+test('String#remove', function () {
+  strictEqual('abbc'.remove('b'), 'ac');
+  strictEqual('abBc'.remove('b', 'gm'), 'aBc');
+});
+  
+test('String#chunk', function () {
+  deepEqual('abcabc'.chunk(2), ['ab', 'ca', 'bc']);
+});
+
+test('String#distance', function () {
+  strictEqual('hello'.distance('world'), 4);
+});
   
 test('String#insert', function () {
   strictEqual('ab'.insert('ab'), 'abab');

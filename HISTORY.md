@@ -1,3 +1,9 @@
+1.5.4 / 2011-09-30
+==================
+
+  * Fixed multiple bugs on a number of un-tested functions.
+  * Loads of doc typos fixed and examples changed to work with the online repl.
+
 1.5.3 / 2011-09-30
 ==================
 

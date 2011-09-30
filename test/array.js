@@ -98,6 +98,7 @@ test('Array#intersect', function () {
   deepEqual(a.intersect(b,c), [3]);
   deepEqual([a,b,c].intersect(), [3]);
   deepEqual(a.intersect(1), [1]);
+  deepEqual([1,2,3].intersect(2,[2,3]), [2]);
   deepEqual([].intersect(), []);
 });
   
@@ -113,6 +114,7 @@ test('Array#union', function () {
   var a = [1,2,3], b = [3,4,5], c = [5,6,7];
   deepEqual(a.union(b,c), [1,2,3,4,5,6,7]);
   deepEqual([[1,2,3],[2,3,4],[3,4,5]].union(), [1,2,3,4,5]);
+  deepEqual([1,2,3].union(4,[5,6]), [1,2,3,4,5,6]);
   deepEqual([].union(), []);
 });
   

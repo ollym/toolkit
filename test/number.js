@@ -38,6 +38,7 @@ test('Number#lcm', function () {
   
 test('Number#round', function () {
   strictEqual((1.5).round(), 2);
+  strictEqual((1.53123).round(), 2);
   strictEqual((1.52).round(1), 1.5);
   strictEqual((15).round(-1), 20);
 });
