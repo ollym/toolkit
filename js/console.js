@@ -2,7 +2,7 @@ $(function() {
 
   var format = function format(value) {
     
-    if (typeof value === 'undefined' || value !== value)
+    if (typeof value === 'undefined' || value !== value || value === null)
       return '<span class="console-const">' + value + '</span>';
     
     if (value.constructor === Array) {
