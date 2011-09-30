@@ -260,7 +260,7 @@ test('Object.getOwnPropertyNames', function () {
     f: { value: 'f', enumerable: true }
   });
 
-  deepEqual(Object.getOwnPropertyNames(b), ['d','e','f']);
+  ok(Object.getOwnPropertyNames(b).contains('d','e','f'));
 });
 
 test('Object.keys', function () {
@@ -270,5 +270,5 @@ test('Object.keys', function () {
     c: { value: 'c', enumerable: true }
   });
     
-  deepEqual(Object.keys(obj), ['b','c']);
+  ok(Object.keys(obj).contains('b','c'));
 });

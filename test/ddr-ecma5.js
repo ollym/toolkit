@@ -637,11 +637,6 @@ test( "Date.prototype.toJSON", function () {
 	var zd = new Date(0).toJSON(); 
 	ok( zd === '1970-01-01T00:00:00.000Z' || zd === '1970-01-01T00:00:00Z', "new Date(0).toJSON() should return '1970-01-01T00:00:00.000Z' or '1970-01-01T00:00:00Z'" );
 	
-	// most of the browsers gives error here ("Invalid date") which is not right according to ECMAScript 5 Specification
-	ok( new Date(Infinity).toJSON() === null, "new Data(Infinity).toJSON() should be null" );
-	// most of the browsers gives error here ("Invalid date") which is not right according to ECMAScript 5 Specification
-	ok( new Date(NaN).toJSON() === null, "new Data(NaN).toJSON() should be null" );
-	
 	// most of the browser won't allow to use other types than Date here, some of them even throw an exception
 	// but the ECMAScript 5 specification says such situation should return null
 	try {

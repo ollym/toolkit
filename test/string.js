@@ -4,11 +4,6 @@ test('String.UUID', function () {
   strictEqual(String.UUID().length, 36);
   notEqual(String.UUID(), String.UUID());
 });
-
-test('String#eval', function () {
-  strictEqual(''.eval.name, 'eval');
-  strictEqual('3'.eval(), 3);
-});
   
 test('String#chars', function () {
   deepEqual('abcd'.chars(), ['a','b','c','d']);
