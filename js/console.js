@@ -205,6 +205,10 @@ $(function() {
             .insertBefore(prompt);
         }
         
+        window.log = function(data) {
+          out(data);
+        };
+        
         sbox.eval(buffer + code, err, out);
         
         $('<span class="console-stdin">').insertBefore(cursor);
