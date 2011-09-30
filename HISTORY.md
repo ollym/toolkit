@@ -1,4 +1,4 @@
-1.5.2 / master
+1.5.3 / 2011-09-30
 ==================
 
   * Major fixes to the online REPL

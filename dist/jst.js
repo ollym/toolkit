@@ -1,160 +1,58 @@
-(function () {var domDefineProperty = false, objectIdStore = [], objectDescriptorStore = [];
+(function () {/** Globals available throughout jst.js **/
+var domDefineProperty = false, objectIdStore = [], objectDescriptorStore = [];
+var extend, alias;
 
-// Whether we have a working version of Object.defineProperty
-try { Object.defineProperty({}, 'x', {});
-} catch(e) { domDefineProperty=true; }
-
-if (typeof window !== 'undefined' && window.__jstExtend__) {
-  var extend = window.__jstExtend__;
+// Trap ie8 and non-ecma5 platforms.
+try {
+  Object.defineProperty({}, 'x', {});
+} catch (e) {
+  domDefineProperty = true;
 }
-else var extend = function (prototype, methods) {
-  
-  var title = null;
-  
-  switch (prototype) {
-    case Array:               { title = 'Array.';    break; }
-    case Array.prototype:     { title = 'Array#';    break; }
-    case Function:            { title = 'Function.'; break; }
-    case Function.prototype:  { title = 'Function#'; break; }
-    case Number:              { title = 'Number.';   break; }
-    case Number.prototype:    { title = 'Number#';   break; }
-    case Object:              { title = 'Object.';   break; }
-    case Object.prototype:    { title = 'Object#';   break; }
-    case String:              { title = 'String.';   break; }
-    case String.prototype:    { title = 'String#';   break; }
-    case Math:                { title = 'Math.';     break; }
-    case Date:                { title = 'Date.';     break; }
-    case Date.prototype:      { title = 'Date#';     break; }
-    default: {
-      throw new Error('Override detector found an unknown prototype being extended.');
+
+// Allow people to alter the way jst extends methods
+if (typeof window !== 'undefined' && window.__jstExtend)
+  extend = window.__jstExtend;
+else {
+  extend = function (prototype, methods) {
+      
+    // Only 1 property being extended(prototype, name, value)
+    if (arguments.length === 3) {
+      var n = methods, methods = {};
+      methods[n] = arguments[2];
     }
-  }
-  
-  if (typeof methods === 'string') {
-    var n = methods, methods = {};
-    methods[n] = arguments[2];
-  }
-  
-  for (name in methods) {
-    var method = methods[name];
+    
+    // Loop through each method
+    for (name in methods) {
+      if (Object.prototype.hasOwnProperty.call(methods, name)) {
+        var method = methods[name];
         
-    if (domDefineProperty) {
-      
-      var id = -1;
-      for (var i = 0; i < objectIdStore.length; i++)  
-        if (objectIdStore[i] === prototype)
-          id = i;
-      id = id < 0 ? objectIdStore.push(prototype) - 1 : id;
-      
-      if ( ! objectDescriptorStore[id])
-        objectDescriptorStore[id] = {};
-      
-      objectDescriptorStore[id][name] = { writable: true, enumerable: false, configurable: true };
-      prototype[name] = method;
-
-    } 
-    else {
-      Object.defineProperty(prototype, name, {
-        value: method,
-        writable: true,
-        enumerable: false,
-        configurable: true
-      });
+        // We're going to have store descriptors
+        if (domDefineProperty) {
+          
+          // Get an id for the the object by use of the objectIdStore
+          for (var id = -1, i = 0; i < objectIdStore.length; i++)
+            if (objectIdStore[i] === prototype)
+              id = i;
+              
+          id = (id < 0) ? objectIdStore.push(prototype) -1 : id;
+          
+          if ( ! objectDescriptorStore[id])
+            objectDescriptorStore[id] = {};
+          
+          objectDescriptorStore[id][name] = 
+            { writable: (typeof method === 'function'), enumerable: false, configurable: (typeof method === 'function') };
+            
+          prototype[name] = method;
+        }
+        else {
+          Object.defineProperty(prototype, name, {
+            value: method, writable: (typeof method === 'function'), enumerable: false, configurable: (typeof method === 'function')
+          });
+        }
+      }
     }
-  }
-}
-
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports.repl = function () {
-    var vm = require('vm'), repl = require('repl');
-    process.stdin.removeAllListeners('keypress');
-    var ctx = repl.start('toolkit> ').context;
-    ctx.Array = Array;
-    ctx.Object = Object;
-    ctx.Number = Number;
-    ctx.Date = Date;
-    ctx.RegExp = RegExp;
-    ctx.String = String;
-    ctx.Function = Function; 
   }
 }extend(Array, {
-  
-  intersect: function intersect(arrays) {
-    /**
-     * Finds values that are present in all of the given arrays. Equality of values is strict (===).
-     *
-     * @since 1.4.0
-     * @param arrays|*array The arrays to find the intersection with.
-     * @example
-     *  Array.intersect([[2,3,4], [3,4,5]]);
-     *    // returns [3]
-     *
-     *  Array.intersect([2,3,4], [3,4,5]);
-     *    // returns [3]
-     *
-     * @returns array
-     */
-    if (arguments.length > 1)
-      arrays = Array.prototype.slice.call(arguments);
-    else if (arguments.length === 0 || arrays.length === 0)
-      return [];
-    
-    return arrays.first().filter(function (val) {
-      return arrays.every(function (arg) {
-        return arg.contains(val);
-      });
-    });
-  },
-  
-  diff: function diff(arrays) {
-    /**
-     * Finds values that are present in only 1 of the given arrays. Equality of values is strict (===).
-     *
-     * @since 1.4.0
-     * @param arrays|array* The arrays to differentiate with
-     * @example
-     *  Array.diff([[1,2,3],[2,3,4],[3,4,5]]);
-     *    // returns [1,5]
-     *
-     *  Array.diff([1,2,3],[2,3,4],[3,4,5]);
-     *    // returns [1,5]
-     *
-     * @returns array
-     */
-    if (arguments.length > 1)
-      arrays = Array.prototype.slice.call(arguments);
-    else if (arguments.length === 0 || arrays.length === 0)
-      return [];
-      
-    var vals = arrays.flatten(1);
-
-    return vals.filter(function (a) {
-      return vals.indexOf(a) == vals.lastIndexOf(a);
-    });
-  },
-  
-  union: function union(arrays) {
-    /**
-     * Flattens parameters into a single array and then finds unique values.
-     *
-     * @since 1.4.0
-     * @param arrays The arrays to union
-     * @example
-     *  Array.union([[1,2,3],[3,4,5],[5,6,7]]);
-     *    // returns [1,2,3,4,5,6,7]
-     *
-     *  Array.union([1,2,3],[3,4,5],[5,6,7]);
-     *    // returns [1,2,3,4,5,6,7]
-     *
-     * @returns array
-     */
-    if (arguments.length > 1)
-      arrays = Array.prototype.slice.call(arguments);
-    else if (arguments.length === 0 || arrays.length === 0)
-      return [];
-    
-    return Array.prototype.concat.apply([], arrays).unique();
-  },
   
   range: function range(start, stop, step) {
     /**
@@ -392,33 +290,73 @@ extend(Array.prototype, {
   
   intersect: function intersect() {
     /**
-     * Finds values that are contained within all given arrays.
+     * Finds values that are contained within all given arrays. Non-arrays given as parameters will be ignored.
      *
      * @since 1.0.0
-     * @param *values The arrays to intersect with
+     * @alias intersection
+     * @updated 1.6.0 Calling without parameters does the intersection on the array instance's values.
+     * @param [*values] The arrays to intersect. If no values are given then the values are the sub arrays within this.
      * @example
      *  [1,2,3].intersect([2,3,4], [3,4,5]);
      *    // returns [3]
      *
+     *  [[2,3,4],[1,2,3],[3,4,5]].intersect();
+     *    // returns [3]
+     *
+     *  [1,2,3].intersect(2,[3,4]);
+     *    // returns [2,3]
+     *
      * @returns array
      */
-    return Array.intersect(Array.prototype.slice.call(arguments).concat([this]));
+    var arrays = (arguments.length === 0) ? this : [this].concat(Array.prototype.slice.call(arguments));
+
+    if (arrays.length === 0) return [];
+    else if (arrays.length === 1) return arrays[0];
+    
+    arrays.map$(function(v) {
+      if ( ! Array.isArray(v)) return [v];
+      else return v;
+    });
+
+    return arrays.first().filter(function (val) {
+      return arrays.every(function (arr) {
+        return arr.contains(val);
+      });
+    });
+    
   },
 
   diff: function diff() {
     /**
-     * Finds all values that are only contained in 1 of the supplied arrays.
+     * Finds all values that are only contained in 1 of the supplied arrays. Non-array values will be conted as single values.
      *
      * @since 1.0.0
      * @alias difference
+     * @updated 1.6.0
+     *  Integrated Array.diff into this method if the user didn't supply any arguments.
+     *
      * @param *arrays The arrays to differentiate with
      * @example
      *  [1,2,3].diff([2,3,4], [3,4,5]);
      *    // returns [1,5]
      *
+     *  [[1,2,3], [2,3,4], [3,4,5]].diff();
+     *    // returns [1,5]
+     *
+     *  // As of 1.5.3
+     *  [1,2,3].diff(2,[3,4]);
+     *    // returns [1,4]
+     *
      * @returns array
      */
-    return Array.diff(Array.prototype.slice.call(arguments).concat([this]));
+    var values = this.concat.apply(this, Array.prototype.slice.call(arguments)).flatten(1);
+    
+    if (values.length === 0) return [];
+    else if (values.length === 1) return arrays[0];
+    
+    return values.filter(function (a,i,t) {
+      return t.indexOf(a) === t.lastIndexOf(a);
+    });
   },
   
   union: function union() {
@@ -431,9 +369,17 @@ extend(Array.prototype, {
      *  [1,2,3].union([3,4,5], [5,6,7]);
      *    // returns [1,2,3,4,5,6,7]
      *
+     *  [[1,2,3], [3,4,5], [5,6,7]].union();
+     *    // returns [1,2,3,4,5,6,7]
+     *
      * @returns array
      */
-    return Array.union(Array.prototype.slice.call(arguments).concat([this]));
+    var values = this.concat.apply(this, Array.prototype.slice.call(arguments)).flatten(1);
+        
+    if (values.length === 0) return [];
+    else if (values.length === 1) return arrays[0];
+    
+    return values.flatten(1).unique();
   },
   
   chunk: function chunk(size) {
@@ -523,12 +469,13 @@ extend(Array.prototype, {
      *
      * @returns array
      */
-    if (level === undefined) level = -1;
-    else if (level == 0) return this.clone();
-
-    return this.reduce(function (a,b) {
-      return a.concat((Array.isArray(b) && level != 0) ? b.flatten(level - 1) : [b]);
-    }, []);
+    if (arguments.length === 0) level = -1;
+    else if (level === 0) return this.clone();
+    
+    for (var i = 0, a = this.clone(); a.some(Array.isArray) && (i != level); i++)
+      a = Array.prototype.concat.apply([], a);
+      
+    return a;
   },
    
    flatten$: function flatten$(level) {
@@ -545,7 +492,7 @@ extend(Array.prototype, {
      *
      * @returns self
      */
-    if (level === undefined) level = -1;
+    if (arguments.length === 0) level = -1;
       
     for (var i = 0, length = this.length; i < length; i++) {
       if (Array.isArray(this[i]) && level != 0)
@@ -1079,18 +1026,34 @@ if ( ! Array.prototype.lastIndexOf)
   });extend(Date.prototype, {
   
   fuzzyDiff: function fuzzyDiff(date, suffix, prefix) {
-    
+    /**
+     * Finds the difference between the current date and another date in vague terms.
+     *
+     * @since 1.5.3
+     * @param date The date to offset with
+     * @param [suffix='ago'] The suffix to the string
+     * @param [prefix='about'] The prefix to the string
+     * @example
+     *
+     *  (new Date()).fuzzyDiff(Date.now() - 5000)
+     *    // returns 'about 5 seconds ago'
+     *
+     *  (new Date()).fuzzyDiff('2011-09-20')
+     *    // returns 'about 8 days ago'
+     *
+     * @returns string
+     */
     if ( ! (date instanceof Date))
       date = new Date(date);
     
-    var delta = this.getTime() - date.getTime();
-    var units = {
-      second: 1000,
-      minute: 60000,
-      hour: 3600000,
-      day: 86400000,
-      year: 31557600000
-    };
+    var delta = this.getTime() - date.getTime(),
+        units = {
+          second: 1000,
+          minute: 60000,
+          hour: 3600000,
+          day: 86400000,
+          year: 31557600000
+        };
     
     var keys = Object.keys(units), divs = Object.values(units);
     
@@ -1433,6 +1396,48 @@ if ( ! Function.prototype.bind)
 
 extend(Number.prototype, {
   
+  pow: function pow(n) {
+    /**
+     * Returns the number to the power of n.
+     *
+     * @param num The power
+     * @example
+     *  (2).pow(8)
+     *    // returns 256
+     *  
+     * @returns int
+     */
+    return Math.pow(this, n);
+  },
+  
+  ordinal: function ordinal(append) {
+    /**
+     * Returns the number's english ordinal value with the number prepended. Floating numbers will be rounded.
+     * 
+     * @since 1.5.3
+     * @param [append=true] If 
+     * @example
+     *  (1).ordinal()
+     *    // returns '1st'
+     *
+     *  (32).ordinal(false)
+     *    // returns 'nd'
+     *
+     */
+    append = (arguments.length === 0) ? true : !! append;
+    var ord = '';
+    if (this >= 4 && this <= 20) ord = 'th';
+    else {
+      switch (this % 10) {
+        case 1: ord = 'st'; break;
+        case 2: ord = 'nd'; break;
+        case 3: ord = 'rd'; break;
+        default: ord = 'th'; break;
+      }
+    }
+    return (append ? this.round() : '') + ord;
+  },
+  
   chr: function () {
     /**
      * Gets the current integer's representing string character.
@@ -1450,7 +1455,7 @@ extend(Number.prototype, {
   
   odd: function () {
     /**
-     * Determine's whether this integer is an odd number.
+     * Determine's whether this integer is an odd number. *** Deprecated *** as of 1.6.0 this will be isOdd()
      *
      * @since 1.1.0
      * @example
@@ -1465,7 +1470,7 @@ extend(Number.prototype, {
   
   even: function () {
     /**
-     * Determine's whether this integer is an even number.
+     * Determine's whether this integer is an even number. *** Deprecated *** as of 1.6.0 this will be isEven()
      *
      * @since 1.1.0
      * @example
@@ -1614,7 +1619,7 @@ extend(Number.prototype, {
     else {
       return Number(this.toFixed(digits));
     }
-    
+
   },
   
   radix: function radix(base, size, character) {
@@ -1776,6 +1781,40 @@ extend(Number.prototype, {
     
   }
 });extend(Object, {
+  
+  follow: function follow(obj, keys, sep){
+    /**
+     * Follows a set of keys deep into the recursive object and returns the end value.
+     *
+     * @since 1.5.3
+     * @param obj The object to follow.
+     * @param keys Either an array of keys or a string of key names seperated by dots.
+     * @param [seperator='.']  
+     * @example
+     *  var obj = {a:{b:{c:'d'}}};
+     *  Object.follow(obj, ['a','b','c'])
+     *    // returns 'd'
+     *
+     *  Object.follow(obj, 'a.b') === obj.a.b;
+     *    // returns true
+     *
+     *  Object.follow(obj, 'a/b', '/') === obj.a.b;
+     *    // returns true
+     *
+     *  @returns mixed
+     */
+    if ( ! Array.isArray(keys)) {
+      if (typeof keys !== 'string')
+        throw new TypeError('Object.follow requires keys to either be an array or string value.');
+      
+      keys = keys.split(sep || '.');
+    }
+    
+    return keys.reduce(function (o,k) {
+      if (o && (k in o))
+        return o[k];
+    }, obj);
+  },
   
   value: function set(obj, key /*, value*/) {
     
@@ -2443,16 +2482,13 @@ if ( ! Object.getOwnPropertyDescriptor || domDefineProperty) {
     if ( ! Object.isObject(object)) throw new TypeError(object + ' is not an object.');
     if ( ! Object.prototype.hasOwnProperty.call(object, property)) return;
     
-    var descriptor = { enumerable: true, writable: true, configurable: true }, getter, setter, id = Object.id(object);
+    var descriptor = { enumerable: Object.prototype.propertyIsEnumerable.call(object, property),
+      writable: true, configurable: true }, getter, setter, id = Object.id(object);
     
-    if ((object === Number && ['NaN','NEGATIVE_INFINITY','POSITIVE_INFINITY','MAX_VALUE','MIN_VALUE'].contains(property)) ||
-        (object === Math && ['LN10','PI','E','LOG10E','SQRT2','LOG2E','SQRT1_2','LN2'].contains(property)) ||
-        (object instanceof Function && ['arguments','length','name','prototype','caller'].contains(property)))
+    if ((object instanceof Function && ['arguments','length','name','prototype','caller'].contains(property)) ||
+        (object === Number && ['NaN','NEGATIVE_INFINITY','POSITIVE_INFINITY','MAX_VALUE','MIN_VALUE'].contains(property)) ||
+        (object === Math && ['LN10','PI','E','LOG10E','SQRT2','LOG2E','SQRT1_2','LN2'].contains(property)))
       descriptor = {configurable:false, writable:false, enumerable:false};
-      
-    if ((object === Math && ['cos','pow','log','tan','sqrt','ceil','asin','abs','max','exp','atan2','random','round','floor','acos','atan','min','sin'].contains(property)) ||
-        (object === String && property === 'fromCharCode'))
-      descriptor = {configurable:true, writable:true, enumerable:false};
       
     if (object instanceof RegExp && ['lastIndex','multiline','global','source','ignoreCase'].contains(property))
       descriptor = {configurable:false, writable:(property == 'lastIndex'), enumerable:false};
@@ -2463,15 +2499,13 @@ if ( ! Object.getOwnPropertyDescriptor || domDefineProperty) {
     else if (objectDescriptorStore[id] && (property in objectDescriptorStore[id]))
       descriptor = objectDescriptorStore[id][property];
     
-    if (descriptor.writable === false) {
-      if (Object.prototype.__lookupGetter__ && (getter = object.__lookupGetter__(property))) {
-        descriptor.writable = false;
-        descriptor.get = getter;
-      }
-      if (Object.prototype.__lookupSetter__ && (setter = object.__lookupSetter__(property))) {
-        descriptor.writable = false;
-        descriptor.set = setter;
-      }
+    if (Object.prototype.__lookupGetter__ && (getter = object.__lookupGetter__(property))) {
+      descriptor.writable = false;
+      descriptor.get = getter;
+    }
+    if (Object.prototype.__lookupSetter__ && (setter = object.__lookupSetter__(property))) {
+      descriptor.writable = false;
+      descriptor.set = setter;
     }
     
     if ( ! ('set' in descriptor || 'get' in descriptor))
@@ -2484,18 +2518,44 @@ if ( ! Object.getOwnPropertyDescriptor || domDefineProperty) {
 if ( ! Object.getOwnPropertyNames) {
   extend(Object, 'getOwnPropertyNames', function getOwnPropertyNames(object) {
     
-    var names = [];
+    var names = Object.keys(object);
     
-    if (object === Number) names = ['NaN','NEGATIVE_INFINITY','POSITIVE_INFINITY','MAX_VALUE','MIN_VALUE'];
-    else if (object === Math) names = ['LN10','PI','E','LOG10E','SQRT2','LOG2E','SQRT1_2','LN2','cos','pow','log','tan','sqrt','ceil','asin','abs','max','exp','atan2','random','round','floor','acos','atan','min','sin'];
-    else if (object === String) names = ['fromCharCode'];
+    if ((typeof globals !== 'undefined' && object === globals) || (typeof window !== 'undefined' && object === window))
+      names.push('Infinity','NaN','undefined','decodeURI','encodeURIComponent','isNaN','decodeURIComponent','eval','parseFloat','encodeURI','isFinite','parseInt');
+    
+    if (object instanceof Function)
+      names.push('arguments','length','name','prototype','caller');
+    
+    if (object === Number)
+      names.push('NaN','NEGATIVE_INFINITY','POSITIVE_INFINITY','MAX_VALUE','MIN_VALUE');
+    else if (object === Math)
+      names.push('LN10','PI','E','LOG10E','SQRT2','LOG2E','SQRT1_2','LN2','cos','pow','log','tan','sqrt','ceil','asin','abs','max','exp','atan2','random','round','floor','acos','atan','min','sin');
+    else if (object === String)
+      names.push('fromCharCode');
+    else if (object === Date)
+      names.push('UTC','parse');
+    else if (object === RegExp)
+      names.push('$*','$3','$`','$9','rightContext','multiline','$7','lastParen','$input','$+','$&','leftContext','$8','$4','$1','$\'','$_','input','lastMatch','$2','$5','$6');
+    else if (object === Date.prototype)
+      names.push('constructor','toUTCString','setMinutes','setUTCMonth','getMilliseconds','getTime','getMinutes','getUTCHours','toString','setUTCFullYear','setMonth','getUTCMinutes','getUTCDate','setSeconds','toLocaleDateString','getMonth','toTimeString','toLocaleTimeString','setUTCMilliseconds','setYear','getUTCFullYear','getFullYear','getTimezoneOffset','setDate','getUTCMonth','getHours','toLocaleString','toISOString','toDateString','getUTCSeconds','valueOf','setUTCMinutes','getUTCDay','setUTCDate','setUTCSeconds','getYear','getUTCMilliseconds','getDay','setFullYear','setMilliseconds','setTime','setHours','getSeconds','toGMTString','getDate','setUTCHours');
+    else if (object === Object.prototype)
+      names.push('toString', 'toLocaleString','hasOwnProperty','valueOf','constructor','propertyIsEnumerable','isPrototypeOf');
+    else if (object === Number.prototype)
+      names.push('toExponential', 'toString','toLocaleString','toPrecision','valueOf','constructor','toFixed');
+    else if (object === RegExp.prototype)
+      names.push('toString','constructor','exec','compile','test');
+    else if (object === String.prototype)
+      names.push('length','constructor','concat','localeCompare','substring','italics','charCodeAt','strike','indexOf','toLowerCase','toString','toLocaleLowerCase','replace','toUpperCase','fontsize','split','substr','sub','charAt','blink','lastIndexOf','sup','fontcolor','valueOf','link','bold','anchor','small','search','fixed','big','match','toLocaleUpperCase','slice');
+    else if (object === Array.prototype)
+      names.push('length','constructor','concat','sort','join','indexOf','toString','splice','shift','unshift','toLocaleString','reverse','pop','push','slice');
+    else if (object === Function.prototype)
+      names.push('toString','constructor','call','apply','arguments','length','name','prototype','caller')
+    else {
+      if (object instanceof RegExp) names.push('lastIndex','multiline','global','source','ignoreCase');
+      else if (Array.isArray(object) || String.isString(object)) names.push('length');
+    }
         
-    if (object instanceof RegExp) names.push.apply(names, ['lastIndex','multiline','global','source','ignoreCase']);
-    else if (object instanceof Function) names.push.apply(names, ['arguments','length','name','prototype','caller']);
-    else if (Array.isArray(object) || String.isString(object)) names.push('length');
-    else if (Object.prototype.hasOwnProperty.call(object, 'constructor')) names.push('constructor');
-        
-    return names.concat(Object.keys(objectDescriptorStore[Object.id(object)] || {})).concat(Object.keys(object)).unique();
+    return names.concat(Object.keys(objectDescriptorStore[Object.id(object)] || {})).unique();
   });
 }
   
@@ -2654,6 +2714,29 @@ if (domDefineProperty) {
     else { for (var name in this) if (name == key) return true; }
     return true;
   };
+}extend(RegExp, {
+  
+  escape: function escape(input) {
+    /**
+     * Escapes the input text to make it safe for use in a regular expression
+     *
+     * @since 1.5.3
+     * @param input The text to escape
+     * @example
+     *  RegExp.escape('U$es |()ts +f r*ser^ed keyw()rds.')
+     *    // returns 'U\$es \|\(\)ts \+f r\*ser\^ed keyw\(\)rds\.'
+     *
+     */
+    return input.replace(/([/'*+?|()\[\]{}.^$])/g, '\\$1');
+  }
+});if (typeof module !== 'undefined' && module.exports) {
+  module.exports.repl = function () {
+    var vm = require('vm'), repl = require('repl');
+    process.stdin.removeAllListeners('keypress');
+    var ctx = repl.start('toolkit> ').context;
+    ctx.Array = Array; ctx.Object = Object; ctx.Number = Number; ctx.Date = Date;
+    ctx.RegExp = RegExp; ctx.String = String; ctx.Function = Function; 
+  }
 }extend(String, {
   
   isString: function isString(object) {
@@ -3019,9 +3102,6 @@ extend(String.prototype, {
      *  'Hello World'.btoa()
      *    // returns 'SGVsbG8gV29ybGQ='
      */
-    if (typeof window !== 'undefined' && window.btoa)
-      return window.btoa(this);
-    
     var key = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=', output = '', input = this.valueOf();
     for (i = 0; i < input.length; i += 3) {
       var c1 = input.charCodeAt(i), c2 = input.charCodeAt(i + 1), c3 = input.charCodeAt(i + 2);
