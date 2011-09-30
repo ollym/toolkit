@@ -87,6 +87,9 @@ $.getJSONP('https://api.github.com/repos/ollym/toolkit/git/blobs/%s'.sprintf(sha
                 case String.prototype:    { prototype = true;  group = 'String';   break; }
                 case Math:                { prototype = false; group = 'Math';     break; }
                 case Date:                { prototype = false; group = 'Date';     break; }
+                case Date.prototype:      { prototype = true;  group = 'Date';     break; }
+                case RegExp.prototype:    { prototype = true;  group = 'RegExp';   break; }
+                case RegExp:              { prototype = false; group = 'RegExp';   break; }
 
                 default: {
                     throw new Error('AutoDoc failed. Unable to find suitable group for given prototype.');
