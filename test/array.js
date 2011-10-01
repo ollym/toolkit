@@ -99,7 +99,7 @@ test('Array#intersect', function () {
   deepEqual([a,b,c].intersect(), [3]);
   deepEqual(a.intersect(1), [1]);
   deepEqual([1,2,3].intersect(2,[2,3]), [2]);
-  deepEqual([].intersect(), []);
+  deepEqual([1,2].intersect(), []);
 });
   
 test('Array#diff', function () {
