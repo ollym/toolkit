@@ -116,9 +116,8 @@ extend(Array.prototype, {
      * 
      * @returns self
      */
-    var args = Array.prototype.slice.call(arguments).flatten(1);
-    this.splice.apply(this, [this.length, 0].concat(args));
-    
+    Array.prototype.push.apply(this, arguments);
+
     return this;
   },
   
@@ -167,7 +166,7 @@ extend(Array.prototype, {
     return this;
   },
   
-  contains: function contains(values) {
+  contains: function contains() {
     /**
      * Checks whether the array obtains a certain value. This uses the internal indexOf() method which enforces strict equality (===).
      *
@@ -184,11 +183,12 @@ extend(Array.prototype, {
      * @returns bool
      */
     if (arguments.length === 0) return false;
-    args = Array.prototype.slice.call(arguments);
-    
-    return args.every(function (arg) { 
-      return !! ~ this.indexOf(arg);
-    }.bind(this));
+    else if (arguments.length === 1) return !! ~ this.indexOf(arguments[0]);
+    else {
+      return Array.prototype.slice.call(arguments).every(function (arg) { 
+        return !! ~ this.indexOf(arg);
+      }.bind(this));
+    }
   },
   
   remove$: function remove$() {
@@ -344,8 +344,9 @@ extend(Array.prototype, {
      *
      * @returns array
      */
-    var values = this.concat.apply(this, Array.prototype.slice.call(arguments)).flatten(1);
-    
+    var concat = Array.prototype.concat,
+        values = concat.apply([], concat.apply(this, arguments));
+
     if (values.length === 0) return [];
     else if (values.length === 1) return arrays[0];
     
@@ -372,12 +373,13 @@ extend(Array.prototype, {
      *
      * @returns array
      */
-    var values = this.concat.apply(this, Array.prototype.slice.call(arguments)).flatten(1);
+    var concat = Array.prototype.concat,
+        values = concat.apply(this, arguments);
         
     if (values.length === 0) return [];
     else if (values.length === 1) return arrays[0];
     
-    return values.flatten(1).unique();
+    return concat.apply([], values).unique();
   },
   
   chunk: function chunk(size) {
@@ -428,9 +430,9 @@ extend(Array.prototype, {
      *
      * @returns array
      */
-    return this.filter(function (a, idx) {
-      return this.indexOf(a) == idx;
-    }.bind(this));
+    return this.filter(function (v,i,a) {
+      return a.indexOf(v) === i;
+    });
   },
   
   each: function each(callback) {
@@ -547,7 +549,7 @@ extend(Array.prototype, {
      *
      * @returns array
      */
-    return num ? this.slice(0, num || 1) : this[0];
+    return arguments.length ? this.slice(0, num || 1) : this[0];
   },
   
   last: function last(num) {
@@ -565,7 +567,7 @@ extend(Array.prototype, {
      *
      * @returns array
      */
-    return num ? this.slice(this.length - (num || 1)) : this[this.length - 1];
+    return arguments.length ? this.slice(this.length - (num || 1)) : this[this.length - 1];
   },
   
   clean: function clean() {
