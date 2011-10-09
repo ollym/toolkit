@@ -120,7 +120,7 @@ test('Array#union', function () {
   
 test('Array#chunk', function () {
   var $R = Array.range, a = $R(12);
-  deepEqual(a.chunk(), [[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11],[12],[13],[14]]);
+  deepEqual(a.chunk(), [[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11],[12]]);
   deepEqual(a.chunk(3), [[1,2,3],[4,5,6],[7,8,9],[10,11,12]]);
   deepEqual(a.chunk(7), [[1,2,3,4,5,6,7],[8,9,10,11,12]]);
   deepEqual(a.chunk(13), [[1,2,3,4,5,6,7,8,9,10,11,12]]);
