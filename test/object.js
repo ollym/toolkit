@@ -90,7 +90,7 @@ test('Object.map$', function () {
   
 test('Object.getOwnPropertyDescriptors', function () {
   
-  desc = {
+  var desc = {
     bar: 
      { value: function () { },
      writable: false,

@@ -48,20 +48,20 @@ test('Array#swap$', function () {
 });
   
 test('Array#contains', function () {
-  ok([1,2,3].contains(1,2));                    // 2
-  strictEqual([1,2,3].contains(4), false);      // 3
-  strictEqual([1,2,3].contains(), false);       // 4
-  strictEqual([].contains(2), false);           // 5
+  ok([1,2,3].contains(1,2));                    // 1
+  strictEqual([1,2,3].contains(4), false);      // 2
+  strictEqual([1,2,3].contains(), false);       // 3
+  strictEqual([].contains(2), false);           // 4
 });
 
-test('Array#remove', function () {
+test('Array#remove$', function () {
   var a = [1,2,3];
   ok(a.remove(2,3) !== a);
   deepEqual(a.remove(2,3), [1,2,3].remove$(2,3));
   // Further testing is done in #remove$
 });
   
-test('Array#remove$', function () {
+test('Array#remove', function () {
   
   var arr = [1,2,3];
   arr.foo = 'bar';
