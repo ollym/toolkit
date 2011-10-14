@@ -1,5 +1,12 @@
 module('Object');
 
+test('Object.is', function() {
+  ok(!Object.is(0,-0));
+  ok(Object.is(NaN,NaN));
+  ok(!Object.is(true,false));
+  ok(Object.is(true,true));
+});
+
 test('Object.follow', function () {
   var obj = {a:{b:{c:'d'}}};
   strictEqual(Object.follow(obj, ['a', 'b', 'c']), 'd');
