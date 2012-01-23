@@ -1,4 +1,5 @@
 window.jstBenchmarks = {
+  /*
   'Array#unique': {
     'Underscore.JS': { sandbox: 'underscore', fn: function() {
       _.uniq(['a','b','b','c','c','c','d','d','f','f','j','k']);
@@ -63,4 +64,5 @@ window.jstBenchmarks = {
         [1, 2, 3].diff([101, 2, 1, 10],[2, 1]);
       }}
   }
+  */
 }
