@@ -1,29 +1,30 @@
 <html>
     <head>
-        <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
-        <link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+        <title>JSToolkit - The only compact ECMA5 compliant javascript toolkit.</title>
+        
         <link href="css/button.css" rel="stylesheet" type="text/css">
         <link href="css/grid.css" rel="stylesheet" type="text/css">
         <link href="css/style.css" rel="stylesheet" type="text/css">
-        <link href="css/docs.css" rel="stylesheet" type="text/css">
-        <link href="css/syntax.css" rel="stylesheet" type="text/css">
-        <script type="text/javascript">
-
-          var _gaq = _gaq || [];
-          _gaq.push(['_setAccount', 'UA-25625923-1']);
-          _gaq.push(['_trackPageview']);
-
-          (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-          })();
-
-        </script>
+        <link href="css/style.css" rel="stylesheet" type="text/css">
+        
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+        <script type="text/javascript" src="js/jst.min.js"></script>
+        <script type="text/javascript" src="js/util.js"></script>
+        <script type="text/javascript" src="js/home.js" async></script>
     </head>
     <body>
         <div id="banner">
-            
+            <div class="container-12">
+                <div class="grid-6 alpha">
+                    <h1><img src="img/logo-64.png">JSToolkit</h1>
+                </div>
+                <ul id="nav" class="grid-6">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a id="nav-docs" href="#">Documentation</a></li>
+                    <li><a href="https://github.com/ollym/toolkit">Source Code</a></li>
+                </ul>
+            </div>
+            <div class="clear"></div>
         </div>
         <div id="content">
             <div class="container-12">
@@ -38,9 +39,27 @@
                         <li>Opera 8+</li>
                     </ul>
 
-                    <p>Note Mozilla Firefox is <b>NOT</b> supported. Please use one of the other browsers listed. Alternative documentation will be provided soon. See <a href="https://github.com/ollym/toolkit/issues/26">issue #26</p>.
+                    <p>Note Mozilla Firefox is <b>NOT</b> supported. Please use one of the other browsers listed. Alternative documentation will be provided soon.<br>
+                    See <a href="https://github.com/ollym/toolkit/issues/26">issue #26</a> for more information.</p>.
                 </div>
             </div>
         </div>
+        <div id="footer">
+            Copyright &copy; 2011 <a href="mailto:oliver.morgan@kohark.com">Oliver Morgan</a><br>
+                JSToolkit is licensed under the <a href="http://en.wikipedia.org/wiki/MIT_License">MIT license</a>.
+        </div>
+        <script type="text/javascript">
+          var _gauges = _gauges || [];
+          (function() {
+            var t   = document.createElement('script');
+            t.type  = 'text/javascript';
+            t.async = true;
+            t.id    = 'gauges-tracker';
+            t.setAttribute('data-site-id', '4f1d51d0f5a1f52185000003');
+            t.src = '//secure.gaug.es/track.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(t, s);
+          })();
+        </script>
     </body>
 </html>
