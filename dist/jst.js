@@ -121,6 +121,30 @@ extend(Array.prototype, {
     return this;
   },
   
+  foldLeft: function foldLeft(initialValue){
+  	/**
+  	 * @since 
+  	 * @param initialValue The initial value to be fed to foldLeft operation
+  	 * @param operator The operator expression that is executed while folding the array to the left
+  	 * @example
+  	 * [1,2,3,4,5].foldLeft(0)(function(init,next){return init + next;});
+  	 *   //returns 15
+  	 * [1,2,3,4,5].foldLeft(1)(function(init,next){return init * next;});
+  	 *   //returns 120 
+  	 * Addition by Hrishikesh Paranjape
+  	 * Inspired By: Scala Sequence Object foldLeft method
+  	 * Contact: hrishikeshparanjape.github.com
+  	 */
+    var len = this.length, reference = this;
+    return function(operator){
+      var ret=initialValue;
+      for (var i=0; i<len; i++){
+          ret=operator(ret,reference[i]);
+      }
+      return ret;
+    };
+  },
+  
   swap: function swap(index1, index2) {
     /**
      * The self modification version of Array#Swap.

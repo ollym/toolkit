@@ -8,6 +8,7 @@ lib-cov
 *.pid
 *.swp
 *.swo
+*.project
 benchmarks/graphs
 testing.js
 node_modules/

@@ -1,5 +1,5 @@
 # ECMA5 Multi-Purpose Javascript Toolkit
-Documentation is at: jstoolkit.org
+Documentation is at: http://jstoolkit.org
 
 ## Features
 * Emulates ECMA5 Object features in legacy browsers. http://ejohn.org/blog/ecmascript-5-objects-and-properties/
